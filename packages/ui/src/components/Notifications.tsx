@@ -72,12 +72,14 @@ export function NotificationsBell({ count = 0, alarm, onClick, compact, label }:
 }) {
   const { t } = useT(texts)
   const name = label ?? t('nav.notifications')
+  const shown = count > 99 ? '99+' : count > 0 ? String(count) : ''
   return (
     <Tooltip label={name}>
+      {/* The name holds the count exactly as shown ("99+"), so it matches what people see and say. */}
       <ActionIcon variant="subtle" color="gray" size={36} className={`bnb-bell${compact ? ' is-compact' : ''}`} onClick={onClick}
-        aria-label={count ? `${name} (${count})` : name}>
+        aria-label={shown ? `${name} ${shown}` : name}>
         <IconBell size={compact ? 20 : 18} aria-hidden="true" />
-        {count > 0 && <span className={`bnb-bell-count${alarm ? ' is-alarm' : ''}`} aria-hidden="true">{count > 99 ? '99+' : count}</span>}
+        {shown && <span className={`bnb-bell-count${alarm ? ' is-alarm' : ''}`} aria-hidden="true">{shown}</span>}
       </ActionIcon>
     </Tooltip>
   )
