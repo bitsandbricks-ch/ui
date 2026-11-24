@@ -1,0 +1,6 @@
+/* ActionList */
+.bnb-actions { display: grid; gap: 10px; }
+.bnb-actions-title { margin: 0 0 4px; font-size: var(--bnb-fs-xs); font-weight: 650; color: var(--bnb-muted); }
+.bnb-actions-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.bnb-actions-ok { color: var(--bnb-ok); }
+.bnb-actions-err { color: var(--bnb-err); }

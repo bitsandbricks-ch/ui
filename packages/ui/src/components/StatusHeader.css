@@ -1,0 +1,17 @@
+/* StatusHeader: title, badges, blockers and the next step. */
+.bnb-status-head { display: grid; gap: 10px; margin-bottom: var(--bnb-space-4); }
+.bnb-status-title { margin: 0; font-size: var(--bnb-fs-xl); font-weight: 650; line-height: 1.25; overflow-wrap: anywhere; }
+.bnb-status-sub { color: var(--bnb-muted); font-size: var(--bnb-fs-sm); font-family: var(--bnb-font-mono); }
+.bnb-status-badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.bnb-status-badge { --bnb-badge-tone: var(--bnb-muted); display: inline-flex; border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-sm); overflow: hidden; font-size: var(--bnb-fs-xs); }
+.bnb-status-badge[data-tone="ok"] { --bnb-badge-tone: var(--bnb-ok); }
+.bnb-status-badge[data-tone="warn"] { --bnb-badge-tone: var(--bnb-warn); }
+.bnb-status-badge[data-tone="err"] { --bnb-badge-tone: var(--bnb-err); }
+.bnb-status-badge-label { padding: 2px 6px; background: var(--bnb-raised); color: var(--bnb-muted); }
+.bnb-status-badge-value { padding: 2px 6px; font-weight: 600; color: var(--bnb-fg); box-shadow: inset 3px 0 0 var(--bnb-badge-tone); }
+.bnb-status-blockers { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; color: var(--bnb-err); font-size: var(--bnb-fs-sm); }
+.bnb-status-blockers li { display: flex; align-items: center; gap: 6px; }
+.bnb-status-next { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: var(--bnb-fs-sm); }
+.bnb-status-next-label { color: var(--bnb-muted); }
+.bnb-status-next[data-tone="err"] .bnb-status-next-text { color: var(--bnb-err); }
+.bnb-status-next[data-tone="warn"] .bnb-status-next-text { color: var(--bnb-warn); }
