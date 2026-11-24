@@ -1,4 +1,4 @@
-# Publishes the packages to npm (npmjs.com, public) when Mike pushes a release tag (v0.2.0), then creates
+# Stages the packages on npm (npmjs.com, public, live after Mike approves) when Mike pushes a release tag (v0.2.0), then creates
 # the GitHub release from the changelog (handbook decision 0014: the release comes last, so an
 # immutable release never points at something that failed to publish). Versions come from
 # changesets: `pnpm version-packages` in a pull request, merged, then the tag. Nothing here changes
@@ -14,13 +14,17 @@ permissions:
 
 jobs:
   publish:
-    name: Publish to npm
+    name: Stage on npm
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     # Mike approves each publish (Settings > Environments > release > required reviewers).
     environment: release
+    # id-token: write lets npm trusted publishing (OIDC) publish without a token and add provenance.
+    # Each package's Trusted Publisher on npmjs.com names bitsandbricks-ch/ui, release.yml and the
+    # release environment.
     permissions:
       contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -30,8 +34,6 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
-          scope: '@bitsandbricks'
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
@@ -42,10 +44,22 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
         run: node scripts/check-versions.mjs "$TAG"
-      - name: Publish
+      # pnpm packs (it turns workspace:^ into real versions); npm stages each tarball through trusted
+      # publishing (OIDC, no token). The trusted publishers on npmjs.com allow staging only, so a
+      # version goes live when Mike approves it there (Staged Packages) or with `npm stage approve`.
+      # Staged publishing needs npm 11.15.0 or later.
+      - name: Stage on npm
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm -r publish --no-git-checks --access public
+          PACK_DIR: ${{ runner.temp }}/pack
+        run: |
+          if ! node -e 'const v = process.argv[1].split(".").map(Number); process.exit(v[0] > 11 || (v[0] === 11 && v[1] >= 15) ? 0 : 1)' "$(npm --version)"; then
+            npm install -g npm@11.15.0
+          fi
+          npm --version
+          pnpm -r pack --pack-destination "$PACK_DIR"
+          for tarball in "$PACK_DIR"/*.tgz; do
+            npm stage publish "$tarball" --access public
+          done
 
   github-release:
     name: Create the GitHub release
