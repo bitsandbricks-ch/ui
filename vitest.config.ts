@@ -9,8 +9,8 @@ export default defineConfig({
   resolve: {
     // Tests run against the sources, so no build is needed first.
     alias: {
-      '@bitsandbricks/tokens': src('./packages/tokens/src/index.js'),
-      '@bitsandbricks/ui': src('./packages/ui/src/index.ts'),
+      '@bitsandbricks-ch/tokens': src('./packages/tokens/src/index.js'),
+      '@bitsandbricks-ch/ui': src('./packages/ui/src/index.ts'),
     },
   },
   test: {

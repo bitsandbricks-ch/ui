@@ -1,4 +1,4 @@
-import { registerMessages } from '@bitsandbricks/ui'
+import { registerMessages } from '@bitsandbricks-ch/ui'
 
 // The widgets' texts (from Floorbit's widgets and dashboard texts). Registered with the ui
 // package, so an app's own translate function still wins for any key it knows.

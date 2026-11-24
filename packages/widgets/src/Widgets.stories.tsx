@@ -1,6 +1,6 @@
 import { SimpleGrid } from '@mantine/core'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import type { Widget } from '@bitsandbricks/ui'
+import type { Widget } from '@bitsandbricks-ch/ui'
 import { FitWidget } from './FitWidget'
 import type { KindPick } from './level'
 import { TileCard } from './TileCard'

@@ -20,9 +20,9 @@ import {
   type MantineThemeOverride,
   type VariantColorsResolver,
 } from '@mantine/core'
-import tokens, { INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks/tokens'
+import tokens, { INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks-ch/tokens'
 
-// The Mantine theme every React app shares, on top of @bitsandbricks/tokens. Built from Hubra's
+// The Mantine theme every React app shares, on top of @bitsandbricks-ch/tokens. Built from Hubra's
 // packages/ui theme (contrast-aware fills) and Floorbit's theme.ts (colours as CSS variables, so
 // light and dark switch without a rebuild). An app sets only its accent:
 //

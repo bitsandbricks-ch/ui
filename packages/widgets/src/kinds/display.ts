@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { MaybeTone as Tone, Widget } from '@bitsandbricks/ui'
+import type { MaybeTone as Tone, Widget } from '@bitsandbricks-ch/ui'
 import { PALETTE, formatValue, numberColumns } from './shape'
 
 /** How a pane shows its numbers (issue #960): colour steps, value mappings, unit and decimals,

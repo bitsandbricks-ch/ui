@@ -1,5 +1,5 @@
-import { useT as useTranslation } from '@bitsandbricks/ui'
-import type { Widget } from '@bitsandbricks/ui'
+import { useT as useTranslation } from '@bitsandbricks-ch/ui'
+import type { Widget } from '@bitsandbricks-ch/ui'
 import type { Level } from '../level'
 import { useNumberStyle } from './display'
 import { formatValue, scaleOf, statOf } from './shape'

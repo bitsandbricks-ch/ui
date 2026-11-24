@@ -1,6 +1,6 @@
-// @bitsandbricks/ui: the React and Mantine pieces every BitsAndBricks app shares.
-// Import the styles once: import '@bitsandbricks/tokens/tokens.css' and '@bitsandbricks/ui/styles.css'.
-export { accents, default as tokens } from '@bitsandbricks/tokens'
+// @bitsandbricks-ch/ui: the React and Mantine pieces every BitsAndBricks app shares.
+// Import the styles once: import '@bitsandbricks-ch/tokens/tokens.css' and '@bitsandbricks-ch/ui/styles.css'.
+export { accents, default as tokens } from '@bitsandbricks-ch/tokens'
 export { BnbProvider } from './BnbProvider'
 export { accentScale, createBnbTheme, cssVariablesResolver, resolveAccent, STATUS_COLORS, variantColorResolver, type Accent, type BnbThemeOptions, type StatusColor } from './theme'
 export { createColorSchemeManager, readColorScheme, type ColorSchemeOptions } from './colorScheme'

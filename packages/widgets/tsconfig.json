@@ -3,8 +3,8 @@
   "compilerOptions": {
     "types": ["vitest/globals"],
     "paths": {
-      "@bitsandbricks/tokens": ["../tokens/src/index.js"],
-      "@bitsandbricks/ui": ["../ui/src/index.ts"]
+      "@bitsandbricks-ch/tokens": ["../tokens/src/index.js"],
+      "@bitsandbricks-ch/ui": ["../ui/src/index.ts"]
     },
     "allowJs": true
   },

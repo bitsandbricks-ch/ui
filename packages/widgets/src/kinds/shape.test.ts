@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Widget } from '@bitsandbricks/ui'
+import type { Widget } from '@bitsandbricks-ch/ui'
 import { PALETTE, binsOf, changeOf, bucketsOf, formatValue, kindsFor, looksFor, partsOf, resolveKind, rowsOf, scaleOf, slices, stackLines, stateCounts, statOf, trendOf, valuesOf } from './shape'
 
 const base = { id: 'w', label: 'W', size: 'small', refresh: 60, sub: '', link: '' } as const

@@ -6,28 +6,28 @@ type and the dot grid, and each app its own accent.
 
 | Package | What |
 | --- | --- |
-| [`@bitsandbricks/tokens`](packages/tokens) | CSS variables (`--bnb-*`), light and dark, plus the same values as JSON |
-| [`@bitsandbricks/ui`](packages/ui) | React 19 and Mantine 9: `createBnbTheme`, page head, stat tile, data table with pager and filters, empty and error states, confirm dialogs, side panel, status badges, app shell, theme switch, toasts, and the shared plugin types |
-| [`@bitsandbricks/widgets`](packages/widgets) | Stat, gauge, graph, bars, columns, pie, histogram, rows and time chart, drawn from plugin widget data in plain SVG |
+| [`@bitsandbricks-ch/tokens`](packages/tokens) | CSS variables (`--bnb-*`), light and dark, plus the same values as JSON |
+| [`@bitsandbricks-ch/ui`](packages/ui) | React 19 and Mantine 9: `createBnbTheme`, page head, stat tile, data table with pager and filters, empty and error states, confirm dialogs, side panel, status badges, app shell, theme switch, toasts, and the shared plugin types |
+| [`@bitsandbricks-ch/widgets`](packages/widgets) | Stat, gauge, graph, bars, columns, pie, histogram, rows and time chart, drawn from plugin widget data in plain SVG |
 
 Storybook shows every component in each app's accent, light and dark: TODO: the GitHub Pages link
 once Pages is on for this repo.
 
 ## Install
 
-The packages are on GitHub Packages. Tell npm or pnpm where `@bitsandbricks` lives, in the app's
+The packages are on GitHub Packages. Tell npm or pnpm where `@bitsandbricks-ch` lives, in the app's
 `.npmrc`:
 
 ```ini
-@bitsandbricks:registry=https://npm.pkg.github.com
+@bitsandbricks-ch:registry=https://npm.pkg.github.com
 ```
 
 and log in once with a GitHub token that can read packages (`npm login --registry=https://npm.pkg.github.com`).
 CI uses `GITHUB_TOKEN`.
 
 ```sh
-pnpm add @bitsandbricks/ui @bitsandbricks/tokens     # React and Mantine apps
-pnpm add @bitsandbricks/tokens                       # any other app
+pnpm add @bitsandbricks-ch/ui @bitsandbricks-ch/tokens     # React and Mantine apps
+pnpm add @bitsandbricks-ch/tokens                          # any other app
 ```
 
 ## React and Mantine apps
@@ -35,9 +35,9 @@ pnpm add @bitsandbricks/tokens                       # any other app
 ```tsx
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
-import '@bitsandbricks/tokens/tokens.css'
-import '@bitsandbricks/ui/styles.css'
-import { accents, BnbProvider, createBnbTheme, createColorSchemeManager } from '@bitsandbricks/ui'
+import '@bitsandbricks-ch/tokens/tokens.css'
+import '@bitsandbricks-ch/ui/styles.css'
+import { accents, BnbProvider, createBnbTheme, createColorSchemeManager } from '@bitsandbricks-ch/ui'
 import { Link, useSearchParams } from 'react-router-dom'
 
 const theme = createBnbTheme({ accent: accents.hubra })
@@ -54,7 +54,7 @@ const theme = createBnbTheme({ accent: accents.hubra })
   knows wins.
 - `link` and `useSearchParams` let the side panel, the sidebar and the lists use the app's router.
   Without them, plain links and the address bar are used.
-- `theme-script.js` (`@bitsandbricks/ui/theme-script.js`) paints the saved light or dark theme
+- `theme-script.js` (`@bitsandbricks-ch/ui/theme-script.js`) paints the saved light or dark theme
   before the app loads; serve it as a file and load it in `<head>`.
 
 ## Vue, Astro and Tailwind apps
@@ -62,8 +62,8 @@ const theme = createBnbTheme({ accent: accents.hubra })
 Load the tokens and the app's accent, then use the variables:
 
 ```css
-@import '@bitsandbricks/tokens/tokens.css';
-@import '@bitsandbricks/tokens/accents/labdex.css';   /* or your own accentCss() */
+@import '@bitsandbricks-ch/tokens/tokens.css';
+@import '@bitsandbricks-ch/tokens/accents/labdex.css';   /* or your own accentCss() */
 
 .card { background: var(--bnb-surface); border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-lg); }
 .button-primary { background: var(--bnb-accent); color: var(--bnb-on-accent); }
@@ -87,9 +87,9 @@ A change to a package adds a changeset (`pnpm changeset`). Releases: see
 
 ## Where it came from
 
-`@bitsandbricks/ui` started from Hubra's `packages/ui` (theme, filters, side panel, feedback) and
+`@bitsandbricks-ch/ui` started from Hubra's `packages/ui` (theme, filters, side panel, feedback) and
 Floorbit's components (data table, stat tile, state badges, theme as CSS variables), merged where
-both had one. `@bitsandbricks/widgets` is Floorbit's widget kit with its tests.
+both had one. `@bitsandbricks-ch/widgets` is Floorbit's widget kit with its tests.
 
 ## Licence
 

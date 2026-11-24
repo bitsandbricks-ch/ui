@@ -1,5 +1,5 @@
 import { Anchor, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core'
-import { ConfirmButton, LoadingState, useT, type ActionResult, type ActionTile, type Tile, type Widget, type WidgetTile } from '@bitsandbricks/ui'
+import { ConfirmButton, LoadingState, useT, type ActionResult, type ActionTile, type Tile, type Widget, type WidgetTile } from '@bitsandbricks-ch/ui'
 import { useState, type ReactNode } from 'react'
 import { WidgetBody } from './WidgetBody'
 

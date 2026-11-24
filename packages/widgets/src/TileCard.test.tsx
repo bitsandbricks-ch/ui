@@ -1,6 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import type { ActionTile, Tile, WidgetTile } from '@bitsandbricks/ui'
+import type { ActionTile, Tile, WidgetTile } from '@bitsandbricks-ch/ui'
 import { renderWithApp } from '../../../test/render'
 import { TileGrid, WidgetCard } from './TileCard'
 import { TimeChart } from './TimeChart'

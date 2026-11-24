@@ -12,8 +12,8 @@ const config: StorybookConfig = {
     vite.resolve ??= {}
     vite.resolve.alias = {
       ...(vite.resolve.alias as Record<string, string>),
-      '@bitsandbricks/tokens': src('../packages/tokens/src/index.js'),
-      '@bitsandbricks/ui': src('../packages/ui/src/index.ts'),
+      '@bitsandbricks-ch/tokens': src('../packages/tokens/src/index.js'),
+      '@bitsandbricks-ch/ui': src('../packages/ui/src/index.ts'),
     }
     return vite
   },

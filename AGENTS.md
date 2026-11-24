@@ -13,9 +13,9 @@ A pnpm monorepo with three packages every BitsAndBricks app shares:
 
 | Package | What | Used by |
 | --- | --- | --- |
-| `packages/tokens` (`@bitsandbricks/tokens`) | CSS variables (`--bnb-*`) and JSON, generated from `src/tokens.js` | every app |
-| `packages/ui` (`@bitsandbricks/ui`) | React 19 and Mantine 9: theme, page head, tables, filters, panels, shell, plugin types | Hubra, Floorbit |
-| `packages/widgets` (`@bitsandbricks/widgets`) | dashboard widgets drawn from plugin data | Floorbit, later Hubra and Labdex |
+| `packages/tokens` (`@bitsandbricks-ch/tokens`) | CSS variables (`--bnb-*`) and JSON, generated from `src/tokens.js` | every app |
+| `packages/ui` (`@bitsandbricks-ch/ui`) | React 19 and Mantine 9: theme, page head, tables, filters, panels, shell, plugin types | Hubra, Floorbit |
+| `packages/widgets` (`@bitsandbricks-ch/widgets`) | dashboard widgets drawn from plugin data | Floorbit, later Hubra and Labdex |
 
 Vue apps (Labdex, Mason) and Seatbit (Tailwind) take the tokens only.
 

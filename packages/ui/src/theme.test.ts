@@ -1,5 +1,5 @@
 import { DEFAULT_THEME, defaultVariantColorsResolver, mergeMantineTheme } from '@mantine/core'
-import { contrastRatio } from '@bitsandbricks/tokens'
+import { contrastRatio } from '@bitsandbricks-ch/tokens'
 import { describe, expect, it } from 'vitest'
 import { accentScale, createBnbTheme, cssVariablesResolver, resolveAccent, variantColorResolver } from './theme'
 

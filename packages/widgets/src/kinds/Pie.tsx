@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useT as useTranslation } from '@bitsandbricks/ui'
-import type { WidgetState as State, Widget } from '@bitsandbricks/ui'
+import { useT as useTranslation } from '@bitsandbricks-ch/ui'
+import type { WidgetState as State, Widget } from '@bitsandbricks-ch/ui'
 import type { Level } from '../level'
 import { useNumberStyle } from './display'
 import { formatValue, partsOf, slices } from './shape'

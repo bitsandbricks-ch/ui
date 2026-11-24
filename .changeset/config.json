@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [["@bitsandbricks/tokens", "@bitsandbricks/ui", "@bitsandbricks/widgets"]],
+  "fixed": [["@bitsandbricks-ch/tokens", "@bitsandbricks-ch/ui", "@bitsandbricks-ch/widgets"]],
   "linked": [],
   "access": "restricted",
   "baseBranch": "main",

@@ -1,4 +1,4 @@
-import type { WidgetState as State, MaybeTone as Tone, Widget } from '@bitsandbricks/ui'
+import type { WidgetState as State, MaybeTone as Tone, Widget } from '@bitsandbricks-ch/ui'
 import type { Kind, KindPick } from '../level'
 import type { Calc } from './combine'
 import type { NumberStyle, Threshold } from './display'

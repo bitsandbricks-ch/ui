@@ -1,4 +1,4 @@
-import type { Widget } from '@bitsandbricks/ui'
+import type { Widget } from '@bitsandbricks-ch/ui'
 import { formatValue, linesOf, numberColumns, valuesOf } from './shape'
 
 /** What a pane does to its data before drawing it (issue #959): more sources merged in, rows

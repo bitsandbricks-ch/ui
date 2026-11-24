@@ -1,5 +1,5 @@
 
-import type { Widget } from '@bitsandbricks/ui'
+import type { Widget } from '@bitsandbricks-ch/ui'
 import { type Kind, type KindPick, type Level, type LevelPin, pickLevel, tooSmall } from './level'
 import { BarsKind } from './kinds/Bars'
 import { ColumnsKind } from './kinds/Columns'

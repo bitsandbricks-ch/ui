@@ -1,8 +1,8 @@
 import { Group, Table, Text } from '@mantine/core'
-import { useT as useTranslation } from '@bitsandbricks/ui'
-import type { MaybeTone as Tone, Widget } from '@bitsandbricks/ui'
+import { useT as useTranslation } from '@bitsandbricks-ch/ui'
+import type { MaybeTone as Tone, Widget } from '@bitsandbricks-ch/ui'
 import { FitWidget } from './FitWidget'
-import { Sparkline } from '@bitsandbricks/ui'
+import { Sparkline } from '@bitsandbricks-ch/ui'
 import { registerWidgetMessages } from './messages'
 
 registerWidgetMessages()

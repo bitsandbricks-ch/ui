@@ -97,7 +97,7 @@ importers:
 
   packages/ui:
     dependencies:
-      '@bitsandbricks/tokens':
+      '@bitsandbricks-ch/tokens':
         specifier: workspace:^
         version: link:../tokens
       '@mantine/core':
@@ -124,7 +124,7 @@ importers:
 
   packages/widgets:
     dependencies:
-      '@bitsandbricks/ui':
+      '@bitsandbricks-ch/ui':
         specifier: workspace:^
         version: link:../ui
       '@mantine/core':

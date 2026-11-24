@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Widget } from '@bitsandbricks/ui'
+import type { Widget } from '@bitsandbricks-ch/ui'
 import { calc, groupBy, groupKeys, merge, reduce, shapeData } from './combine'
 
 const base = { id: 'w', size: 'small', refresh: 60, sub: '', link: '' } as const

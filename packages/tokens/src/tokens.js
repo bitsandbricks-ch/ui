@@ -1,5 +1,5 @@
 // The one source of the BitsAndBricks tokens. scripts/build.mjs writes tokens.css and
-// tokens.json from it; @bitsandbricks/ui reads it for the Mantine theme.
+// tokens.json from it; @bitsandbricks-ch/ui reads it for the Mantine theme.
 //
 // Every app shares the neutrals, status colours, spacing, radii, type and the dot grid. An app
 // differs only through its accent (--bnb-accent) and its logo, so the apps read as siblings.

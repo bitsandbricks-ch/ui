@@ -1,6 +1,6 @@
 import { act, fireEvent, screen } from '@testing-library/react'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import type { Widget } from '@bitsandbricks/ui'
+import type { Widget } from '@bitsandbricks-ch/ui'
 import { renderWithApp } from '../../../test/render'
 import { clock } from './time'
 import { FitWidget } from './FitWidget'

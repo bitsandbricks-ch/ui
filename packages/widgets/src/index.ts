@@ -1,5 +1,5 @@
-// @bitsandbricks/widgets: dashboard widgets drawn from plugin data (Floorbit's widget kit). Plain
-// SVG and CSS, no chart library. Import '@bitsandbricks/widgets/styles.css' once.
+// @bitsandbricks-ch/widgets: dashboard widgets drawn from plugin data (Floorbit's widget kit). Plain
+// SVG and CSS, no chart library. Import '@bitsandbricks-ch/widgets/styles.css' once.
 export { FitWidget } from './FitWidget'
 export { WidgetBody } from './WidgetBody'
 export { ActionCard, TileCard, TileGrid, WidgetCard, type WidgetData } from './TileCard'

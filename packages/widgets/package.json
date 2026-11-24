@@ -1,5 +1,5 @@
 {
-  "name": "@bitsandbricks/widgets",
+  "name": "@bitsandbricks-ch/widgets",
   "version": "0.1.0",
   "description": "BitsAndBricks dashboard widgets: stat, gauge, graph, bars, pie, histogram, tables, from plugin data",
   "license": "MIT",
@@ -30,7 +30,7 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
-    "@bitsandbricks/ui": "workspace:^"
+    "@bitsandbricks-ch/ui": "workspace:^"
   },
   "peerDependencies": {
     "@mantine/core": "^9.7.4",

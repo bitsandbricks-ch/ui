@@ -1,5 +1,5 @@
 {
-  "name": "@bitsandbricks/ui",
+  "name": "@bitsandbricks-ch/ui",
   "version": "0.1.0",
   "description": "BitsAndBricks React components on Mantine: theme, page head, tables, filters, panels, shell",
   "license": "MIT",
@@ -32,7 +32,7 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
-    "@bitsandbricks/tokens": "workspace:^",
+    "@bitsandbricks-ch/tokens": "workspace:^",
     "@tanstack/react-table": "^8.21.3"
   },
   "peerDependencies": {

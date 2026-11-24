@@ -32,7 +32,7 @@ jobs:
           node-version: 24
           cache: pnpm
           registry-url: https://npm.pkg.github.com
-          scope: '@bitsandbricks'
+          scope: '@bitsandbricks-ch'
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck

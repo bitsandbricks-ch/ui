@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Widget } from '@bitsandbricks/ui'
+import type { Widget } from '@bitsandbricks-ch/ui'
 import { applyDisplay, displaysFor, mappingFor, seriesColour, seriesLabels, toneAt } from './display'
 import { formatValue } from './shape'
 

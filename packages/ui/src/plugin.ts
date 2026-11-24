@@ -5,7 +5,7 @@ import type { MaybeTone } from './status'
 //   - components a plugin's frontend bundle registers (Hubra's PluginDefinition): pages, tabs,
 //     slots, search and dashboard widgets;
 //   - data a plugin's backend sends (Floorbit's widgets and tiles), which the app draws with
-//     @bitsandbricks/widgets, so a plugin needs no frontend code for a number or a chart.
+//     @bitsandbricks-ch/widgets, so a plugin needs no frontend code for a number or a chart.
 // Each app names its own slots: `PluginDefinition<MySlots>`.
 
 /** Shown only while `module` is on and the user has `perm`. */
@@ -120,7 +120,7 @@ interface WidgetBase {
   link: string
 }
 
-/** A widget's data: what the backend answers, and what @bitsandbricks/widgets draws. */
+/** A widget's data: what the backend answers, and what @bitsandbricks-ch/widgets draws. */
 export type Widget = WidgetBase & (
   /** `min` and `max` let a stat show as a gauge. `text` replaces the number when set. */
   | { type: 'stat'; value: number | string; unit: string; tone: MaybeTone; min?: number; max?: number; text?: string }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useT as useTranslation } from '@bitsandbricks/ui'
-import type { Widget } from '@bitsandbricks/ui'
+import { useT as useTranslation } from '@bitsandbricks-ch/ui'
+import type { Widget } from '@bitsandbricks-ch/ui'
 import { clock, dayClock } from '../time'
 import type { Level } from '../level'
 import { type Threshold, useNumberStyle } from './display'

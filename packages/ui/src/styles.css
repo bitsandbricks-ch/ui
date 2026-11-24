@@ -1,5 +1,5 @@
-/* @bitsandbricks/ui: one look for Mantine's controls and the shared components, on the tokens.
- * Load after Mantine's styles and @bitsandbricks/tokens/tokens.css. Pages never restyle these. */
+/* @bitsandbricks-ch/ui: one look for Mantine's controls and the shared components, on the tokens.
+ * Load after Mantine's styles and @bitsandbricks-ch/tokens/tokens.css. Pages never restyle these. */
 
 html { -webkit-font-smoothing: antialiased; }
 body { background: var(--bnb-bg); color: var(--bnb-fg); font-size: var(--bnb-fs-md); line-height: var(--bnb-lh-normal); }
