@@ -1,5 +1,7 @@
-# Publishes Storybook, the visual reference for every app, to GitHub Pages from main.
-name: Storybook
+# Publishes GitHub Pages from main: the showcase (apps/demo, a small app built from the packages'
+# dist/) at the root, and Storybook, the visual reference for every component, under storybook/.
+# The showcase forwards Storybook's old links (?path=…, iframe.html) to storybook/.
+name: Pages
 
 on:
   push:
@@ -29,9 +31,14 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm build-storybook
+      - run: pnpm build-site
+      - name: Showcase at the root, Storybook under storybook/
+        run: |
+          cp -r apps/demo/dist _site
+          cp -r storybook-static _site/storybook
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: storybook-static
+          path: _site
 
   deploy:
     needs: build

@@ -36,6 +36,8 @@ jobs:
       # Builds tokens first: Storybook loads the generated tokens.css.
       - run: pnpm build
       - run: pnpm build-storybook
+      # The showcase on GitHub Pages, built against the packages' dist/ as an app gets them.
+      - run: pnpm build-site
       - name: Pack (what would be published)
         run: pnpm -r exec pnpm pack --pack-destination "$RUNNER_TEMP/packs"
 

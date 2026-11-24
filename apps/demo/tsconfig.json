@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["vitest/globals", "vite/client"],
+    "paths": {
+      "@bitsandbricks/tokens": ["../../packages/tokens/src/index.js"],
+      "@bitsandbricks/ui": ["../../packages/ui/src/index.ts"],
+      "@bitsandbricks/widgets": ["../../packages/widgets/src/index.ts"],
+      "@bitsandbricks/ui/*": ["../../packages/ui/src/*"]
+    },
+    "allowJs": true
+  },
+  "include": ["src", "vite.config.ts", "../../test"]
+}
