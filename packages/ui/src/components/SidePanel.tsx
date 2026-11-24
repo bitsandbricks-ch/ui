@@ -1,7 +1,9 @@
-import { ActionIcon, Button, Drawer, Group, useMatches } from '@mantine/core'
-import { IconArrowRight, IconX } from '@tabler/icons-react'
-import { createContext, useContext, type CSSProperties, type ElementType, type ReactNode } from 'react'
+import { ActionIcon, Button, Drawer, Group, Tooltip, useMatches } from '@mantine/core'
+import { IconArrowDown, IconArrowRight, IconArrowUp, IconCheck, IconLink, IconX } from '@tabler/icons-react'
+import { createContext, useContext, useEffect, useState, type CSSProperties, type ElementType, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react'
 import { useT } from '../i18n'
+import { clampPanelWidth } from '../panelWidth'
+import { texts } from './SidePanel.texts'
 
 /** The app's link component (React Router's Link takes `to`); a plain <a href> without one. */
 export const LinkContext = createContext<ElementType | null>(null)
@@ -9,7 +11,7 @@ export const LinkContext = createContext<ElementType | null>(null)
 /** A quick look from the right: a row opens it, the list stays where it was, and "Open" leads on
  *  to the thing's own page. One layout for every app: header (icon, eyebrow, title, subtitle,
  *  actions, close), a scrolling body and an optional footer. Full width on phones. */
-export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, icon, href, openLabel, actions, footer, width = 440, padded = true, children }: {
+export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, icon, href, openLabel, actions, footer, width = 440, padded = true, resizable, onPrev, onNext, copyHref, children }: {
   opened?: boolean
   onClose: () => void
   title: ReactNode
@@ -26,11 +28,63 @@ export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, ic
   width?: number
   /** false: the body's sections bring their own padding (PanelSection). */
   padded?: boolean
+  /** Wide screens: the left edge drags the panel wider or narrower (← → on it too). A `storageKey`
+   *  keeps the width in this browser. From Mason. */
+  resizable?: boolean | { storageKey?: string; min?: number }
+  /** ↑ ↓ in the header: the row above or below in the list beside the panel. */
+  onPrev?: () => void
+  onNext?: () => void
+  /** Adds "Copy link": this address (the thing's own page, as an absolute URL) goes to the clipboard. */
+  copyHref?: string
   children: ReactNode
 }) {
-  const { t } = useT()
+  const { t } = useT(texts)
+  const resize = resizable ? (typeof resizable === 'object' ? resizable : {}) : null
+  const [dragged, setDragged] = useState<number | null>(() => {
+    if (!resize?.storageKey) return null
+    try { return Number(localStorage.getItem(resize.storageKey)) || null } catch { return null }
+  })
+  const [dragging, setDragging] = useState(false)
+  const [copied, setCopied] = useState(false)
+  useEffect(() => {
+    if (!copied) return
+    const timer = setTimeout(() => setCopied(false), 1500)
+    return () => clearTimeout(timer)
+  }, [copied])
+  const screen = typeof window === 'undefined' ? 1280 : window.innerWidth
+  const shown = resize && dragged ? clampPanelWidth(dragged, screen, resize.min) : width
+  const keep = (w: number) => {
+    if (resize?.storageKey) try { localStorage.setItem(resize.storageKey, String(w)) } catch { /* private mode */ }
+  }
+  function grab(e: PointerEvent<HTMLDivElement>) {
+    if (e.button !== 0) return
+    setDragging(true)
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+    e.preventDefault()
+  }
+  function drag(e: PointerEvent<HTMLDivElement>) {
+    if (dragging) setDragged(clampPanelWidth(window.innerWidth - e.clientX, window.innerWidth, resize?.min))
+  }
+  function drop() {
+    if (!dragging) return
+    setDragging(false)
+    keep(shown)
+  }
+  function nudge(e: KeyboardEvent<HTMLDivElement>) {
+    const by = ({ ArrowLeft: 40, ArrowRight: -40 } as Record<string, number>)[e.key]
+    if (!by) return
+    const w = clampPanelWidth(shown + by, window.innerWidth, resize?.min)
+    setDragged(w)
+    keep(w)
+    e.preventDefault()
+    e.stopPropagation()
+  }
+  async function copy() {
+    if (!copyHref) return
+    try { await navigator.clipboard.writeText(copyHref); setCopied(true) } catch { /* no clipboard: nothing to say */ }
+  }
   const Link = useContext(LinkContext)
-  const size = useMatches({ base: '100%', xs: width }, { getInitialValueInEffect: false })
+  const size = useMatches({ base: '100%', xs: shown }, { getInitialValueInEffect: false })
   const open = href
     ? Link
       ? <Button renderRoot={(props) => <Link to={href} {...props} />} size="xs" rightSection={<IconArrowRight size={14} aria-hidden="true" />} onClick={onClose}>{openLabel ?? t('common.open')}</Button>
@@ -42,7 +96,11 @@ export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, ic
     <Drawer.Root opened={opened} onClose={onClose} position="right" size={size} padding={0}
       classNames={{ content: 'bnb-side' }} scrollAreaComponent={SideScroll}>
       <Drawer.Overlay backgroundOpacity={0.18} />
-      <Drawer.Content>
+      <Drawer.Content data-dragging={dragging || undefined}>
+        {resize && (
+          <div className="bnb-side-grip" role="separator" aria-orientation="vertical" tabIndex={0} aria-label={t('panel.resize')}
+            aria-valuenow={shown} onPointerDown={grab} onPointerMove={drag} onPointerUp={drop} onPointerCancel={drop} onKeyDown={nudge} />
+        )}
         <div className="bnb-side-head">
           {icon && <div className="bnb-side-icon">{icon}</div>}
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -51,6 +109,15 @@ export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, ic
             {subtitle && <div className="bnb-side-sub">{subtitle}</div>}
           </div>
           <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
+            {onPrev && <Tooltip label={t('panel.prev')}><ActionIcon variant="subtle" color="gray" onClick={onPrev} aria-label={t('panel.prev')}><IconArrowUp size={16} /></ActionIcon></Tooltip>}
+            {onNext && <Tooltip label={t('panel.next')}><ActionIcon variant="subtle" color="gray" onClick={onNext} aria-label={t('panel.next')}><IconArrowDown size={16} /></ActionIcon></Tooltip>}
+            {copyHref && (
+              <Tooltip label={copied ? t('panel.copied') : t('panel.copyLink')}>
+                <ActionIcon variant="subtle" color={copied ? 'ok' : 'gray'} onClick={copy} aria-label={copied ? t('panel.copied') : t('panel.copyLink')}>
+                  {copied ? <IconCheck size={16} /> : <IconLink size={16} />}
+                </ActionIcon>
+              </Tooltip>
+            )}
             {actions}
             <ActionIcon variant="subtle" color="gray" onClick={onClose} aria-label={t('common.close')}>
               <IconX size={18} />

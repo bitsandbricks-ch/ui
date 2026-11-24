@@ -1,0 +1,7 @@
+/* Side panel: the drag handle on its left edge. Built into @bitsandbricks/ui/styles.css after the shared styles. */
+.bnb-side-grip { position: absolute; inset: 0 auto 0 -4px; width: 8px; cursor: col-resize; z-index: 2; touch-action: none; }
+.bnb-side-grip::after { content: ''; position: absolute; inset: 0 3px; transition: background 120ms; }
+.bnb-side-grip:hover::after, .bnb-side-grip:focus-visible::after, [data-dragging] > .bnb-side-grip::after { background: var(--bnb-accent); }
+.bnb-side-grip:focus-visible { outline: none; }
+[data-dragging] { user-select: none; }
+@media (max-width: 36em) { .bnb-side-grip { display: none; } }
