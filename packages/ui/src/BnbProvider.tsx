@@ -2,6 +2,7 @@ import { MantineProvider, type MantineColorSchemeManager, type MantineThemeOverr
 import { Notifications } from '@mantine/notifications'
 import type { ElementType, ReactNode } from 'react'
 import { LinkContext } from './components/SidePanel'
+import { ConfirmProvider } from './components/useConfirm'
 import { I18nProvider, type Locale, type Messages, type Translate } from './i18n'
 import { cssVariablesResolver } from './theme'
 import { SearchParamsProvider, type UseSearchParams } from './urlState'
@@ -35,7 +36,9 @@ export function BnbProvider({ theme, locale = 'en', translate, messages, link, u
       {notifications && <Notifications position="bottom-right" />}
       <I18nProvider locale={locale} translate={translate} messages={messages}>
         <SearchParamsProvider hook={useSearchParams}>
-          <LinkContext.Provider value={link ?? null}>{children}</LinkContext.Provider>
+          <LinkContext.Provider value={link ?? null}>
+            <ConfirmProvider>{children}</ConfirmProvider>
+          </LinkContext.Provider>
         </SearchParamsProvider>
       </I18nProvider>
     </MantineProvider>

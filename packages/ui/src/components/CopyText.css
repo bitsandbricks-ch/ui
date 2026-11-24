@@ -1,0 +1,5 @@
+/* A value you click to copy. */
+.bnb-copy { color: inherit; font: inherit; border-radius: var(--bnb-radius-xs); padding: 0 2px; margin: 0 -2px; cursor: copy; overflow-wrap: anywhere; text-align: left; }
+.bnb-copy.is-mono { font-family: var(--bnb-font-mono); }
+.bnb-copy:hover { background: var(--bnb-raised); }
+.bnb-copy:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: 1px; }
