@@ -75,16 +75,20 @@ Load the tokens, set the app's accent in the app's own stylesheet, then use the 
 @import '@bitsandbricks/tokens/tokens.css';
 
 /* The app's accent, kept in the app. accentCss({ light, dark }) from @bitsandbricks/tokens writes
-   this block, with the text colour on the accent worked out per theme. */
+   this block, with the text colour on the accent and the accent as text (links, deepened where
+   needed for 4.5:1 on every grey) worked out per theme. */
 :root {
   --bnb-accent-light: #b85a0a;
   --bnb-accent-dark: #f59a23;
   --bnb-on-accent-light: #ffffff;
   --bnb-on-accent-dark: #0f0f11;
+  --bnb-accent-text-light: #a7530b;
+  --bnb-accent-text-dark: #f59a23;
 }
 
 .card { background: var(--bnb-surface); border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-lg); }
 .button-primary { background: var(--bnb-accent); color: var(--bnb-on-accent); }
+a { color: var(--bnb-accent-text); }
 ```
 
 Dark applies with `data-theme="dark"` or `data-mantine-color-scheme="dark"` on `<html>`, or the

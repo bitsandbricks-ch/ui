@@ -59,3 +59,12 @@ export function readableOn(hex, backgrounds, min = 4.5) {
   }
   return lighten ? WHITE : INK
 }
+
+/**
+ * The accent as text and links in one theme: the accent itself where it reads at 4.5:1 on every
+ * neutral of that theme text sits on (surface, page, raised fill), otherwise deepened in light and
+ * lightened in dark until it does. @param {string} hex @param {{ surface: string, bg: string, raised: string }} n
+ */
+export function accentTextOn(hex, n) {
+  return readableOn(hex, [n.surface, n.bg, n.raised])
+}

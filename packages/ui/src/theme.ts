@@ -22,7 +22,7 @@ import {
   type MantineThemeOverride,
   type VariantColorsResolver,
 } from '@mantine/core'
-import tokens, { INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks/tokens'
+import tokens, { accentTextOn, INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks/tokens'
 
 // The Mantine theme every React app shares, on top of @bitsandbricks/tokens. Built from Hubra's
 // packages/ui theme (contrast-aware fills) and Floorbit's theme.ts (colours as CSS variables, so
@@ -101,6 +101,7 @@ function cssAccentScale(): MantineColorsTuple {
 }
 
 const tint = (name: string, pct: number) => `color-mix(in srgb, var(--bnb-${name}) ${pct}%, transparent)`
+const onTint = (name: string) => `color-mix(in srgb, var(--bnb-${name}) 80%, var(--bnb-fg))`
 
 export const variantColorResolver: VariantColorsResolver = (input) => {
   const result = defaultVariantColorsResolver(input)
@@ -130,13 +131,15 @@ export const variantColorResolver: VariantColorsResolver = (input) => {
         ...result,
         background: tint(v, 14),
         hover: tint(v, 22),
-        color: `color-mix(in srgb, var(--bnb-${v}) 80%, var(--bnb-fg))`,
+        color: onTint(v),
         border: 'transparent',
       }
+    // Outline and subtle text often sits on a tint (an error alert, a hovered row): the same pull
+    // towards the page text keeps it 4.5:1 there (an error alert's "Try again" was 4.2:1).
     case 'outline':
-      return { ...result, background: 'transparent', hover: tint(v, 10), color: `var(--bnb-${v})`, border: `1px solid var(--bnb-${v})` }
+      return { ...result, background: 'transparent', hover: tint(v, 10), color: onTint(v), border: `1px solid var(--bnb-${v})` }
     case 'subtle':
-      return { ...result, background: 'transparent', hover: tint(v, 12), color: `var(--bnb-${v})`, border: 'transparent' }
+      return { ...result, background: 'transparent', hover: tint(v, 12), color: onTint(v), border: 'transparent' }
     default:
       return result
   }
@@ -275,6 +278,8 @@ export const cssVariablesResolver: CSSVariablesResolver = (theme) => {
     '--bnb-accent-dark': accent.dark,
     '--bnb-on-accent-light': textOn(accent.light),
     '--bnb-on-accent-dark': textOn(accent.dark),
+    '--bnb-accent-text-light': accentTextOn(accent.light, tokens.neutrals.light),
+    '--bnb-accent-text-dark': accentTextOn(accent.dark, tokens.neutrals.dark),
   }
   return {
     variables: {},
