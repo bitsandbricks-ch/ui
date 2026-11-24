@@ -231,6 +231,31 @@ body { background: var(--bnb-bg); color: var(--bnb-fg); font-size: var(--bnb-fs-
   .bnb-topbar { padding: 0 12px; }
 }
 
+/* ── Breadcrumbs, scope switcher, status line ──────────────────────────── */
+.bnb-crumbs { display: flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; overflow: hidden; color: var(--bnb-muted); font-weight: 500; }
+.bnb-crumb { color: var(--bnb-muted); text-decoration: none; flex: none; }
+a.bnb-crumb:hover { color: var(--bnb-fg); text-decoration: underline; }
+.bnb-crumb.is-current { color: var(--bnb-fg); font-weight: 600; flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.bnb-crumb-sep { color: var(--bnb-faint); flex: none; }
+.bnb-scope {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px 10px; margin-bottom: 8px;
+  border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-md); background: var(--bnb-surface); text-align: left;
+}
+.bnb-scope:hover { border-color: var(--bnb-muted); }
+.bnb-scope:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: 1px; }
+.bnb-scope-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.bnb-scope-label { font-size: var(--bnb-fs-xs); color: var(--bnb-muted); }
+.bnb-scope-value { font-size: var(--bnb-fs-sm); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bnb-scope-caret, .bnb-scope-icon { flex: none; color: var(--bnb-muted); display: inline-flex; }
+.bnb-scope-desc { font-size: var(--bnb-fs-xs); color: var(--bnb-muted); }
+.bnb-status-line { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; }
+.bnb-status-item { display: inline-flex; align-items: center; gap: 6px; color: var(--bnb-muted); text-decoration: none; }
+a.bnb-status-item:hover { color: var(--bnb-fg); }
+.bnb-status-end { margin-left: auto; display: inline-flex; align-items: center; gap: 12px; }
+@media (max-width: 48em) {
+  .bnb-status-item.is-phone-hidden { display: none; }
+}
+
 @media print {
   .bnb-shell-nav, .bnb-topbar, .bnb-status { display: none !important; }
 }

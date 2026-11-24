@@ -112,7 +112,7 @@ export function AppShell({ brand, nav, navFooter, title, topBarEnd, banner, stat
         <main id="bnb-main" className={`bnb-main${dotGrid ? ' bnb-dot-grid' : ''}`} tabIndex={-1}>
           <TopBarSlot.Provider value={actionsInTopBar ? slot : null}>{children}</TopBarSlot.Provider>
         </main>
-        {status && <footer className="bnb-status">{status}</footer>}
+        {status && <footer className="bnb-status" aria-label={t('nav.statusLine')}>{status}</footer>}
       </div>
     </div>
   )

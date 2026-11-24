@@ -71,6 +71,10 @@ export const en: Messages = {
   'shell.menu': 'Menu',
   'shell.nav': 'Main',
   'shell.skip': 'Skip to content',
+  'nav.breadcrumbs': 'Where you are',
+  'nav.statusLine': 'Status',
+  'scope.all': 'All',
+  'scope.current': '{{label}}: {{value}}',
 }
 
 export const de: Messages = {
@@ -136,6 +140,10 @@ export const de: Messages = {
   'shell.menu': 'Menü',
   'shell.nav': 'Hauptmenü',
   'shell.skip': 'Zum Inhalt springen',
+  'nav.breadcrumbs': 'Wo du bist',
+  'nav.statusLine': 'Status',
+  'scope.all': 'Alle',
+  'scope.current': '{{label}}: {{value}}',
 }
 
 const BUILT_IN: Record<Locale, Messages> = { en: { ...en }, de: { ...de } }
