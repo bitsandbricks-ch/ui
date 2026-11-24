@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Checkbox, Group, Pagination, Paper, Table, Text, UnstyledButton } from '@mantine/core'
+import { ActionIcon, Box, Button, Checkbox, Group, Pagination, Paper, Table, Text, UnstyledButton } from '@mantine/core'
 import { IconChevronDown, IconChevronLeft, IconChevronRight, IconChevronUp, IconDownload, IconSelector } from '@tabler/icons-react'
 import {
   flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable,
@@ -76,6 +76,10 @@ export interface DataTableProps<T> {
   head?: boolean
   /** 'compact': one short line ("1–8 of 40" and arrows) instead of the page buttons. */
   pager?: 'full' | 'compact'
+  /** Where the page buttons show: above the table, below it, or both (default). The one above
+   *  shows only when there is more than one page, and not on phones, so the first rows come first.
+   *  Turning the page below scrolls back up to the top of the table. */
+  pagerAt?: 'top' | 'bottom' | 'both'
   /** The page shown, counted from 0, when the caller turns pages itself. */
   page?: number
   onPage?: (index: number) => void
@@ -110,7 +114,7 @@ function ownClick(e: { target: EventTarget; currentTarget: Element }) {
  *  the count. Search and filters sit above it (FilterBar) and narrow `rows`. From Floorbit. */
 export function DataTable<T>(props: DataTableProps<T>) {
   const { rows, columns, rowKey, label, defaultSort, pageSize = 50, empty, loading, count, rowStyle, rowProps, onRowClick,
-    urlState = true, density = 'default', minWidth, bare, className, striped, cards, head = true, pager = 'full', page, onPage,
+    urlState = true, density = 'default', minWidth, bare, className, striped, cards, head = true, pager = 'full', pagerAt = 'both', page, onPage,
     selected, onSelect, picked, onPick, rowLabel, exportName, isNew } = props
   const { t } = useT(texts)
   const [params, setParams] = useSearchParamsAdapter()
@@ -180,6 +184,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
 
   // The selected row stays in view as the keys move it.
   const box = useRef<HTMLDivElement>(null)
+  const topRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (onSelect && selected != null) box.current?.querySelector<HTMLElement>('tr[data-selected]')?.scrollIntoView?.({ block: 'nearest' })
   }, [selected, onSelect])
@@ -319,31 +324,50 @@ export function DataTable<T>(props: DataTableProps<T>) {
     </div>
   )
   const first = pagination.pageIndex * pagination.pageSize
+  const range = t('table.rowsOf', { from: first + 1, to: Math.min(rows.length, first + pagination.pageSize), count: rows.length })
+  const pagesTop = pages > 1 && pagerAt !== 'bottom'
+  const pagesBottom = pages > 1 && pagerAt !== 'top'
+  // A page turned below the table: back up to its top, unless that is already in view.
+  const pageBelow = (index: number) => {
+    setPage(index)
+    const el = topRef.current ?? box.current
+    if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView?.({ block: 'start' })
+  }
+  const compactPages = (go: (index: number) => void) => <>
+    <span>{range}</span>
+    <ActionIcon size="sm" variant="subtle" color="gray" disabled={pagination.pageIndex === 0} aria-label={t('table.previous')}
+      onClick={() => go(pagination.pageIndex - 1)}><IconChevronLeft size={14} /></ActionIcon>
+    <ActionIcon size="sm" variant="subtle" color="gray" disabled={pagination.pageIndex >= pages - 1} aria-label={t('table.next')}
+      onClick={() => go(pagination.pageIndex + 1)}><IconChevronRight size={14} /></ActionIcon>
+  </>
+  const fullPages = (go: (index: number) => void) => (
+    <Pagination size="sm" total={pages} value={pagination.pageIndex + 1} onChange={(p) => go(p - 1)}
+      getControlProps={(control) => ({ 'aria-label': t(`table.${control}`) })} />
+  )
   return (
     <>
+      {pagesTop && (pager === 'compact' ? (
+        <Box ref={topRef} component="nav" aria-label={t('table.pagesAbove')} className="bnb-dt-pager is-top" visibleFrom="sm">{compactPages(setPage)}</Box>
+      ) : (
+        <Group ref={topRef} component="nav" aria-label={t('table.pagesAbove')} className="bnb-dt-pages-top" justify="space-between" mb="sm" visibleFrom="sm">
+          <Text size="sm" c="dimmed" style={{ fontVariantNumeric: 'tabular-nums' }}>{range}</Text>
+          {fullPages(setPage)}
+        </Group>
+      ))}
       {bare ? body : <Paper withBorder className="bnb-dt-box">{body}</Paper>}
-      {pager === 'compact' ? (pages > 1 || exportButton) && (
+      {pager === 'compact' ? (pagesBottom || exportButton) && (
         <div className="bnb-dt-pager">
           {exportButton}
-          {pages > 1 && <>
-          <span>{t('table.rowsOf', { from: first + 1, to: Math.min(rows.length, first + pagination.pageSize), count: rows.length })}</span>
-          <ActionIcon size="sm" variant="subtle" color="gray" disabled={pagination.pageIndex === 0} aria-label={t('table.previous')}
-            onClick={() => setPage(pagination.pageIndex - 1)}><IconChevronLeft size={14} /></ActionIcon>
-          <ActionIcon size="sm" variant="subtle" color="gray" disabled={pagination.pageIndex >= pages - 1} aria-label={t('table.next')}
-            onClick={() => setPage(pagination.pageIndex + 1)}><IconChevronRight size={14} /></ActionIcon>
-          </>}
+          {pagesBottom && compactPages(pageBelow)}
         </div>
-      ) : (count || pages > 1 || exportButton || (picks && pickedSet.size > 0)) && (
+      ) : (count || pagesBottom || exportButton || (picks && pickedSet.size > 0)) && (
         <Group justify="space-between" mt="sm">
           <Group gap="xs">
             <Text size="sm" c="dimmed">{count?.(rows.length)}</Text>
             {picks && pickedSet.size > 0 && <Text size="sm" c="dimmed">· {t('table.picked', { count: pickedSet.size })}</Text>}
             {exportButton}
           </Group>
-          {pages > 1 && (
-            <Pagination size="sm" total={pages} value={pagination.pageIndex + 1} onChange={(p) => setPage(p - 1)}
-              getControlProps={(control) => ({ 'aria-label': t(`table.${control}`) })} />
-          )}
+          {pagesBottom && fullPages(pageBelow)}
         </Group>
       )}
     </>
