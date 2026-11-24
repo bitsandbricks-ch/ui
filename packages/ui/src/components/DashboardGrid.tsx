@@ -1,13 +1,13 @@
 import { IconGripVertical } from '@tabler/icons-react'
 import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react'
 import { useT } from '../i18n'
-import { GRID_COLS, GRID_HEIGHTS, type GridBox, gridRows, moveInGrid, phonePair, snapGridHeight, stepGridHeight } from './dashboardGrid'
+import { GRID_COLS, GRID_HEIGHTS, type GridBox, gridRows, moveInGrid, phonePair, snapGridHeight, stepGridHeight } from './gridLayout'
 import { texts } from './DashboardGrid.texts'
 
 const KEYS: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }
 
 /** A dashboard: boxes on a grid of ``cols`` columns that never overlap and float up (the layout
- *  math is in dashboardGrid.ts). Each item carries its box (x, y, w, h) and whatever the app needs
+ *  math is in gridLayout.ts). Each item carries its box (x, y, w, h) and whatever the app needs
  *  to draw it. With ``onChange`` it is in edit mode: a grip moves a box (drag or arrow keys), the
  *  corner resizes it (drag or Shift+arrows), and every step hands the whole new layout back.
  *

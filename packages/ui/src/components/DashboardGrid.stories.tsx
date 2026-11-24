@@ -2,7 +2,7 @@ import { Paper, Switch, Text } from '@mantine/core'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { DashboardGrid } from './DashboardGrid'
-import { flowGrid, type GridBox } from './dashboardGrid'
+import { flowGrid, type GridBox } from './gridLayout'
 
 const meta: Meta = { title: 'Components/Dashboard grid' }
 export default meta

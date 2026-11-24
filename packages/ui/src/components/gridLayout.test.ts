@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { boxesOverlap, compactGrid, flowGrid, freeSpot, gridRows, moveInGrid, phonePair, snapGridHeight, stepGridHeight } from './dashboardGrid'
+import { boxesOverlap, compactGrid, flowGrid, freeSpot, gridRows, moveInGrid, phonePair, snapGridHeight, stepGridHeight } from './gridLayout'
 
 const box = (x: number, y: number, w: number, h: number) => ({ x, y, w, h, id: `${x},${y}` })
 const at = (ps: { x: number; y: number }[]) => ps.map((p) => [p.x, p.y])
