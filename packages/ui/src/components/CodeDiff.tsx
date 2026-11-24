@@ -31,9 +31,10 @@ export function CodeDiff({ after, before, file, language = 'yaml', label }: {
         <div className="bnb-code-head">
           <span className="bnb-code-file">{file}</span>
           {diff && (
-            <span className="bnb-code-count" aria-label={t('codeDiff.counts', { added, removed })}>
+            <span className="bnb-code-count">
               <span className="is-add" aria-hidden="true">+{added}</span>
               <span className="is-del" aria-hidden="true">−{removed}</span>
+              <span className="bnb-sr-only">{t('codeDiff.counts', { added, removed })}</span>
             </span>
           )}
         </div>
