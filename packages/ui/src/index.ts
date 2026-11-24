@@ -8,6 +8,8 @@ export { createT, de, en, I18nProvider, interpolate, registerMessages, useT, typ
 export { SearchParamsProvider, useSearchParamsAdapter, useWindowSearchParams, type SetSearchParams, type UseSearchParams } from './urlState'
 export { normalizeTone, STATE_TONE, toneColor, toneOf, type MaybeTone, type State, type Tone } from './status'
 export { toastDone, toastFailed, toastInfo } from './toast'
+export { dialogOpen, isTyping, keysOn, useKeys, useModKey, type KeyMap, type KeyRow, type UseKeysOptions } from './keys'
+export { matchScore, rankItems, rememberRecent, type Rankable } from './rank'
 export { useFilters, type FilterDef } from './useFilters'
 export * from './plugin'
 
@@ -19,6 +21,8 @@ export { Card, EmptyState, ErrorBanner, LoadingState } from './components/feedba
 export { ActiveFilterChips, activeFilters, FilterBar, FilterButton, type FilterGroup, type FilterOption } from './components/FilterBar'
 export { PageHead } from './components/PageHead'
 export { pageCount, Pager, type Page, type PagerState } from './components/Pager'
+export { JumpBox, type JumpItem } from './components/JumpBox'
+export { KeysSheet, type KeySection } from './components/KeysSheet'
 export { LinkContext, PanelField, PanelSection, SidePanel } from './components/SidePanel'
 export { Sparkline, sparkPoints } from './components/Sparkline'
 export { StatGrid, StatTile, type StatChange } from './components/StatTile'
