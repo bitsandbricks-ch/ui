@@ -1,0 +1,24 @@
+/* Dashboard grid: boxes on whole columns and rows (DashboardGrid.tsx). */
+.bnb-grid { display: grid; grid-template-columns: repeat(var(--bnb-grid-cols), minmax(0, 1fr)); gap: var(--bnb-grid-gap); position: relative; min-width: 0; }
+.bnb-grid.is-fit { height: 100%; min-height: 0; }
+.bnb-grid-item { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.bnb-grid-item > * { flex: 1; min-width: 0; min-height: 0; }
+.bnb-grid.is-editing { min-height: 80px;
+  background-image: linear-gradient(to right, color-mix(in srgb, var(--bnb-line) 50%, transparent) 1px, transparent 1px);
+  background-size: calc((100% + var(--bnb-grid-gap)) / var(--bnb-grid-cols)) 100%; }
+/* Move by the grip, resize by the corner; both above the box's own content. */
+.bnb-grid-grip { position: absolute; top: 8px; right: 8px; z-index: 4; display: inline-flex; padding: 4px; border-radius: 6px; cursor: grab;
+  border: 1px solid var(--bnb-line); background: var(--bnb-raised); color: var(--bnb-muted); touch-action: none; flex: none; }
+.bnb-grid-grip:active { cursor: grabbing; }
+.bnb-grid-grip:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: 1px; }
+.bnb-grid-corner { position: absolute; right: 2px; bottom: 2px; width: 18px; height: 18px; z-index: 4; cursor: nwse-resize; touch-action: none; flex: none;
+  background: linear-gradient(135deg, transparent 50%, var(--bnb-accent) 50%); border-radius: 0 0 10px 0; opacity: .7; }
+.bnb-grid-corner:hover { opacity: 1; }
+.bnb-grid-size { position: absolute; right: 10px; bottom: 26px; z-index: 5; font-size: 12px; font-weight: 700; padding: 2px 8px; flex: none;
+  border-radius: 6px; color: var(--bnb-on-accent); background: var(--bnb-accent); pointer-events: none; }
+@media (max-width: 48em) {
+  /* Phones: one box per row in reading order, each a usable height; small numbers two side by side. */
+  .bnb-grid, .bnb-grid.is-editing { display: flex; flex-flow: row wrap; height: auto; background-image: none; }
+  .bnb-grid-item { flex: 1 1 100%; order: var(--at); min-height: max(calc(var(--rows) * var(--bnb-grid-row)), 30vh); }
+  .bnb-grid-item.is-pair { flex-basis: calc(50% - var(--bnb-grid-gap) / 2); min-height: calc(var(--rows) * var(--bnb-grid-row)); }
+}
