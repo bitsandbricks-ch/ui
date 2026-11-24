@@ -1,0 +1,29 @@
+/* The shell's sidebar extras (AppShell): the slot above the links, folding groups, a button after a
+   link, and the sidebar folded to icons. Built into @bitsandbricks/ui/styles.css after the shared styles. */
+.bnb-shell-nav-top { display: flex; flex-direction: column; gap: 4px; }
+.bnb-nav-heading.is-button { display: flex; align-items: center; gap: 6px; width: 100%; border-radius: var(--bnb-radius-sm); }
+.bnb-nav-heading.is-button:hover { color: var(--bnb-fg); }
+.bnb-nav-heading.is-button:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: -2px; }
+.bnb-nav-chevron { flex: none; transition: transform 120ms; }
+.bnb-nav-heading[aria-expanded='false'] .bnb-nav-chevron { transform: rotate(-90deg); }
+.bnb-nav-row { position: relative; display: flex; align-items: center; }
+.bnb-nav-row > .bnb-nav-item { flex: 1; min-width: 0; padding-right: 32px; }
+.bnb-nav-action { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); line-height: 0; opacity: 0; }
+.bnb-nav-row:hover .bnb-nav-action, .bnb-nav-action:focus-within, .bnb-nav-action:has([aria-pressed='true']) { opacity: 1; }
+.bnb-shell-nav-foot:has(.bnb-shell-fold) { flex-direction: row; align-items: center; }
+.bnb-shell-nav-foot > :first-child:not(.bnb-shell-fold) { flex: 1; min-width: 0; }
+.bnb-shell-fold { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex: none;
+  border-radius: var(--bnb-radius-md); color: var(--bnb-muted); }
+.bnb-shell-fold:hover { background: var(--bnb-raised); color: var(--bnb-fg); }
+.bnb-shell-fold:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: -2px; }
+
+/* Folded to icons: a narrow column, no labels or headings, a line between groups. */
+.bnb-shell-nav.is-folded { width: 60px; padding-left: 8px; padding-right: 8px; }
+.bnb-nav.is-folded .bnb-nav-group + .bnb-nav-group { border-top: 1px solid var(--bnb-line); padding-top: 8px; }
+.bnb-nav.is-folded { gap: 8px; }
+.bnb-nav.is-folded .bnb-nav-item { justify-content: center; padding: 0; position: relative; }
+.bnb-nav.is-folded .bnb-nav-label { display: none; }
+.bnb-nav.is-folded .bnb-nav-badge { position: absolute; top: 1px; right: 2px; font-size: 10px; }
+.bnb-shell-nav.is-folded .bnb-shell-nav-foot { flex-direction: column; }
+/* The app knows it is folded and passes a smaller brand and foot; anything wider is cut, not spilled. */
+.bnb-shell-nav.is-folded .bnb-shell-brand, .bnb-shell-nav.is-folded .bnb-shell-nav-foot { overflow: hidden; justify-content: center; align-items: center; }
