@@ -22,6 +22,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./spotlight": {
+      "types": "./dist/spotlight.d.ts",
+      "default": "./dist/spotlight.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./theme-script.js": "./theme-script.js"
   },
@@ -40,8 +44,14 @@
     "@mantine/core": "^9.7.4",
     "@mantine/hooks": "^9.7.4",
     "@mantine/notifications": "^9.7.4",
+    "@mantine/spotlight": "^9.7.4",
     "@tabler/icons-react": "^3.40.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@mantine/spotlight": {
+      "optional": true
+    }
   }
 }

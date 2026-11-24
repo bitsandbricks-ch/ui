@@ -21,7 +21,6 @@ export { Card, EmptyState, ErrorBanner, LoadingState } from './components/feedba
 export { ActiveFilterChips, activeFilters, FilterBar, FilterButton, type FilterGroup, type FilterOption } from './components/FilterBar'
 export { PageHead } from './components/PageHead'
 export { pageCount, Pager, type Page, type PagerState } from './components/Pager'
-export { JumpBox, type JumpItem } from './components/JumpBox'
 export { KeysSheet, type KeySection } from './components/KeysSheet'
 export { LinkContext, PanelField, PanelSection, SidePanel } from './components/SidePanel'
 export { Sparkline, sparkPoints } from './components/Sparkline'
