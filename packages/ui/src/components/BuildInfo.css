@@ -1,0 +1,6 @@
+/* One quiet line about the running build, under the attribution or in a corner. */
+.bnb-build { display: flex; flex-wrap: wrap; gap: 2px 8px; font-size: var(--mantine-font-size-xs); color: var(--bnb-muted); }
+.bnb-build a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.bnb-build a:hover { color: var(--bnb-fg); }
+.bnb-build-hash { font-family: var(--bnb-font-mono); }
+.bnb-build-dev { color: var(--bnb-fg); font-weight: 600; }
