@@ -109,26 +109,43 @@ export function LoadingState({ message, lines, rows, compact }: {
   )
 }
 
-/** The bordered card every list and form sits in, with an optional header row. */
-export function Card({ title, actions, children, padded = true, style }: {
+/** The bordered card every list and form sits in, with an optional header row: the title, a line
+ *  under it (`desc`) and `actions` at the end. */
+export function Card({ title, desc, actions, children, padded = true, style, className }: {
   title?: ReactNode
+  /** One line under the title. */
+  desc?: ReactNode
   actions?: ReactNode
   children: ReactNode
+  /** False when the content runs to the edges (a table, a list) or brings its own `Card.Header`. */
   padded?: boolean
   style?: CSSProperties
+  className?: string
 }) {
   return (
-    <Paper withBorder className="bnb-card" style={{ overflow: 'hidden', ...style }}>
-      {(title || actions) && (
-        <Group justify="space-between" align="center" gap="sm" className="bnb-card-head" wrap="wrap">
-          {title && <Text fw={650} fz="md">{title}</Text>}
-          {actions}
-        </Group>
-      )}
+    <Paper withBorder className={className ? `bnb-card ${className}` : 'bnb-card'} style={{ overflow: 'hidden', ...style }}>
+      {(title || desc || actions) && <CardHeader title={title} desc={desc}>{actions}</CardHeader>}
       <div className={padded ? 'bnb-card-body' : undefined}>{children}</div>
     </Paper>
   )
 }
+
+/** A card's header row on its own, for an unpadded card whose header holds more than buttons
+ *  (tabs, a search) or sits between parts: `<Card padded={false}><Card.Header title="Members">…`. From Hubra. */
+function CardHeader({ title, desc, children }: { title?: ReactNode; desc?: ReactNode; children?: ReactNode }) {
+  return (
+    <Group justify="space-between" align="center" gap="sm" className="bnb-card-head" wrap="wrap">
+      {(title || desc) && (
+        <div style={{ minWidth: 0, flex: '1 1 200px' }}>
+          {title && <Text fw={650} fz="md">{title}</Text>}
+          {desc && <Text size="sm" c="dimmed">{desc}</Text>}
+        </div>
+      )}
+      {children}
+    </Group>
+  )
+}
+Card.Header = CardHeader
 
 /** A filtered list that shows nothing. "Nothing here yet" was wrong when a filter hid the rows: it
  *  named the filters that are on and offers to clear them. From Mason.
