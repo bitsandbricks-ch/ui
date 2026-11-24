@@ -49,7 +49,7 @@ export const Levels: StoryObj = {
 export const Chart: StoryObj = {
   render: () => (
     <TileCard title="Agent memory" from="Labdex agent">
-      <TimeChart label="Memory over the last hour" since={now} until={now + 3600} points={Array.from({ length: 50 }, (_, i) => [now + i * 72, 300 + (i % 9) * 20] as [number, number])} format={(v) => `${v} MB`} />
+      <TimeChart label="Memory over the last hour" since={now} until={now + 3600} points={Array.from({ length: 50 }, (_, i) => [now + i * 72, 300 + (i % 9) * 20] as [number, number])} format={(v) => `${v} MB`} value={(v) => `${v} MB`} />
     </TileCard>
   ),
 }
