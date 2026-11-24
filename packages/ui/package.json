@@ -56,8 +56,10 @@
     "react-dom": "^19.0.0"
   },
   "peerDependenciesMeta": {
-    "@mantine/spotlight": {
     "@mantine/dates": {
+      "optional": true
+    },
+    "@mantine/spotlight": {
       "optional": true
     },
     "dayjs": {
