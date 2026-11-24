@@ -9,8 +9,7 @@ describe('LanguageMenu', () => {
   it('shows the short form and picks another language', async () => {
     const pick = vi.fn()
     renderWithApp(<LanguageMenu languages={languages} value="de-CH" onChange={pick} />, '/', 'de')
-    const button = screen.getByRole('button', { name: 'Sprache: Deutsch' })
-    expect(button).toHaveTextContent('DE')
+    const button = screen.getByRole('button', { name: 'DE, Sprache: Deutsch' })
     fireEvent.click(button)
     const [en, de] = await screen.findAllByRole('menuitem', { hidden: true })
     expect(de).toHaveAttribute('aria-current', 'true')

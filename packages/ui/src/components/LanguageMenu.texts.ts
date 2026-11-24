@@ -4,10 +4,10 @@ import { defineTexts } from '../i18n'
 export const texts = defineTexts({
   en: {
     'common.language': 'Language',
-    'language.current': 'Language: {{name}}',
+    'language.current': ', language: {{name}}',
   },
   de: {
     'common.language': 'Sprache',
-    'language.current': 'Sprache: {{name}}',
+    'language.current': ', Sprache: {{name}}',
   },
 })

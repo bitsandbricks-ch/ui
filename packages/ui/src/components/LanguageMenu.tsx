@@ -1,4 +1,4 @@
-import { Button, Menu, UnstyledButton } from '@mantine/core'
+import { Button, Menu, UnstyledButton, VisuallyHidden } from '@mantine/core'
 import { IconCheck, IconWorld } from '@tabler/icons-react'
 import { useT } from '../i18n'
 import { texts } from './LanguageMenu.texts'
@@ -29,9 +29,10 @@ export function LanguageMenu({ languages, value, onChange }: {
   return (
     <Menu width={200} position="bottom-end">
       <Menu.Target>
-        <Button variant="subtle" color="gray" size="sm" px={10} leftSection={<IconWorld size={16} aria-hidden="true" />}
-          aria-label={t('language.current', { name: current?.label ?? value })}>
+        <Button variant="subtle" color="gray" size="sm" px={10} leftSection={<IconWorld size={16} aria-hidden="true" />}>
+          {/* The name starts with the visible "DE", so speech input ("click DE") finds it. */}
           {current ? shortOf(current) : value}
+          <VisuallyHidden>{t('language.current', { name: current?.label ?? value })}</VisuallyHidden>
         </Button>
       </Menu.Target>
       <Menu.Dropdown>
