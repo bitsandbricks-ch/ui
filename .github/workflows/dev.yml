@@ -13,6 +13,8 @@ on:
     workflows: [CI]
     types: [completed]
     branches: [main]
+  # A manual run publishes the current main, e.g. after the trusted publishers were set up.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -26,10 +28,12 @@ jobs:
   publish:
     name: Publish dev build
     # Only a CI run for a push to main in this repo that passed (not a pull request from a branch named main).
+    # A manual run only from main.
     if: >-
-      github.event.workflow_run.conclusion == 'success' &&
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.head_repository.full_name == github.repository
+      github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     # The `dev` environment is limited to main and has no reviewers; npm's trusted publisher names it.
@@ -40,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           persist-credentials: false
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -51,10 +55,17 @@ jobs:
       # CI checked this commit already; build only what is published.
       - run: pnpm build
       - name: Set the dev version
-        env:
-          SHA: ${{ github.event.workflow_run.head_sha }}
-          TIME: ${{ github.event.workflow_run.head_commit.timestamp }}
-        run: node scripts/dev-version.mjs "$SHA" "$TIME"
+        run: node scripts/dev-version.mjs "$(git rev-parse HEAD)" "$(git log -1 --format=%cI)"
+      # What npm's trusted publisher is matched against. If the publish fails with ENEEDAUTH, compare
+      # these with the publisher on npmjs.com (workflow dev.yml, environment dev). Claims only, never
+      # the token itself.
+      - name: Show the OIDC claims
+        run: |
+          token=$(curl -sSf -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=npm:registry.npmjs.org" | jq -r .value)
+          node -e 'const c = JSON.parse(Buffer.from(process.argv[1].split(".")[1], "base64url"));
+            const { repository, workflow_ref, job_workflow_ref, environment, event_name, ref } = c;
+            console.log({ repository, workflow_ref, job_workflow_ref, environment, event_name, ref })' "$token"
       # pnpm packs (it turns workspace:^ into the dev version); npm publishes each tarball through
       # trusted publishing (OIDC, no token, with provenance) under `dev`, never `latest`.
       - name: Publish under dev
@@ -68,5 +79,6 @@ jobs:
           pnpm -r pack --pack-destination "$PACK_DIR"
           # tokens first: ui and widgets depend on it at the same dev version.
           for name in tokens ui widgets; do
-            npm publish "$PACK_DIR"/bitsandbricks-"$name"-*.tgz --access public --tag dev
+            # verbose shows npm's "oidc" lines: whether the token exchange worked and why not.
+            npm publish "$PACK_DIR"/bitsandbricks-"$name"-*.tgz --access public --tag dev --loglevel verbose
           done
