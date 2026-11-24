@@ -99,7 +99,7 @@ export function RowsKind({ widget, kind, level, box, onMore }: {
           value={query} onChange={(e) => { setQuery(e.currentTarget.value); setPage(0) }} className="bnb-w-filter" />
       )}
       <DataTable rows={slice} page={at} onPage={setPage} columns={cols} rowKey={(_, i) => String(i)} label={widget.label}
-        urlState={false} pageSize={big ? fit : 0} bare head={table} pager="compact" density="compact"
+        urlState={false} pageSize={big ? fit : 0} bare head={table} pager="compact" pagerAt="bottom" density="compact"
         className={`bnb-w-table${table ? '' : ' bnb-w-plain'}`} empty={<div className="bnb-w-empty">{t('widgets.kind.noRows')}</div>} />
       {more > 0 && (
         onMore

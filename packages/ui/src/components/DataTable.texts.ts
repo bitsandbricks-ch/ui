@@ -9,6 +9,7 @@ export const texts = defineTexts({
     'table.picked_other': '{{count}} picked',
     'table.download': 'Download CSV',
     'table.new': 'New since your last visit',
+    'table.pagesAbove': 'Pages, above the table',
   },
   de: {
     'table.pickAll': 'Alle Zeilen auswählen',
@@ -17,5 +18,6 @@ export const texts = defineTexts({
     'table.picked_other': '{{count}} ausgewählt',
     'table.download': 'Als CSV herunterladen',
     'table.new': 'Neu seit dem letzten Besuch',
+    'table.pagesAbove': 'Seiten, über der Tabelle',
   },
 })

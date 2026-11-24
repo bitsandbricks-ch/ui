@@ -27,7 +27,7 @@ describe('DataTable', () => {
     expect(names()[0]).toBe('sw-12')
     expect(screen.getByTestId('where').textContent).toBe('?sort=-name')
 
-    fireEvent.click(screen.getByRole('button', { name: 'Next page' }))
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Pages, above the table' })).getByRole('button', { name: 'Next page' }))
     expect(names()[0]).toBe('sw-7')
     expect(screen.getByTestId('where').textContent).toBe('?sort=-name&page=2')
   })
@@ -44,6 +44,49 @@ describe('DataTable', () => {
     fireEvent.click(screen.getByRole('button', { name: /Ports/ }))
     expect(screen.getByTestId('where').textContent).toBe('')
     expect(screen.queryByRole('button', { name: 'Next page' })).toBeNull()
+  })
+
+  it('shows the page buttons above and below the table, and scrolls up when turned below', () => {
+    renderWithApp(<DataTable label="Switches" rows={rows} columns={columns} rowKey={(r) => r.id} defaultSort={{ id: 'name' }} pageSize={5} urlState={false} />)
+    const top = screen.getByRole('navigation', { name: 'Pages, above the table' })
+    expect(within(top).getByText('1–5 of 12')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Next page' })).toHaveLength(2)
+
+    const scroll = vi.fn()
+    top.scrollIntoView = scroll
+    top.getBoundingClientRect = () => ({ top: -400 }) as DOMRect
+    const [, below] = screen.getAllByRole('button', { name: 'Previous page' })
+    fireEvent.click(screen.getAllByRole('button', { name: 'Next page' })[1])
+    expect(names()[0]).toBe('sw-6')
+    expect(scroll).toHaveBeenCalledWith({ block: 'start' })
+
+    fireEvent.click(below)
+    expect(names()[0]).toBe('sw-1')
+    expect(scroll).toHaveBeenCalledTimes(2)
+
+    // From the buttons above, the top is already in view.
+    top.getBoundingClientRect = () => ({ top: 80 }) as DOMRect
+    fireEvent.click(within(top).getByRole('button', { name: 'Next page' }))
+    expect(names()[0]).toBe('sw-6')
+    expect(scroll).toHaveBeenCalledTimes(2)
+  })
+
+  it('shows the page buttons only where pagerAt says, and none above a single page', () => {
+    const props = { label: 'Switches', rows, columns, rowKey: (r: Row) => r.id, pageSize: 5, urlState: false }
+    const { rerender } = renderWithApp(<DataTable {...props} pagerAt="bottom" />)
+    expect(screen.queryByRole('navigation', { name: 'Pages, above the table' })).toBeNull()
+    expect(screen.getAllByRole('button', { name: 'Next page' })).toHaveLength(1)
+
+    rerender(<DataTable {...props} pagerAt="top" />)
+    expect(within(screen.getByRole('navigation', { name: 'Pages, above the table' })).getByRole('button', { name: 'Next page' })).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Next page' })).toHaveLength(1)
+
+    rerender(<DataTable {...props} pager="compact" />)
+    expect(within(screen.getByRole('navigation', { name: 'Pages, above the table' })).getByText('1–5 of 12')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Next page' })).toHaveLength(2)
+
+    rerender(<DataTable {...props} pageSize={20} />)
+    expect(screen.queryByRole('navigation', { name: 'Pages, above the table' })).toBeNull()
   })
 
   it('pages at 50 rows by default', () => {

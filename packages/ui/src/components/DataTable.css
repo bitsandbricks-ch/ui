@@ -5,3 +5,5 @@
 .bnb-dt tbody tr[data-picked]:not([data-selected]) { background: color-mix(in srgb, var(--bnb-accent) 6%, transparent); }
 .bnb-dt .bnb-dt-pick { width: 36px; padding-right: 0; }
 .bnb-dt-new { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--bnb-accent); vertical-align: middle; }
+/* DataTable: the page buttons above the table. */
+.bnb-dt-pager.is-top { margin-bottom: 4px; }
