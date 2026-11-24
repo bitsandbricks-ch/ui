@@ -1,0 +1,6 @@
+/* Footer language links: the current one in the text colour, the others muted. */
+.bnb-lang-links { display: inline-flex; flex-wrap: wrap; gap: 4px 12px; font-size: var(--mantine-font-size-xs); }
+.bnb-lang-link { color: var(--bnb-muted); font-size: inherit; border-radius: var(--bnb-radius-sm); }
+.bnb-lang-link:hover { color: var(--bnb-fg); text-decoration: underline; }
+.bnb-lang-link[aria-pressed='true'] { color: var(--bnb-fg); font-weight: 600; }
+.bnb-lang-link:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: 2px; }
