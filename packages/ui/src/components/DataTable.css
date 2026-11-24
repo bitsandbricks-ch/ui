@@ -1,0 +1,7 @@
+/* DataTable: keys, picking and new rows. */
+.bnb-dt.is-keyed:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: -2px; }
+.bnb-dt tbody tr[data-selected] { background: var(--bnb-accent-soft); }
+.bnb-dt tbody tr[data-selected] > td:first-child { box-shadow: inset 3px 0 0 var(--bnb-accent); }
+.bnb-dt tbody tr[data-picked]:not([data-selected]) { background: color-mix(in srgb, var(--bnb-accent) 6%, transparent); }
+.bnb-dt .bnb-dt-pick { width: 36px; padding-right: 0; }
+.bnb-dt-new { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--bnb-accent); vertical-align: middle; }
