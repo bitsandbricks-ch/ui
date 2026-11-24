@@ -13,8 +13,8 @@ accent (and its fonts) in its own code and passes them in, as shown below.
 | [`@bitsandbricks/ui`](packages/ui) | React 19 and Mantine 9: `createBnbTheme`, page head, stat tile, data table with pager and filters, empty and error states, confirm dialogs, side panel, status badges, app shell, theme switch, toasts, and the shared plugin types |
 | [`@bitsandbricks/widgets`](packages/widgets) | Stat, gauge, graph, bars, columns, pie, histogram, rows and time chart, drawn from plugin widget data in plain SVG |
 
-Storybook shows every component with sample accents, light and dark: TODO: the GitHub Pages link
-once Pages is on for this repo.
+[Storybook](https://bitsandbricks-ch.github.io/ui/) shows every component with sample accents,
+light and dark. It is rebuilt from `main` on every merge (`.github/workflows/storybook.yml`).
 
 ## Install
 

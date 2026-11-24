@@ -30,6 +30,10 @@
       "types": "./dist/dates/index.d.ts",
       "default": "./dist/dates/index.js"
     },
+    "./qr": {
+      "types": "./dist/qr/index.d.ts",
+      "default": "./dist/qr/index.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./theme-script.js": "./theme-script.js"
   },
@@ -52,6 +56,7 @@
     "@mantine/spotlight": "^9.7.4",
     "@tabler/icons-react": "^3.40.0",
     "dayjs": "^1.11.0",
+    "qrcode-generator": "^2.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -63,6 +68,9 @@
       "optional": true
     },
     "dayjs": {
+      "optional": true
+    },
+    "qrcode-generator": {
       "optional": true
     }
   }
