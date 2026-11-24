@@ -1,0 +1,6 @@
+packages:
+  - packages/*
+# Fresh releases wait a day before install, so a hijacked version has time to be pulled.
+minimumReleaseAge: 1440
+onlyBuiltDependencies:
+  - esbuild

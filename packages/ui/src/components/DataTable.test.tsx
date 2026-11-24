@@ -1,0 +1,70 @@
+import { fireEvent, screen, within } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+import { renderWithApp } from '../../../../test/render'
+import { Where } from '../../../../test/Where'
+import { DataTable, type DataColumn } from './DataTable'
+
+type Row = { id: string; name: string; ports: number }
+const rows: Row[] = Array.from({ length: 12 }, (_, i) => ({ id: String(i), name: `sw-${i + 1}`, ports: (i * 7) % 5 }))
+const columns: DataColumn<Row>[] = [
+  { id: 'name', header: 'Name', sort: (r) => r.name, cell: (r) => r.name },
+  { id: 'ports', header: 'Ports', sort: (r) => r.ports, cell: (r) => String(r.ports), numeric: true },
+  { id: 'note', header: 'Note', cell: () => '–' },
+]
+
+const names = () => within(screen.getByRole('table')).getAllByRole('row').slice(1).map((r) => within(r).getAllByRole('cell')[0].textContent)
+
+describe('DataTable', () => {
+  it('sorts names naturally, turns on a header click, and keeps it in the address', () => {
+    renderWithApp(<><DataTable label="Switches" rows={rows} columns={columns} rowKey={(r) => r.id} defaultSort={{ id: 'name' }} pageSize={5} count={(n) => `${n} switches`} /><Where /></>)
+    expect(names()).toEqual(['sw-1', 'sw-2', 'sw-3', 'sw-4', 'sw-5'])
+    expect(screen.getByRole('columnheader', { name: /Name/ })).toHaveAttribute('aria-sort', 'ascending')
+    expect(screen.getByText('12 switches')).toBeInTheDocument()
+    expect(within(screen.getByRole('columnheader', { name: 'Note' })).queryByRole('button')).toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: /Name/ }))
+    expect(names()[0]).toBe('sw-12')
+    expect(screen.getByTestId('where').textContent).toBe('?sort=-name')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Next page' }))
+    expect(names()[0]).toBe('sw-7')
+    expect(screen.getByTestId('where').textContent).toBe('?sort=-name&page=2')
+  })
+
+  it('opens on the view the address names', () => {
+    renderWithApp(<DataTable label="Switches" rows={rows} columns={columns} rowKey={(r) => r.id} defaultSort={{ id: 'name' }} pageSize={5} />, '/?sort=ports&page=3')
+    expect(screen.getByRole('columnheader', { name: /Ports/ })).toHaveAttribute('aria-sort', 'ascending')
+    expect(names()).toHaveLength(2)
+  })
+
+  it('keeps its view to itself where several tables share a page', () => {
+    renderWithApp(<><DataTable label="Switches" rows={rows} columns={columns} rowKey={(r) => r.id} urlState={false} pageSize={0} /><Where /></>)
+    expect(names()).toHaveLength(12)
+    fireEvent.click(screen.getByRole('button', { name: /Ports/ }))
+    expect(screen.getByTestId('where').textContent).toBe('')
+    expect(screen.queryByRole('button', { name: 'Next page' })).toBeNull()
+  })
+
+  it('pages at 50 rows by default', () => {
+    const many = Array.from({ length: 120 }, (_, i) => ({ id: String(i), name: `h-${i}`, ports: i }))
+    renderWithApp(<DataTable label="Hosts" rows={many} columns={columns} rowKey={(r) => r.id} />)
+    expect(names()).toHaveLength(50)
+  })
+
+  it('says so when there is nothing to show, and shows lines while loading', () => {
+    const { rerender } = renderWithApp(<DataTable label="Switches" rows={[]} columns={columns} rowKey={(r) => r.id} empty="No switches yet." />)
+    expect(screen.getByText('No switches yet.')).toBeInTheDocument()
+    expect(screen.queryByRole('table')).toBeNull()
+    rerender(<DataTable label="Switches" rows={[]} columns={columns} rowKey={(r) => r.id} loading />)
+    expect(screen.getByRole('status', { name: 'Loading…' })).toBeInTheDocument()
+  })
+
+  it('opens a row on click and on Enter', () => {
+    const open = vi.fn()
+    renderWithApp(<DataTable label="Switches" rows={rows.slice(0, 2)} columns={columns} rowKey={(r) => r.id} onRowClick={open} />)
+    const [, first, second] = screen.getAllByRole('row')
+    fireEvent.click(first)
+    fireEvent.keyDown(second, { key: 'Enter' })
+    expect(open.mock.calls.map((c) => c[0].name)).toEqual(['sw-1', 'sw-2'])
+  })
+})

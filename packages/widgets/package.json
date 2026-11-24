@@ -1,0 +1,42 @@
+{
+  "name": "@bitsandbricks/widgets",
+  "version": "0.0.0",
+  "description": "BitsAndBricks dashboard widgets: stat, gauge, graph, bars, pie, histogram, tables, from plugin data",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitsandbricks-ch/ui.git",
+    "directory": "packages/widgets"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build-package.mjs",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@bitsandbricks/ui": "workspace:^"
+  },
+  "peerDependencies": {
+    "@mantine/core": "^9.7.4",
+    "@mantine/hooks": "^9.7.4",
+    "@tabler/icons-react": "^3.40.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
