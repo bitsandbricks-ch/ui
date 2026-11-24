@@ -29,4 +29,9 @@ describe('ConfirmButton', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Yes, go ahead' }))
     expect(wipe).toHaveBeenCalledOnce()
   })
+
+  it('passes its hover text to the button', () => {
+    renderWithApp(<ConfirmButton label="Remove" title="Only an admin can remove this" disabled onConfirm={() => {}} />)
+    expect(screen.getByRole('button', { name: 'Remove' })).toHaveAttribute('title', 'Only an admin can remove this')
+  })
 })

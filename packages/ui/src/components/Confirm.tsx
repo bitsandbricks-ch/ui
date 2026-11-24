@@ -35,6 +35,8 @@ export function ConfirmButton({ label, danger, onConfirm, question, ...props }: 
   danger?: boolean
   onConfirm: () => void
   question?: string
+  /** The browser's hover text, e.g. why the button is disabled. */
+  title?: string
 }) {
   const { t } = useT()
   const [opened, { open, close }] = useDisclosure(false)
