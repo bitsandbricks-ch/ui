@@ -5,3 +5,17 @@
 .bnb-side-grip:focus-visible { outline: none; }
 [data-dragging] { user-select: none; }
 @media (max-width: 36em) { .bnb-side-grip { display: none; } }
+
+/* Docked beside a page's work area or floating over it (mode="dock" | "float"): the drawer's layout
+   without the drawer. */
+.bnb-side-panel { position: relative; display: flex; flex-direction: column; min-height: 0; width: var(--bnb-side-w, 440px);
+  max-width: 100%; background: var(--bnb-surface); }
+.bnb-side-panel.is-dock { height: 100%; box-shadow: none; }
+.bnb-side-panel.is-float { position: absolute; z-index: 20; top: 12px; right: 12px; bottom: 12px; max-width: calc(100% - 24px);
+  border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-lg); overflow: hidden; }
+.bnb-side-panel.is-float > .bnb-side-grip { inset: 0 auto 0 0; }
+/* Phones: a sheet from below, over the page, whichever mode. */
+@media (max-width: 36em) {
+  .bnb-side-panel.is-dock, .bnb-side-panel.is-float { position: fixed; z-index: 200; inset: auto 0 0; width: auto; max-width: none;
+    height: 60dvh; border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-xl) var(--bnb-radius-xl) 0 0; box-shadow: var(--bnb-shadow-lg); }
+}
