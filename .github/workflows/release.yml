@@ -1,6 +1,8 @@
-# Publishes the packages to GitHub Packages when Mike pushes a release tag (v0.2.0). Versions come
-# from changesets: `pnpm version-packages` in a pull request, merged, then the tag. Nothing here
-# changes a version or pushes a tag.
+# Publishes the packages to GitHub Packages when Mike pushes a release tag (v0.2.0), then creates
+# the GitHub release from the changelog (handbook decision 0014: the release comes last, so an
+# immutable release never points at something that failed to publish). Versions come from
+# changesets: `pnpm version-packages` in a pull request, merged, then the tag. Nothing here changes
+# a version or pushes a tag.
 name: Release
 
 on:
@@ -45,3 +47,30 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm -r publish --no-git-checks --access restricted
+
+  github-release:
+    name: Create the GitHub release
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Notes are this version's section of the ui package's changelog (all packages share one version).
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            echo "Release $TAG exists already"; exit 0
+          fi
+          version="${TAG#v}"
+          awk -v v="$version" '$0 == "## " v {on=1; next} /^## / {on=0} on' packages/ui/CHANGELOG.md > notes.md
+          prerelease=()
+          case "$version" in *-*) prerelease=(--prerelease --latest=false) ;; esac
+          gh release create "$TAG" --repo "$REPO" --verify-tag --title "$TAG" --notes-file notes.md "${prerelease[@]}"
