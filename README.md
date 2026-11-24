@@ -48,6 +48,8 @@ const theme = createBnbTheme({
 ```
 
 - `accent` is one hex, or `{ light, dark }` when the light one must be deeper to read on white.
+  `accent: 'css'` leaves it to the app's stylesheet (`--bnb-accent-light`/`-dark` and
+  `--bnb-on-accent-*`, see below), for apps whose admins or presets change the colour at run time.
   `fonts` keeps an app's own type (Hubra: Hanken Grotesk and Bricolage Grotesque).
 - `translate` is optional: the components bring English and German texts, and any key the app
   knows wins.
