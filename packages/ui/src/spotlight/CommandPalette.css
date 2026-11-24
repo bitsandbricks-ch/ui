@@ -1,0 +1,7 @@
+/* Command palette (ctrl+k), on @mantine/spotlight. Built into @bitsandbricks/ui/styles.css after the shared styles. */
+.bnb-palette .mantine-Spotlight-search { font-size: var(--bnb-fs-lg); }
+.bnb-palette .mantine-Spotlight-action[data-selected] { background: var(--bnb-accent-soft); }
+.bnb-palette .mantine-Spotlight-actionsGroup::before { color: var(--bnb-muted); font-size: var(--bnb-fs-xs); font-weight: 650; }
+.bnb-palette-foot { display: flex; gap: 16px; color: var(--bnb-muted); font-size: var(--bnb-fs-sm); }
+.bnb-palette-foot .mantine-Kbd-root + .mantine-Kbd-root { margin-left: 2px; }
+@media (max-width: 36em) { .bnb-palette-foot { display: none; } }

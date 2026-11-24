@@ -1,50 +1,59 @@
 import { Button, Group, Kbd, Stack, Text } from '@mantine/core'
-import { IconFile, IconMoon, IconServer } from '@tabler/icons-react'
+import { IconFile, IconLetterCase, IconMoon, IconPlus, IconServer } from '@tabler/icons-react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { useState } from 'react'
-import { useKeys, useModKey } from '../keys'
-import { JumpBox, type JumpItem } from './JumpBox'
+import { useEffect, useState } from 'react'
+import { useKeys } from '../keys'
+import { CommandPalette, createCommandPalette, type PaletteGroup } from '../spotlight/CommandPalette'
 import { KeysSheet } from './KeysSheet'
 
 const meta: Meta = { title: 'Keyboard' }
 export default meta
 
-const items: JumpItem[] = [
-  { id: 'p:overview', label: 'Overview', kind: 'page', href: '#overview', icon: <IconFile size={14} /> },
-  { id: 'p:hosts', label: 'Hosts', hint: 'every machine', kind: 'page', href: '#hosts', icon: <IconFile size={14} /> },
-  { id: 'p:settings', label: 'Settings', kind: 'page', href: '#settings', icon: <IconFile size={14} /> },
-  ...['web-1', 'web-2', 'db-1', 'backup'].map((h) => ({ id: `h:${h}`, label: h, hint: 'zurich', kind: 'host', href: `#${h}`, icon: <IconServer size={14} /> })),
-  { id: 'c:theme', label: 'Switch the theme', hint: 'now dark (t)', kind: 'command', run: () => {}, icon: <IconMoon size={14} /> },
-]
-const kinds = { page: 'Page', host: 'Host', command: 'Do' }
+const HOSTS = ['web-1', 'web-2', 'db-1', 'db-2', 'backup', 'mail']
 
-function Demo({ startOpen }: { startOpen?: 'jump' | 'keys' }) {
-  const [jump, setJump] = useState(startOpen === 'jump')
-  const [keys, setKeys] = useState(startOpen === 'keys')
-  const [went, setWent] = useState('')
-  useModKey('k', () => setJump((o) => !o))
-  useKeys({ '?': () => setKeys(true), r: () => setWent('reloaded') })
+function Demo({ start }: { start?: 'palette' | 'keys' }) {
+  const [[store, palette]] = useState(() => createCommandPalette())
+  const [keys, setKeys] = useState(start === 'keys')
+  const [last, setLast] = useState('')
+  const [dark, setDark] = useState(false)
+  useKeys({ '?': () => setKeys(true), r: () => setLast('reloaded') })
+  const groups: PaletteGroup[] = [
+    { id: 'pages', label: 'Pages', items: ['Overview', 'Hosts', 'Settings'].map((p) => ({ id: p, label: p, href: `#${p}`, icon: <IconFile size={16} /> })) },
+    { id: 'create', label: 'Create', commands: true, items: [{ id: 'new-host', label: 'New host', icon: <IconPlus size={16} />, onSelect: () => setLast('new host') }] },
+    { id: 'appearance', label: 'Appearance', commands: true, items: [
+      { id: 'theme', label: 'Switch the theme', description: `now ${dark ? 'dark' : 'light'}`, keywords: ['dark', 'light', 'night'], icon: <IconMoon size={16} />, onSelect: () => setDark((d) => !d) },
+      { id: 'text', label: 'Bigger text', keywords: ['font', 'size', 'zoom'], icon: <IconLetterCase size={16} />, onSelect: () => setLast('bigger text') },
+    ] },
+  ]
+  // The app's own search, slow on purpose: hosts matching the query.
+  const search = (q: string, signal: AbortSignal) => new Promise<PaletteGroup[]>((resolve) => {
+    const timer = setTimeout(() => resolve([{ id: 'hosts', label: 'Hosts', items: HOSTS.filter((h) => h.includes(q.toLowerCase()))
+      .map((h) => ({ id: h, label: h, description: 'zurich', href: `#${h}`, icon: <IconServer size={16} /> })) }]), 600)
+    signal.addEventListener('abort', () => clearTimeout(timer))
+  })
+  useEffect(() => { if (start === 'palette') palette.open() }, [start, palette])
   return (
     <main>
       <Stack gap="sm">
-        <Text size="sm">Press <Kbd>ctrl</Kbd> <Kbd>k</Kbd> to jump, <Kbd>?</Kbd> for the keys.</Text>
+        <Text size="sm">Press <Kbd>ctrl</Kbd> <Kbd>k</Kbd> or <Kbd>/</Kbd> to jump, <Kbd>?</Kbd> for the keys. Type <Kbd>&gt;</Kbd> first for commands only.</Text>
         <Group gap="xs">
-          <Button aria-keyshortcuts="r" onClick={() => setWent('reloaded')}>Reload</Button>
+          <Button aria-keyshortcuts="r" onClick={() => setLast('reloaded')}>Reload</Button>
           <Button aria-keyshortcuts="n" variant="default" disabled>New host</Button>
-          <Button variant="default" onClick={() => setJump(true)}>Jump to…</Button>
+          <Button variant="default" onClick={palette.open}>Jump to…</Button>
         </Group>
-        {went && <Text size="sm" c="dimmed">Last: {went}</Text>}
+        {last && <Text size="sm" c="dimmed">Last: {last}</Text>}
       </Stack>
-      <JumpBox opened={jump} onClose={() => setJump(false)} items={items} kinds={kinds}
-        recent={[items[4]]} onNavigate={(href) => setWent(href)} />
+      <CommandPalette store={store} groups={groups} search={search} recent={[{ id: 'web-2', label: 'web-2', description: 'zurich', href: '#web-2', icon: <IconServer size={16} /> }]}
+        onNavigate={(href) => setLast(href)} />
       <KeysSheet opened={keys} onClose={() => setKeys(false)} everywhere={[
         { key: 'ctrl+k', label: 'Jump to a page, a host or a command' },
+        { key: '/', label: 'The same' },
         { key: '?', label: 'These keys' },
       ]} />
     </main>
   )
 }
 
-export const JumpBoxOpen: StoryObj = { render: () => <Demo startOpen="jump" /> }
-export const KeysSheetOpen: StoryObj = { render: () => <Demo startOpen="keys" /> }
+export const CommandPaletteOpen: StoryObj = { render: () => <Demo start="palette" /> }
+export const KeysSheetOpen: StoryObj = { render: () => <Demo start="keys" /> }
 export const Closed: StoryObj = { render: () => <Demo /> }
