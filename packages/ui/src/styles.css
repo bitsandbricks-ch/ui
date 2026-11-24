@@ -164,7 +164,8 @@ body { background: var(--bnb-bg); color: var(--bnb-fg); font-size: var(--bnb-fs-
 .bnb-chip-x { display: inline-flex; color: inherit; }
 
 /* ── Side panel ────────────────────────────────────────────────────────── */
-.bnb-side { display: flex; flex-direction: column; height: 100%; border-left: 1px solid var(--bnb-line); box-shadow: var(--bnb-shadow-lg); }
+.bnb-side { border-left: 1px solid var(--bnb-line); box-shadow: var(--bnb-shadow-lg); }
+.bnb-side-column { display: flex; flex-direction: column; }
 .bnb-side-head { display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--bnb-line); flex: none; }
 .bnb-side-icon { flex: none; display: flex; }
 .bnb-side-eyebrow { font-size: var(--bnb-fs-xs); color: var(--bnb-muted); }

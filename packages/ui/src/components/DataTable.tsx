@@ -77,6 +77,17 @@ export interface DataTableProps<T> {
   onPage?: (index: number) => void
 }
 
+const CONTROLS = 'a, button, input, select, textarea, label, [role="menuitem"], [role="checkbox"], [role="switch"]'
+
+/** A click meant for the row itself: not one on a button or link in it, and not one that React
+ *  bubbles up from a dialog the row opened (a confirm modal is portalled, but still a child). */
+function ownClick(e: { target: EventTarget; currentTarget: Element }) {
+  const target = e.target as Element
+  if (!e.currentTarget.contains(target)) return false
+  const control = target.closest(CONTROLS)
+  return !control || control === e.currentTarget
+}
+
 /** The one table every page uses: sorting on the columns that can, paging, the empty state and
  *  the count. Search and filters sit above it (FilterBar) and narrow `rows`. From Floorbit. */
 export function DataTable<T>(props: DataTableProps<T>) {
@@ -187,7 +198,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
         <Table.Tbody>
           {table.getRowModel().rows.map((row) => (
             <Table.Tr key={row.id} {...rowProps?.(row.original)} style={rowStyle?.(row.original)}
-              onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+              onClick={onRowClick ? (e) => { if (ownClick(e)) onRowClick(row.original) } : undefined}
               onKeyDown={onRowClick ? (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) onRowClick(row.original) } : undefined}
               tabIndex={onRowClick ? 0 : undefined}>
               {row.getVisibleCells().map((cell) => {

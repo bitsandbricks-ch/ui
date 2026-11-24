@@ -2,6 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { renderWithApp } from '../../../../test/render'
 import { Where } from '../../../../test/Where'
+import { ConfirmIcon } from './Confirm'
 import { DataTable, type DataColumn } from './DataTable'
 
 type Row = { id: string; name: string; ports: number }
@@ -66,5 +67,18 @@ describe('DataTable', () => {
     fireEvent.click(first)
     fireEvent.keyDown(second, { key: 'Enter' })
     expect(open.mock.calls.map((c) => c[0].name)).toEqual(['sw-1', 'sw-2'])
+  })
+
+  it('leaves the row closed when a button in it, or the dialog it opens, is clicked', async () => {
+    const open = vi.fn()
+    const remove = vi.fn()
+    const withDelete: DataColumn<Row>[] = [...columns,
+      { id: 'del', header: '', cell: (r) => <ConfirmIcon label={`Delete ${r.name}`} onConfirm={remove}>×</ConfirmIcon> }]
+    renderWithApp(<DataTable label="Switches" rows={rows.slice(0, 1)} columns={withDelete} rowKey={(r) => r.id} onRowClick={open} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Delete sw-1' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
+    expect(open).not.toHaveBeenCalled()
+    fireEvent.click(screen.getAllByRole('row')[1])
+    expect(open).toHaveBeenCalledTimes(1)
   })
 })
