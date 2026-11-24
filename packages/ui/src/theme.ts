@@ -213,7 +213,10 @@ export function createBnbTheme({ accent, fonts = {}, overrides }: BnbThemeOption
       Menu: Menu.extend({ defaultProps: { ...POP, position: 'bottom-end', shadow: 'md' } }),
       Popover: Popover.extend({ defaultProps: { ...POP, shadow: 'md' } }),
       Tooltip: Tooltip.extend({ defaultProps: { openDelay: 250, color: 'dark', transitionProps: { transition: 'fade', duration: 100 } } }),
-      Modal: { defaultProps: { radius: 'lg', centered: true, overlayProps: { backgroundOpacity: 0.4, blur: 2 } } },
+      // A dialog's <header> is not the page's banner: without the role, axe and screen readers count
+      // a second banner next to the shell's top bar.
+      Modal: { defaultProps: { radius: 'lg', centered: true, overlayProps: { backgroundOpacity: 0.4, blur: 2 }, attributes: { header: { role: 'presentation' } } } },
+      Drawer: { defaultProps: { attributes: { header: { role: 'presentation' } } } },
       Paper: { defaultProps: { radius: 'lg' } },
       Card: { defaultProps: { radius: 'lg', withBorder: true } },
       // Mantine's badge text (9 to 11 px) is made for uppercase labels; ours are words in sentence case.

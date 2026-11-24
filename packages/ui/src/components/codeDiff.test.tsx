@@ -14,7 +14,7 @@ describe('CodeDiff', () => {
     expect(rows[1]).toHaveTextContent('removed')
     expect(rows[2]).toHaveClass('is-add')
     expect(rows[2].querySelector('.bnb-code-n')).toHaveTextContent('2')
-    expect(screen.getByLabelText('1 lines added, 1 removed')).toBeInTheDocument()
+    expect(screen.getByText('1 lines added, 1 removed')).toHaveClass('bnb-sr-only')
     expect(container.querySelector('.bnb-tk-key')).toHaveTextContent('name')
   })
 
