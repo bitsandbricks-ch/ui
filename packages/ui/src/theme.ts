@@ -22,7 +22,7 @@ import {
   type MantineThemeOverride,
   type VariantColorsResolver,
 } from '@mantine/core'
-import tokens, { INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks/tokens'
+import tokens, { accentTextOn, INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks/tokens'
 
 // The Mantine theme every React app shares, on top of @bitsandbricks/tokens. Built from Hubra's
 // packages/ui theme (contrast-aware fills) and Floorbit's theme.ts (colours as CSS variables, so
@@ -278,6 +278,8 @@ export const cssVariablesResolver: CSSVariablesResolver = (theme) => {
     '--bnb-accent-dark': accent.dark,
     '--bnb-on-accent-light': textOn(accent.light),
     '--bnb-on-accent-dark': textOn(accent.dark),
+    '--bnb-accent-text-light': accentTextOn(accent.light, tokens.neutrals.light),
+    '--bnb-accent-text-dark': accentTextOn(accent.dark, tokens.neutrals.dark),
   }
   return {
     variables: {},

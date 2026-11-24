@@ -61,6 +61,9 @@ describe('accents', () => {
     const vars = cssVariablesResolver(theme)
     expect(vars.light['--bnb-accent-light']).toBe('#b85a0a')
     expect(vars.dark['--bnb-on-accent-dark']).toBe('#0f0f11') // dark text on amber, never white
+    // Text and links deepen only where the accent falls below 4.5:1 on a grey fill.
+    expect(vars.light['--bnb-accent-text-light']).toBe('#a7530b')
+    expect(vars.dark['--bnb-accent-text-dark']).toBe('#f59a23')
     expect(vars.light['--mantine-color-body']).toBe('var(--bnb-bg)')
   })
 
