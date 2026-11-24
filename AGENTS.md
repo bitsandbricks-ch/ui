@@ -47,7 +47,8 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook
     rules (Mantine controls, tokens) go into `src/styles.css`;
   - exports: don't edit `packages/ui/src/index.ts`. `scripts/exports.mjs` writes `exports.gen.ts`
     (not committed) with an `export *` for every module in `src/`, so whatever a module exports is
-    public. Keep helpers unexported. `pnpm install` and every check write it; after adding a file
+    public. Keep helpers unexported. A folder with its own `index.ts` (a subpath entry such as
+    `src/dates` for `@bitsandbricks/ui/dates`, which needs an optional peer) is left out. `pnpm install` and every check write it; after adding a file
     while Storybook or an editor is open, run `pnpm exports`.
 - **Every component** has a unit test and a story. Stories are the visual reference on GitHub Pages.
 - **Changesets:** a change to a package adds one with `pnpm changeset`. Never edit a version or a

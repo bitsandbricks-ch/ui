@@ -2,7 +2,9 @@
 // component or hook never touches a shared line in index.ts. The file is not committed; install,
 // lint, typecheck, test, build and Storybook write it first. Everything a module exports is public:
 // keep helpers unexported, or in a `*.texts.ts`, test or story file, which are left out.
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
+// A folder with its own index.ts is a subpath entry (src/dates -> @bitsandbricks/ui/dates) and is
+// left out too, so its optional peer dependencies (@mantine/dates, dayjs) stay optional.
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
 const PACKAGES = ['ui']
@@ -12,7 +14,10 @@ const root = join(import.meta.dirname, '..')
 function modules(src, dir = src) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name)
-    if (entry.isDirectory()) return entry.name === 'test' ? [] : modules(src, path)
+    if (entry.isDirectory()) {
+      const subpathEntry = existsSync(join(path, 'index.ts')) || existsSync(join(path, 'index.tsx'))
+      return entry.name === 'test' || subpathEntry ? [] : modules(src, path)
+    }
     if (!/\.tsx?$/.test(entry.name) || SKIP.test(entry.name)) return []
     const spec = `./${relative(src, path).replace(/\\/g, '/').replace(/\.tsx?$/, '')}`
     return spec === './index' ? [] : [spec]
