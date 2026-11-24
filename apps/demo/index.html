@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="The BitsAndBricks UI packages in one small app: shell, dashboards, tables, forms, notifications, light and dark, English and German." />
+    <title>BitsAndBricks UI</title>
+    <script>
+      // Storybook used to live here. Its old links (?path=/story/…, iframe.html?id=…) go on to
+      // storybook/, where it lives now.
+      if (/[?&](path|id)=/.test(location.search)) location.replace('storybook/' + location.search + location.hash)
+    </script>
+    <script src="./theme-script.js" vite-ignore></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>

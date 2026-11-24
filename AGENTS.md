@@ -19,11 +19,16 @@ A pnpm monorepo with three packages every BitsAndBricks app shares:
 
 Vue apps (Labdex, Mason) and Seatbit (Tailwind) take the tokens only.
 
+`apps/demo` is the showcase on GitHub Pages: a private app (never published) built from the
+packages' `dist/` the way an app gets them (`pnpm build && pnpm build-site`; `pnpm demo` to run it).
+Storybook is served under `storybook/` next to it. A new component doesn't have to appear in the
+showcase; it shows the main patterns working together.
+
 ## Before you push
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook
+pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook && pnpm build-site
 ```
 
 ## Repo-specific rules

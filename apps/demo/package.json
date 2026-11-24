@@ -1,0 +1,17 @@
+{
+  "name": "@bitsandbricks/demo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The showcase on GitHub Pages: a small app built from the published packages. Never published.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "site": "vite build",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@bitsandbricks/tokens": "workspace:^",
+    "@bitsandbricks/ui": "workspace:^",
+    "@bitsandbricks/widgets": "workspace:^"
+  }
+}

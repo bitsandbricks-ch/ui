@@ -16,6 +16,8 @@
     "test:watch": "node scripts/exports.mjs && vitest",
     "storybook": "node scripts/exports.mjs && storybook dev -p 6006",
     "build-storybook": "node scripts/exports.mjs && storybook build -o storybook-static",
+    "demo": "vite apps/demo",
+    "build-site": "vite build apps/demo",
     "visual": "playwright test -c visual",
     "visual:docker": "node visual/docker.mjs",
     "changeset": "changeset",
