@@ -55,3 +55,10 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook
   `CHANGELOG.md` by hand, never push a tag; Mike releases.
 - **Dependencies:** Mantine, Tabler icons and React are peer dependencies; the apps bring them.
   Add a runtime dependency only when it clearly pays for itself, and say why in the pull request.
+
+## Pull requests
+
+- One topic per branch and per pull request. Open it as a **draft** while the work is in progress;
+  say what changed and why, and call out breaking prop changes with the Hubra and Floorbit migration.
+- When it is done and every check is green, mark it **ready for review** right away. A draft means
+  work in progress; never leave a finished pull request as a draft.

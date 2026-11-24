@@ -75,6 +75,7 @@ export const en: Messages = {
   'shell.menu': 'Menu',
   'shell.nav': 'Main',
   'shell.skip': 'Skip to content',
+  'nav.statusLine': 'Status',
   'keys.none': 'No keys here.',
 }
 
@@ -141,6 +142,7 @@ export const de: Messages = {
   'shell.menu': 'Menü',
   'shell.nav': 'Hauptmenü',
   'shell.skip': 'Zum Inhalt springen',
+  'nav.statusLine': 'Status',
   'keys.none': 'Hier gibt es keine Tasten.',
 }
 

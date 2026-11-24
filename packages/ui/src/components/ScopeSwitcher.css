@@ -1,0 +1,12 @@
+/* Scope switcher. Built into @bitsandbricks/ui/styles.css after the shared styles. */
+.bnb-scope {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px 10px; margin-bottom: 8px;
+  border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-md); background: var(--bnb-surface); text-align: left;
+}
+.bnb-scope:hover { border-color: var(--bnb-muted); }
+.bnb-scope:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: 1px; }
+.bnb-scope-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.bnb-scope-label { font-size: var(--bnb-fs-xs); color: var(--bnb-muted); }
+.bnb-scope-value { font-size: var(--bnb-fs-sm); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bnb-scope-caret, .bnb-scope-icon { flex: none; color: var(--bnb-muted); display: inline-flex; }
+.bnb-scope-desc { font-size: var(--bnb-fs-xs); color: var(--bnb-muted); }

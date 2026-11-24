@@ -2,9 +2,10 @@ import { Button } from '@mantine/core'
 import { IconBell, IconHome, IconNetwork, IconServer, IconSettings } from '@tabler/icons-react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { AppShell } from './AppShell'
+import { Breadcrumbs } from './Breadcrumbs'
 import { PageHead } from './PageHead'
 import { StatGrid, StatTile } from './StatTile'
-import { StatusBit } from './StatusBadge'
+import { StatusLine } from './StatusLine'
 import { ThemeSwitch } from './ThemeSwitch'
 
 const meta: Meta = { title: 'Shell', parameters: { layout: 'fullscreen' } }
@@ -22,9 +23,9 @@ const nav = [
 function Page({ actionsInTopBar }: { actionsInTopBar?: boolean }) {
   return (
     <div style={{ margin: -24 }}>
-      <AppShell brand={<strong>BitsAndBricks</strong>} nav={nav} title="Overview" actionsInTopBar={actionsInTopBar}
+      <AppShell brand={<strong>BitsAndBricks</strong>} nav={nav} title={<Breadcrumbs items={[{ label: 'Home', href: '#' }, { label: 'Overview' }]} />} actionsInTopBar={actionsInTopBar}
         navFooter={<ThemeSwitch />} topBarEnd={<IconBell size={18} aria-label="Notifications" />}
-        status={<><StatusBit state="up" /> All 48 hosts answer <span style={{ flex: 1 }} /> v0.1.0</>}>
+        status={<StatusLine items={[{ id: 'hosts', label: 'All 48 hosts answer', tone: 'ok' }]} end="v0.1.0" />}>
         <PageHead title="Overview" desc="What runs, what needs a look." actions={<Button>Plan changes</Button>} />
         <StatGrid>
           <StatTile label="Hosts" value={48} />
