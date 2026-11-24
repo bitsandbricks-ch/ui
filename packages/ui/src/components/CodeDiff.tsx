@@ -31,7 +31,9 @@ export function CodeDiff({ after, before, file, language = 'yaml', label }: {
         <div className="bnb-code-head">
           <span className="bnb-code-file">{file}</span>
           {diff && (
-            <span className="bnb-code-count" aria-label={t('codeDiff.counts', { added, removed })}>
+            // A plain span can't carry a label: the words go in hidden text, the signs stay visual.
+            <span className="bnb-code-count">
+              <span className="bnb-sr-only">{t('codeDiff.counts', { added, removed })}</span>
               <span className="is-add" aria-hidden="true">+{added}</span>
               <span className="is-del" aria-hidden="true">−{removed}</span>
             </span>
