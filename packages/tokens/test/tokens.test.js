@@ -48,6 +48,29 @@ describe('tokens', () => {
     })
   }
 
+  // Apps put hints and status words on raised rows and on tinted notices and badges, not only on cards.
+  for (const scheme of /** @type {const} */ (['light', 'dark'])) {
+    const n = tokens.neutrals[scheme]
+    it(`keeps faint and status text AA on the page and raised fills too (${scheme})`, () => {
+      for (const bg of [n.bg, n.surface, n.raised]) {
+        expect(contrastRatio(n.faint, bg)).toBeGreaterThanOrEqual(4.5)
+        for (const [name, colour] of Object.entries(tokens.status[scheme])) {
+          expect(contrastRatio(colour, bg), `${name} on ${bg}`).toBeGreaterThanOrEqual(4.5)
+        }
+      }
+    })
+
+    it(`keeps warn and err AA on their own soft tint (${scheme})`, () => {
+      for (const name of /** @type {const} */ (['warn', 'err'])) {
+        const colour = tokens.status[scheme][name]
+        for (const bg of [n.bg, n.surface]) {
+          // --bnb-<name>-soft: 14% of the colour over the background
+          expect(contrastRatio(colour, mix(bg, colour, 0.14)), `${name} on its tint over ${bg}`).toBeGreaterThanOrEqual(4.5)
+        }
+      }
+    })
+  }
+
   it('keeps the default accent readable in both themes', () => {
     const accent = tokens.defaultAccent
     expect(contrastRatio(accent.light, '#ffffff')).toBeGreaterThanOrEqual(4.5)
