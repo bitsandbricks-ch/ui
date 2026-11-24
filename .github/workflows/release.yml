@@ -1,4 +1,4 @@
-# Publishes the packages to GitHub Packages when Mike pushes a release tag (v0.2.0), then creates
+# Publishes the packages to npm (npmjs.com, public) when Mike pushes a release tag (v0.2.0), then creates
 # the GitHub release from the changelog (handbook decision 0014: the release comes last, so an
 # immutable release never points at something that failed to publish). Versions come from
 # changesets: `pnpm version-packages` in a pull request, merged, then the tag. Nothing here changes
@@ -14,14 +14,13 @@ permissions:
 
 jobs:
   publish:
-    name: Publish to GitHub Packages
+    name: Publish to npm
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     # Mike approves each publish (Settings > Environments > release > required reviewers).
     environment: release
     permissions:
       contents: read
-      packages: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -31,7 +30,7 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://npm.pkg.github.com
+          registry-url: https://registry.npmjs.org
           scope: '@bitsandbricks'
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
@@ -45,8 +44,8 @@ jobs:
         run: node scripts/check-versions.mjs "$TAG"
       - name: Publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm -r publish --no-git-checks --access restricted
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm -r publish --no-git-checks --access public
 
   github-release:
     name: Create the GitHub release
