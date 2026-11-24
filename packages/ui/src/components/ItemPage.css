@@ -1,0 +1,8 @@
+/* The way back above an item's name, and the card that removes it. */
+.bnb-back-link { display: inline-flex; align-items: center; gap: 6px; font-size: var(--mantine-font-size-sm); font-weight: 600;
+  color: var(--bnb-accent-text); text-decoration: none; border-radius: var(--bnb-radius-sm); }
+.bnb-back-link:hover { text-decoration: underline; }
+.bnb-back-link:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: 2px; }
+.bnb-back-button { text-decoration: none; }
+.bnb-danger-zone { margin-top: var(--mantine-spacing-xl); }
+.bnb-danger-zone > .bnb-card { border-color: color-mix(in srgb, var(--bnb-err) 45%, var(--bnb-line)); }
