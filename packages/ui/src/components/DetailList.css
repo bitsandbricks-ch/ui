@@ -1,0 +1,17 @@
+/* Label and value pairs; one column on phones. */
+.bnb-details { display: grid; grid-template-columns: repeat(var(--bnb-details-cols, 2), minmax(0, 1fr)); gap: 14px 24px; margin: 0; }
+.bnb-detail { min-width: 0; }
+.bnb-detail.is-wide { grid-column: 1 / -1; }
+.bnb-detail-label { font-size: var(--bnb-fs-xs); color: var(--bnb-muted); margin-bottom: 2px; }
+.bnb-detail-value { margin: 0; font-size: var(--bnb-fs-sm); overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 2px; }
+.bnb-detail-value.is-mono { font-family: var(--bnb-font-mono); }
+.bnb-detail-none { color: var(--bnb-faint); }
+.bnb-detail-hint { font-size: var(--bnb-fs-xs); color: var(--bnb-muted); font-family: var(--bnb-font-sans); }
+.bnb-details.is-inline { grid-template-columns: 1fr; gap: 0; }
+.bnb-details.is-inline .bnb-detail { display: grid; grid-template-columns: minmax(8rem, 30%) 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--bnb-line); }
+.bnb-details.is-inline .bnb-detail:last-child { border-bottom: 0; }
+.bnb-details.is-inline .bnb-detail-label { margin: 0; font-size: var(--bnb-fs-sm); }
+@media (max-width: 48em) {
+  .bnb-details { grid-template-columns: 1fr; }
+  .bnb-details.is-inline .bnb-detail { grid-template-columns: 1fr; gap: 2px; }
+}
