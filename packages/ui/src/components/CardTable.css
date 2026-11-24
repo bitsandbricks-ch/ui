@@ -1,0 +1,4 @@
+.bnb-cardtable .bnb-filterbar { margin-bottom: 16px; }
+.bnb-cardtable-item { min-width: 0; display: flex; flex-direction: column; }
+.bnb-cardtable-item > * { flex: 1; }
+.bnb-cardtable-pager { margin-top: 16px; }
