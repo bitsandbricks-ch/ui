@@ -18,8 +18,15 @@ describe('WidgetBody', () => {
     renderWithApp(
       <WidgetBody widget={{ ...base, type: 'status', items: [{ label: 'DNS', state: 'down', detail: 'timeout' }] }} />,
     )
-    expect(screen.getByRole('img', { name: 'down' })).toHaveClass('bnb-dot', 'down')
+    expect(screen.getByRole('img', { name: 'Down' })).toHaveClass('bnb-dot', 'down')
     expect(screen.getByText('timeout')).toBeInTheDocument()
+  })
+
+  it('names the status dot in the reader\'s language', () => {
+    renderWithApp(
+      <WidgetBody widget={{ ...base, type: 'status', items: [{ label: 'DNS', state: 'warn', detail: '' }] }} />, '/', 'de',
+    )
+    expect(screen.getByRole('img', { name: 'Warnung' })).toBeInTheDocument()
   })
 
   it('keeps a long detail inside the tile, whole on hover', () => {
