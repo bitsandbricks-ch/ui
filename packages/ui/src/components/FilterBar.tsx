@@ -1,4 +1,4 @@
-import { Badge, Button, CloseButton, Drawer, Group, Menu, Popover, Select, Stack, Text, TextInput, UnstyledButton, useMatches } from '@mantine/core'
+import { Badge, Button, CloseButton, Drawer, Group, Menu, Popover, Select, Stack, Text, TextInput, UnstyledButton, useMatches, VisuallyHidden } from '@mantine/core'
 import { IconAdjustmentsHorizontal, IconCheck, IconChevronDown, IconSearch, IconX } from '@tabler/icons-react'
 import { useState, type ReactNode } from 'react'
 import { useT } from '../i18n'
@@ -177,10 +177,11 @@ function FilterMenus({ groups }: { groups: FilterGroup[] }) {
         return (
           <Menu key={g.key} position="bottom-start">
             <Menu.Target>
+              {/* The name holds every visible word, the count too (WCAG 2.5.3). */}
               <Button variant={active ? 'light' : 'default'} rightSection={<IconChevronDown size={14} />}
-                aria-label={`${g.label}: ${optionText(current)}`}>
+                aria-label={`${g.label}: ${optionText(current)}${current.count != null ? ` (${current.count})` : ''}`}>
                 <span className="bnb-filter-key">{g.label}:</span>&nbsp;{current.label}
-                {current.count != null && <span className="bnb-count">{current.count}</span>}
+                {current.count != null && <><VisuallyHidden> </VisuallyHidden><span className="bnb-count">{current.count}</span></>}
               </Button>
             </Menu.Target>
             <Menu.Dropdown>
