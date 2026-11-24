@@ -1,0 +1,72 @@
+# Publishes a dev build of every main commit to npm (npmjs.com) under the dist-tag `dev`, once CI
+# passed on it, so apps can follow main between releases (`pnpm add @bitsandbricks/ui@dev`). Same
+# rule as the handbook's image tags: main moves `dev`; each version (0.2.1-dev.<time>.sha-<7hex>)
+# is published once and never changes. `latest` stays on the releases from release.yml.
+#
+# Each package has a second trusted publisher on npmjs.com for this file and the `dev` environment
+# that may publish directly (release.yml's stays stage-only, so stable versions still wait for
+# Mike). Nothing here changes a committed version or pushes a tag.
+name: Dev build
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+# One at a time, in order; a dev build is never cancelled halfway through the three packages.
+concurrency:
+  group: dev-build
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish dev build
+    # Only a CI run for a push to main in this repo that passed (not a pull request from a branch named main).
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # The `dev` environment is limited to main and has no reviewers; npm's trusted publisher names it.
+    environment: dev
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # CI checked this commit already; build only what is published.
+      - run: pnpm build
+      - name: Set the dev version
+        env:
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          TIME: ${{ github.event.workflow_run.head_commit.timestamp }}
+        run: node scripts/dev-version.mjs "$SHA" "$TIME"
+      # pnpm packs (it turns workspace:^ into the dev version); npm publishes each tarball through
+      # trusted publishing (OIDC, no token, with provenance) under `dev`, never `latest`.
+      - name: Publish under dev
+        env:
+          PACK_DIR: ${{ runner.temp }}/pack
+        run: |
+          if ! node -e 'const v = process.argv[1].split(".").map(Number); process.exit(v[0] > 11 || (v[0] === 11 && v[1] >= 15) ? 0 : 1)' "$(npm --version)"; then
+            npm install -g npm@11.15.0
+          fi
+          npm --version
+          pnpm -r pack --pack-destination "$PACK_DIR"
+          # tokens first: ui and widgets depend on it at the same dev version.
+          for name in tokens ui widgets; do
+            npm publish "$PACK_DIR"/bitsandbricks-"$name"-*.tgz --access public --tag dev
+          done

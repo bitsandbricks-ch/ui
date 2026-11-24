@@ -25,6 +25,15 @@ pnpm add @bitsandbricks/ui @bitsandbricks/tokens     # React and Mantine apps
 pnpm add @bitsandbricks/tokens                       # any other app
 ```
 
+To follow `main` between releases, install the dist-tag `dev`. Every commit on `main` that passed CI
+is published as the next patch with a dev suffix (`0.2.1-dev.20261124134900.sha-abc1234`); the
+lockfile pins one, and `pnpm update @bitsandbricks/ui @bitsandbricks/tokens` moves to the newest.
+A dev version is never `latest`; switch back to a release version once the next one is out.
+
+```sh
+pnpm add @bitsandbricks/ui@dev @bitsandbricks/tokens@dev @bitsandbricks/widgets@dev
+```
+
 ## React and Mantine apps
 
 ```tsx
