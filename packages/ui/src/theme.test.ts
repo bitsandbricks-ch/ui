@@ -82,6 +82,11 @@ describe('variant colours', () => {
     expect(resolve('light', 'warn').background).toContain('var(--bnb-warn) 14%')
   })
 
+  it('pulls subtle and outline text the same way, as it often sits on a tint', () => {
+    expect(resolve('subtle', 'err').color).toBe('color-mix(in srgb, var(--bnb-err) 80%, var(--bnb-fg))')
+    expect(resolve('outline', 'accent')).toMatchObject({ color: 'color-mix(in srgb, var(--bnb-accent) 80%, var(--bnb-fg))', border: '1px solid var(--bnb-accent)' })
+  })
+
   it('uses the muted text for grey outlines and leaves other colours to Mantine', () => {
     expect(resolve('outline', 'gray').color).toBe('var(--bnb-muted)')
     expect(resolve('light', 'gray')).toEqual(defaultVariantColorsResolver({ variant: 'light', color: 'gray', theme, autoContrast: false }))
