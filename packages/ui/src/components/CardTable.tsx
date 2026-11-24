@@ -122,8 +122,9 @@ export function CardTable<T>({
 
   return (
     <div className="bnb-cardtable">
-      <FilterBar search={searchText ? q : undefined} onSearchChange={searchText ? state.setSearch : undefined}
-        searchLabel={searchLabel} groups={groups} actions={actions} onClear={state.clear} />
+      {/* With nothing to search or filter, only the actions stay (a "New" button). */}
+      <FilterBar search={searchText ? q : undefined} onSearchChange={searchText && items.length ? state.setSearch : undefined}
+        searchLabel={searchLabel} groups={items.length ? groups : []} actions={actions} onClear={state.clear} />
       {loading ? <LoadingState lines={3} /> : !items.length ? (empty ?? <EmptyState title={t('table.empty')} />) : !shown.length ? (
         // The filter bar above already offers "Clear filters".
         <EmptyState icon={<IconSearchOff size={24} />} title={t('cards.noMatch')} />
