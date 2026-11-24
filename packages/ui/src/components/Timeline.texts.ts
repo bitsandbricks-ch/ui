@@ -3,8 +3,6 @@ import { defineTexts } from '../i18n'
 // The timeline's texts. Keys follow Floorbit's names.
 export const texts = defineTexts({
   en: {
-    'common.details': 'Details',
-    'common.hideDetails': 'Hide details',
     'timeline.title': 'Events',
     'timeline.all': 'All',
     'timeline.none': 'Nothing yet.',
@@ -13,8 +11,6 @@ export const texts = defineTexts({
     'timeline.openElsewhere': 'Open where it happened (new tab)',
   },
   de: {
-    'common.details': 'Details',
-    'common.hideDetails': 'Details ausblenden',
     'timeline.title': 'Ereignisse',
     'timeline.all': 'Alle',
     'timeline.none': 'Noch nichts.',
