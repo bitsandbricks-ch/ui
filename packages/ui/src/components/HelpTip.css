@@ -1,0 +1,11 @@
+/* A ? after a label: its explanation opens on hover, click, tap or Enter. */
+.bnb-help { display: inline-flex; align-items: center; gap: 4px; }
+.bnb-help-button { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 16px; height: 16px;
+  border-radius: 50%; color: var(--bnb-muted); cursor: help; vertical-align: middle;
+  /* Above the hidden input a Switch or Checkbox spreads over its label. */
+  position: relative; z-index: 1; }
+.bnb-help-button:hover, .bnb-help-button[aria-expanded='true'] { color: var(--bnb-accent); }
+.bnb-help-button:focus-visible { outline: 2px solid var(--bnb-accent); outline-offset: 1px; }
+/* Larger to hit with a finger; the icon stays small. */
+@media (pointer: coarse) { .bnb-help-button { width: 24px; height: 24px; margin: -4px -4px -4px 0; } }
+.bnb-help-text { max-width: 280px; font-size: var(--mantine-font-size-xs); line-height: 1.45; font-weight: 400; white-space: normal; }
