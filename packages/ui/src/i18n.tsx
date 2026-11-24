@@ -71,6 +71,18 @@ export const en: Messages = {
   'shell.menu': 'Menu',
   'shell.nav': 'Main',
   'shell.skip': 'Skip to content',
+  'jump.label': 'Jump to',
+  'jump.placeholder': 'Jump to a page or run a command',
+  'jump.none': 'Nothing matches',
+  'jump.recent': 'Recent',
+  'jump.pick': 'pick',
+  'jump.go': 'go',
+  'jump.close': 'close',
+  'keys.title': 'Keys',
+  'keys.here': 'On this page',
+  'keys.everywhere': 'Everywhere',
+  'keys.notNow': '(not now)',
+  'keys.none': 'No keys here.',
 }
 
 export const de: Messages = {
@@ -136,6 +148,18 @@ export const de: Messages = {
   'shell.menu': 'Menü',
   'shell.nav': 'Hauptmenü',
   'shell.skip': 'Zum Inhalt springen',
+  'jump.label': 'Springen zu',
+  'jump.placeholder': 'Zu einer Seite springen oder einen Befehl ausführen',
+  'jump.none': 'Nichts passt',
+  'jump.recent': 'Zuletzt',
+  'jump.pick': 'wählen',
+  'jump.go': 'los',
+  'jump.close': 'schliessen',
+  'keys.title': 'Tasten',
+  'keys.here': 'Auf dieser Seite',
+  'keys.everywhere': 'Überall',
+  'keys.notNow': '(gerade nicht)',
+  'keys.none': 'Hier gibt es keine Tasten.',
 }
 
 const BUILT_IN: Record<Locale, Messages> = { en: { ...en }, de: { ...de } }
