@@ -1,6 +1,6 @@
 {
   "name": "@bitsandbricks/ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "BitsAndBricks React components on Mantine: theme, page head, tables, filters, panels, shell",
   "license": "MIT",
   "type": "module",
