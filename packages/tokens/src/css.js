@@ -1,7 +1,7 @@
 // Renders the tokens as CSS variables (--bnb-*). Light is the base; dark applies with
 // data-theme="dark" (Vue apps, plain pages), data-mantine-color-scheme="dark" (Mantine apps),
 // or the system setting when the page chose neither.
-import { textOn } from './contrast.js'
+import { accentTextOn, textOn } from './contrast.js'
 import tokens from './tokens.js'
 
 /** @param {Record<string, string | number>} vars @param {string} indent */
@@ -26,8 +26,9 @@ function schemeVars(scheme) {
   vars['--bnb-on-accent'] = `var(--bnb-on-accent-${scheme})`
   vars['--bnb-accent-hover'] = `color-mix(in srgb, var(--bnb-accent), ${scheme === 'light' ? 'black' : 'white'} 12%)`
   vars['--bnb-accent-soft'] = 'color-mix(in srgb, var(--bnb-accent) 14%, transparent)'
-  // The accent as text and links: the light accent is chosen to be readable on white already.
-  vars['--bnb-accent-text'] = 'var(--bnb-accent)'
+  // The accent as text and links, readable on every neutral (accentCss and the ui theme set it per
+  // theme). An app that sets only its accent falls back to the accent itself.
+  vars['--bnb-accent-text'] = `var(--bnb-accent-text-${scheme}, var(--bnb-accent))`
   // Text on a filled status colour (a "Failed" badge, a delete button).
   vars['--bnb-on-status'] = scheme === 'light' ? '#ffffff' : '#0f0f11'
   for (const [k, v] of Object.entries(sh)) vars[`--bnb-shadow-${k}`] = v
@@ -44,6 +45,8 @@ function sharedVars() {
     '--bnb-accent-dark': tokens.defaultAccent.dark,
     '--bnb-on-accent-light': textOn(tokens.defaultAccent.light),
     '--bnb-on-accent-dark': textOn(tokens.defaultAccent.dark),
+    '--bnb-accent-text-light': accentTextOn(tokens.defaultAccent.light, tokens.neutrals.light),
+    '--bnb-accent-text-dark': accentTextOn(tokens.defaultAccent.dark, tokens.neutrals.dark),
     '--bnb-text': '1',
   }
   for (const [k, v] of Object.entries(tokens.space)) vars[`--bnb-space-${k}`] = v
@@ -99,6 +102,8 @@ export function accentCss(accent, selector = ':root') {
   --bnb-accent-dark: ${accent.dark};
   --bnb-on-accent-light: ${textOn(accent.light)};
   --bnb-on-accent-dark: ${textOn(accent.dark)};
+  --bnb-accent-text-light: ${accentTextOn(accent.light, tokens.neutrals.light)};
+  --bnb-accent-text-dark: ${accentTextOn(accent.dark, tokens.neutrals.dark)};
 }
 `
 }
