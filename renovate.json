@@ -28,6 +28,12 @@
       "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch"
+    },
+    {
+      "description": "The Playwright image in CI must match @playwright/test, or the browser is missing.",
+      "matchPackageNames": ["@playwright/test", "mcr.microsoft.com/playwright"],
+      "groupName": "Playwright",
+      "groupSlug": "playwright"
     }
   ],
   "vulnerabilityAlerts": {
