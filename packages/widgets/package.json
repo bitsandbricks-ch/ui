@@ -1,6 +1,6 @@
 {
   "name": "@bitsandbricks/widgets",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "BitsAndBricks dashboard widgets: stat, gauge, graph, bars, pie, histogram, tables, from plugin data",
   "license": "MIT",
   "type": "module",

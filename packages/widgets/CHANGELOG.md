@@ -1,5 +1,15 @@
 # @bitsandbricks/widgets
 
+## 0.2.0
+
+### Patch Changes
+
+- c01bb85: Publish to npm (npmjs.com) as public packages instead of GitHub Packages. Apps install `@bitsandbricks/*` without a token or a scope line in `.npmrc`.
+- Updated dependencies [ee6bc73]
+- Updated dependencies [c01bb85]
+- Updated dependencies [3b84d6f]
+  - @bitsandbricks/ui@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes
