@@ -1,0 +1,6 @@
+/* One row that scrolls sideways instead of wrapping: more agents or halls mean more tabs. */
+.bnb-tabs .mantine-Tabs-list,
+.bnb-subtabs .mantine-Tabs-list { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
+.bnb-tabs .mantine-Tabs-tab,
+.bnb-subtabs .mantine-Tabs-tab { flex: none; white-space: nowrap; }
+.bnb-tabs .mantine-Tabs-tabSection[data-position='right'] { display: inline-flex; align-items: center; gap: 6px; }
