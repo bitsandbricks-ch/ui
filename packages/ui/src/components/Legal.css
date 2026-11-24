@@ -1,0 +1,3 @@
+/* Links to the privacy policy, terms and imprint: quiet, underlined so they read as links. */
+.bnb-legal .bnb-legal-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.bnb-legal .bnb-legal-link:hover { color: var(--bnb-fg); }
