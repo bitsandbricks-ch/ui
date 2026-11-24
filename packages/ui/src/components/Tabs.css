@@ -4,5 +4,6 @@
 .bnb-tabs .mantine-Tabs-tab,
 .bnb-subtabs .mantine-Tabs-tab { flex: none; white-space: nowrap; }
 .bnb-tabs .mantine-Tabs-tabSection[data-position='right'] { display: inline-flex; align-items: center; gap: 6px; }
+/* Muted colour, not opacity: faded muted text falls below AA contrast. */
 .bnb-tabs .mantine-Tabs-tab.bnb-tab-hidden:not([data-active]),
-.bnb-subtabs .mantine-Tabs-tab.bnb-tab-hidden:not([data-active]) { opacity: 0.65; }
+.bnb-subtabs .mantine-Tabs-tab.bnb-tab-hidden:not([data-active]) { color: var(--bnb-muted); }

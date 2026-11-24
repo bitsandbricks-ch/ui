@@ -18,4 +18,7 @@
 /* Token colours come from the status colours, which stay AA as text in both themes. */
 .bnb-tk-key { color: var(--bnb-info); }
 .bnb-tk-num, .bnb-tk-bool { color: var(--bnb-warn); }
+/* On the green and red line tints, info alone drops just below AA in light: pull it towards the text colour. */
+.bnb-code-line.is-add .bnb-tk-key,
+.bnb-code-line.is-del .bnb-tk-key { color: color-mix(in srgb, var(--bnb-info) 75%, var(--bnb-text)); }
 .bnb-tk-comment { color: var(--bnb-muted); font-style: italic; }

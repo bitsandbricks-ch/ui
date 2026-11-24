@@ -9,7 +9,9 @@
 .bnb-glance-row.is-link:hover { background: var(--bnb-raised); }
 .bnb-glance-row.is-link:hover .bnb-glance-chevron { color: var(--bnb-accent-text); }
 .bnb-glance-row.is-link:focus-visible { box-shadow: var(--bnb-focus-ring); outline: none; }
-.bnb-glance-row.is-hidden { opacity: 0.65; }
+/* Muted colour, not opacity: faded muted text falls below AA contrast. */
+.bnb-glance-row.is-hidden,
+.bnb-glance-row.is-hidden .bnb-glance-label { color: var(--bnb-muted); }
 .bnb-glance-row:not(.is-link) .bnb-glance-label { color: var(--bnb-muted); font-weight: 500; }
 .bnb-glance-label { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 8rem; min-width: 0; font-weight: 600; }
 .bnb-glance-status { flex: 1; min-width: 0; color: var(--bnb-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
