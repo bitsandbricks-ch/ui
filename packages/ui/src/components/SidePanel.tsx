@@ -8,11 +8,22 @@ import { texts } from './SidePanel.texts'
 /** The app's link component (React Router's Link takes `to`); a plain <a href> without one. */
 export const LinkContext = createContext<ElementType | null>(null)
 
+/** Where a side panel sits. `drawer`: over the page from the right, modal (a quick look from a list).
+ *  `dock`: a column in the page's own layout, e.g. an editor's settings beside its canvas.
+ *  `float`: over the page's work area, inset with a shadow, but not modal: the page stays usable,
+ *  so picking another item just changes what the panel shows. `dock` and `float` are a sheet from
+ *  below on phones. */
+export type SidePanelMode = 'drawer' | 'dock' | 'float'
+
 /** A quick look from the right: a row opens it, the list stays where it was, and "Open" leads on
  *  to the thing's own page. One layout for every app: header (icon, eyebrow, title, subtitle,
- *  actions, close), a scrolling body and an optional footer. Full width on phones. */
-export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, icon, href, openLabel, actions, footer, width = 440, padded = true, resizable, onPrev, onNext, copyHref, children }: {
+ *  actions, close), a scrolling body and an optional footer. Full width on phones.
+ *  Editors use the same panel docked beside their canvas or floating over it (`mode`). */
+export function SidePanel({ opened = true, mode = 'drawer', onClose, title, eyebrow, subtitle, icon, href, openLabel, actions, footer, width = 440, padded = true, resizable, onPrev, onNext, copyHref, children }: {
   opened?: boolean
+  /** `drawer` (modal, the default), `dock` or `float`; see `SidePanelMode`. A `dock` or `float`
+   *  panel is placed by its parent: give the parent `position: relative` for `float`. */
+  mode?: SidePanelMode
   onClose: () => void
   title: ReactNode
   /** A small line above the title (a type, a place). */
@@ -90,6 +101,50 @@ export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, ic
       ? <Button renderRoot={(props) => <Link to={href} {...props} />} size="xs" rightSection={<IconArrowRight size={14} aria-hidden="true" />} onClick={onClose}>{openLabel ?? t('common.open')}</Button>
       : <Button component="a" href={href} size="xs" rightSection={<IconArrowRight size={14} aria-hidden="true" />}>{openLabel ?? t('common.open')}</Button>
     : null
+  const head = (Title: ElementType) => (<>
+    {resize && (
+      <div className="bnb-side-grip" role="separator" aria-orientation="vertical" tabIndex={0} aria-label={t('panel.resize')}
+        aria-valuenow={shown} onPointerDown={grab} onPointerMove={drag} onPointerUp={drop} onPointerCancel={drop} onKeyDown={nudge} />
+    )}
+    <div className="bnb-side-head">
+      {icon && <div className="bnb-side-icon">{icon}</div>}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        {eyebrow && <div className="bnb-side-eyebrow">{eyebrow}</div>}
+        <Title className="bnb-side-title">{title}</Title>
+        {subtitle && <div className="bnb-side-sub">{subtitle}</div>}
+      </div>
+      <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
+        {onPrev && <Tooltip label={t('panel.prev')}><ActionIcon variant="subtle" color="gray" onClick={onPrev} aria-label={t('panel.prev')}><IconArrowUp size={16} /></ActionIcon></Tooltip>}
+        {onNext && <Tooltip label={t('panel.next')}><ActionIcon variant="subtle" color="gray" onClick={onNext} aria-label={t('panel.next')}><IconArrowDown size={16} /></ActionIcon></Tooltip>}
+        {copyHref && (
+          <Tooltip label={copied ? t('panel.copied') : t('panel.copyLink')}>
+            <ActionIcon variant="subtle" color={copied ? 'ok' : 'gray'} onClick={copy} aria-label={copied ? t('panel.copied') : t('panel.copyLink')}>
+              {copied ? <IconCheck size={16} /> : <IconLink size={16} />}
+            </ActionIcon>
+          </Tooltip>
+        )}
+        {actions}
+        <ActionIcon variant="subtle" color="gray" onClick={onClose} aria-label={t('common.close')}>
+          <IconX size={18} />
+        </ActionIcon>
+      </Group>
+    </div>
+    {open && <Group gap="xs" className="bnb-side-actions">{open}</Group>}
+    <div className={`bnb-side-body${padded ? ' is-padded' : ''}`}>{children}</div>
+    {footer && <div className="bnb-side-foot">{footer}</div>}
+  </>)
+  if (mode !== 'drawer') {
+    if (!opened) return null
+    return (
+      // Not modal: no overlay and no focus trap, the page beside it stays usable. Esc closes a
+      // floating panel, like the drawer; a docked one is part of the page and stays.
+      <aside className={`bnb-side bnb-side-panel is-${mode}`} aria-label={typeof title === 'string' ? title : undefined}
+        data-dragging={dragging || undefined} style={{ '--bnb-side-w': `${shown}px` } as CSSProperties}
+        onKeyDown={mode === 'float' ? (e) => { if (e.key === 'Escape') { e.stopPropagation(); onClose() } } : undefined}>
+        {head('div')}
+      </aside>
+    )
+  }
   return (
     // The class goes on the content only: Drawer.Content puts its className on the wrapper too,
     // and the column layout then dropped the panel into the bottom left corner.
@@ -97,36 +152,7 @@ export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, ic
       classNames={{ content: 'bnb-side' }} scrollAreaComponent={SideScroll}>
       <Drawer.Overlay backgroundOpacity={0.18} />
       <Drawer.Content data-dragging={dragging || undefined}>
-        {resize && (
-          <div className="bnb-side-grip" role="separator" aria-orientation="vertical" tabIndex={0} aria-label={t('panel.resize')}
-            aria-valuenow={shown} onPointerDown={grab} onPointerMove={drag} onPointerUp={drop} onPointerCancel={drop} onKeyDown={nudge} />
-        )}
-        <div className="bnb-side-head">
-          {icon && <div className="bnb-side-icon">{icon}</div>}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {eyebrow && <div className="bnb-side-eyebrow">{eyebrow}</div>}
-            <Drawer.Title className="bnb-side-title">{title}</Drawer.Title>
-            {subtitle && <div className="bnb-side-sub">{subtitle}</div>}
-          </div>
-          <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
-            {onPrev && <Tooltip label={t('panel.prev')}><ActionIcon variant="subtle" color="gray" onClick={onPrev} aria-label={t('panel.prev')}><IconArrowUp size={16} /></ActionIcon></Tooltip>}
-            {onNext && <Tooltip label={t('panel.next')}><ActionIcon variant="subtle" color="gray" onClick={onNext} aria-label={t('panel.next')}><IconArrowDown size={16} /></ActionIcon></Tooltip>}
-            {copyHref && (
-              <Tooltip label={copied ? t('panel.copied') : t('panel.copyLink')}>
-                <ActionIcon variant="subtle" color={copied ? 'ok' : 'gray'} onClick={copy} aria-label={copied ? t('panel.copied') : t('panel.copyLink')}>
-                  {copied ? <IconCheck size={16} /> : <IconLink size={16} />}
-                </ActionIcon>
-              </Tooltip>
-            )}
-            {actions}
-            <ActionIcon variant="subtle" color="gray" onClick={onClose} aria-label={t('common.close')}>
-              <IconX size={18} />
-            </ActionIcon>
-          </Group>
-        </div>
-        {open && <Group gap="xs" className="bnb-side-actions">{open}</Group>}
-        <div className={`bnb-side-body${padded ? ' is-padded' : ''}`}>{children}</div>
-        {footer && <div className="bnb-side-foot">{footer}</div>}
+        {head(Drawer.Title)}
       </Drawer.Content>
     </Drawer.Root>
   )
