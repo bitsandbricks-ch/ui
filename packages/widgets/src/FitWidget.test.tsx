@@ -260,4 +260,18 @@ describe('FitWidget', () => {
     expect(screen.getByText('From the last port read')).toBeInTheDocument()
     spy.mockImplementation(() => size.h)
   })
+
+  it('draws a note as text and links list rows it can trust', () => {
+    size = { w: 300, h: 200 }
+    const { unmount } = renderWithApp(<FitWidget widget={{ ...base, type: 'text', text: 'Bring the keys back.' }} />)
+    expect(document.querySelector('[data-kind]')).toHaveAttribute('data-kind', 'text')
+    expect(screen.getByText('Bring the keys back.')).toHaveClass('bnb-w-text')
+    unmount()
+    renderWithApp(<FitWidget widget={{ ...base, type: 'list', total: 20, items: [
+      { label: 'Anna', value: '', tone: '', link: '/members/1' }, { label: 'Ben', value: '', tone: '', link: '//evil.example' }] }} />)
+    expect(screen.getByRole('link', { name: 'Anna' })).toHaveAttribute('href', '/members/1')
+    expect(screen.queryByRole('link', { name: 'Ben' })).toBeNull()
+    expect(screen.getByText('+18 more')).toBeInTheDocument()
+  })
 })
+

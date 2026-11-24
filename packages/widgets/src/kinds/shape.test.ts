@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Widget } from '@bitsandbricks/ui'
-import { PALETTE, binsOf, changeOf, bucketsOf, formatValue, kindsFor, looksFor, partsOf, resolveKind, rowsOf, scaleOf, slices, stackLines, stateCounts, statOf, trendOf, valuesOf } from './shape'
+import { PALETTE, binsOf, changeOf, bucketsOf, formatValue, kindsFor, safeLink, looksFor, partsOf, resolveKind, rowsOf, scaleOf, slices, stackLines, stateCounts, statOf, trendOf, valuesOf } from './shape'
 
 const base = { id: 'w', label: 'W', size: 'small', refresh: 60, sub: '', link: '' } as const
 const status: Widget = { ...base, type: 'status', items: [
@@ -102,5 +102,12 @@ describe('widget shapes', () => {
     expect(changeOf({ ...base, type: 'sparkline', unit: '', points: [4, 2, 3] })).toEqual({ from: 4, to: 3, pct: -25, hour: false })
     expect(changeOf({ ...base, type: 'stat', value: 3, unit: '', tone: '' })).toBeNull()
     expect(looksFor(series, 'stat')).toEqual(['spark', 'change'])
+  })
+})
+
+describe('safeLink', () => {
+  it('keeps app paths and http(s) addresses, drops the rest', () => {
+    expect(['/members/1', 'https://hubra.app', 'HTTP://x.ch', '//evil.example', 'javascript:alert(1)', 'data:text/html,x', '', undefined].map(safeLink))
+      .toEqual(['/members/1', 'https://hubra.app', 'HTTP://x.ch', undefined, undefined, undefined, undefined, undefined])
   })
 })

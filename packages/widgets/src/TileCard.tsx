@@ -1,17 +1,24 @@
-import { Anchor, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core'
+import { Anchor, Group, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core'
 import { ConfirmButton, LoadingState, useT, type ActionResult, type ActionTile, type Tile, type Widget, type WidgetTile } from '@bitsandbricks/ui'
 import { useState, type ReactNode } from 'react'
+import { safeLink } from './kinds/shape'
 import { WidgetBody } from './WidgetBody'
 
-/** A plugin's tile: its title, which plugin it is from, and what it shows. */
-export function TileCard({ title, from, wide, children }: { title: ReactNode; from?: ReactNode; wide?: boolean; children: ReactNode }) {
+/** A widget's box: its title, which plugin it is from, something on the right of the title (a
+ *  count, a link, a button) and what it shows. */
+export function TileCard({ title, from, action, wide, children }: {
+  title: ReactNode; from?: ReactNode; action?: ReactNode; wide?: boolean; children: ReactNode
+}) {
   return (
     <Paper withBorder radius="lg" p="md" style={wide ? { gridColumn: '1 / -1' } : undefined} component="section">
       <Stack gap={10}>
-        <div>
-          <Title order={3} fz="md">{title}</Title>
-          {from && <Text size="xs" c="dimmed">{from}</Text>}
-        </div>
+        <Group justify="space-between" align="flex-start" gap="xs" wrap="nowrap">
+          <div style={{ minWidth: 0 }}>
+            <Title order={3} fz="md">{title}</Title>
+            {from && <Text size="xs" c="dimmed">{from}</Text>}
+          </div>
+          {action && <div style={{ flexShrink: 0 }}>{action}</div>}
+        </Group>
         {children}
       </Stack>
     </Paper>
@@ -36,7 +43,7 @@ export function WidgetCard({ tile, state, from, detailsLabel = 'Details' }: { ti
           <>
             <WidgetBody widget={data} />
             {data.sub && <Text size="xs" c="dimmed">{data.sub}</Text>}
-            {data.link && <Anchor href={data.link} size="sm">{detailsLabel}</Anchor>}
+            {safeLink(data.link) && <Anchor href={safeLink(data.link)} size="sm">{detailsLabel}</Anchor>}
           </>
         ) : null}
     </TileCard>

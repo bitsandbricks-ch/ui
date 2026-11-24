@@ -6,7 +6,7 @@ export type Level = 's' | 'm' | 'l'
 export type LevelPin = 'auto' | Level
 export const LEVEL_PINS: LevelPin[] = ['auto', 's', 'm', 'l']
 
-export type Kind = 'stat' | 'status' | 'graph' | 'table' | 'list' | 'gauge' | 'bar' | 'column' | 'histogram' | 'pie'
+export type Kind = 'stat' | 'status' | 'graph' | 'table' | 'list' | 'gauge' | 'bar' | 'column' | 'histogram' | 'pie' | 'text'
 export type KindPick = 'auto' | Kind
 export const KIND_PICKS: KindPick[] = ['auto', 'stat', 'gauge', 'status', 'list', 'table', 'bar', 'column', 'histogram', 'pie', 'graph']
 
@@ -23,6 +23,7 @@ const FLOOR: Record<Kind, { m: [number, number]; l: [number, number] }> = {
   column: { m: [240, 140], l: [480, 280] },
   histogram: { m: [240, 140], l: [480, 280] },
   pie: { m: [280, 160], l: [480, 300] },
+  text: { m: [200, 100], l: [420, 260] },
 }
 
 /** Below this box (px) even the small level is cut off: the editor warns (#928). */

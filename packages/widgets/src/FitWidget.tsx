@@ -8,6 +8,7 @@ import { HistogramKind } from './kinds/Histogram'
 import { Graph } from './kinds/Graph'
 import { PieKind } from './kinds/Pie'
 import { RowsKind } from './kinds/Rows'
+import { TextKind } from './kinds/Text'
 import { type Look, resolveKind } from './kinds/shape'
 import { NumberStyleContext } from './kinds/display'
 import { StatKind } from './kinds/Stat'
@@ -61,6 +62,7 @@ function Kind({ kind, look, ...props }: { kind: Kind; widget: Widget; level: Lev
     case 'column': return <ColumnsKind {...props} look={look} />
     case 'histogram': return <HistogramKind {...props} />
     case 'pie': return <PieKind {...props} />
+    case 'text': return <TextKind {...props} />
     default: return <RowsKind kind={kind} {...props} />
   }
 }

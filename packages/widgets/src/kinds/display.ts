@@ -93,6 +93,8 @@ export function applyDisplay(w: Widget, d: Display, lang?: string): Widget {
       const items = sortRows(w.items, d.sort?.startsWith('name') ? d.sort : undefined, () => null, (i) => i.label)
       return { ...w, items: d.limit ? items.slice(0, d.limit) : items }
     }
+    case 'text':
+      return w
     case 'table': {
       // The value of a row is its last number column: labels come first.
       const num = numberColumns(w).pop()

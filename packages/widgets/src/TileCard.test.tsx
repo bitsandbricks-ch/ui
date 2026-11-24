@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { ActionTile, Tile, WidgetTile } from '@bitsandbricks/ui'
 import { renderWithApp } from '../../../test/render'
-import { TileGrid, WidgetCard } from './TileCard'
+import { TileCard, TileGrid, WidgetCard } from './TileCard'
 import { TimeChart } from './TimeChart'
 
 const widgetTile: WidgetTile = { plugin: 'ups', plugin_name: 'UPS', id: 'load', label: 'Load', size: 'small', refresh: 60, url: '/w' }
@@ -38,5 +38,18 @@ describe('TimeChart', () => {
     const { container } = renderWithApp(<TimeChart label="Load" points={points} since={0} until={3660} />)
     expect(screen.getByRole('img', { name: 'Load' })).toBeInTheDocument()
     expect(container.querySelectorAll('polyline.line')).toHaveLength(2)
+  })
+
+  it('drops a details link it cannot trust', () => {
+    renderWithApp(<WidgetCard tile={widgetTile} state={{ data: { id: 'load', label: 'Load', size: 'small', refresh: 60, sub: '', link: 'javascript:alert(1)', type: 'stat', value: 42, unit: '%', tone: 'ok' } }} />)
+    expect(screen.queryByRole('link', { name: 'Details' })).toBeNull()
+  })
+})
+
+describe('TileCard', () => {
+  it('shows what goes to the right of the title', () => {
+    renderWithApp(<TileCard title="Members" action={<span>12 members</span>}>body</TileCard>)
+    expect(screen.getByRole('heading', { name: 'Members' })).toBeInTheDocument()
+    expect(screen.getByText('12 members')).toBeInTheDocument()
   })
 })

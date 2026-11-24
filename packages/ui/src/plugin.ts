@@ -125,9 +125,17 @@ export type Widget = WidgetBase & (
   /** `min` and `max` let a stat show as a gauge. `text` replaces the number when set. */
   | { type: 'stat'; value: number | string; unit: string; tone: MaybeTone; min?: number; max?: number; text?: string }
   | { type: 'status'; items: { label: string; state: WidgetState; detail: string; device?: string }[] }
-  /** `number` (and `max`) on items let a list show as bars or a pie. */
-  | { type: 'list'; items: { label: string; value: string; tone: MaybeTone; number?: number; max?: number; colour?: string; device?: string }[] }
+  /** `number` (and `max`) on items let a list show as bars or a pie. `sub` is a second line under
+   *  a row's label and `link` where the row leads (a path or an http(s) address). `total` is how
+   *  many rows there are when only the first ones were sent ("+N more"). */
+  | {
+      type: 'list'
+      items: { label: string; value: string; tone: MaybeTone; number?: number; max?: number; colour?: string; device?: string; sub?: string; link?: string }[]
+      total?: number
+    }
   | { type: 'table'; columns: { key: string; label: string }[]; rows: Record<string, string>[] }
+  /** Plain text, such as a note: line breaks kept, never read as HTML or Markdown. */
+  | { type: 'text'; text: string }
   | { type: 'sparkline'; points: number[]; value?: number; min?: number; max?: number; unit: string }
   /** Up to four lines of [unix seconds, value], oldest first, and what happened when. */
   | {
