@@ -1,5 +1,6 @@
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
+import '@mantine/spotlight/styles.css'
 import '../packages/tokens/dist/tokens.css'
 import '../packages/ui/src/styles.css'
 import '../packages/widgets/src/styles.css'
