@@ -3,6 +3,7 @@
 //
 // Every app shares the neutrals, status colours, spacing, radii, type and the dot grid. An app
 // differs only through its accent (--bnb-accent) and its logo, so the apps read as siblings.
+// The accents live in the apps, not here: nothing app-specific goes into a package.
 
 /** Neutrals per theme. Plain greys with no tint, so only the accent carries colour. */
 export const neutrals = {
@@ -39,13 +40,6 @@ export const scales = {
 export const status = {
   light: { ok: '#047857', warn: '#a16207', err: '#c81e1e', info: '#0e7490', off: '#6b6b75' },
   dark: { ok: '#34d399', warn: '#fbbf24', err: '#f87171', info: '#22d3ee', off: '#80808a' },
-}
-
-/** The apps' accents. `light` is readable as text on white; `dark` is the brand colour itself. */
-export const accents = {
-  hubra: { light: '#7441e0', dark: '#9f7cf8' },
-  labdex: { light: '#b85a0a', dark: '#f59a23' },
-  bit: { light: '#047857', dark: '#2ee59d' },
 }
 
 /** The default accent where an app sets none: a quiet blue, so a missing accent is noticed. */
@@ -85,5 +79,5 @@ export const dotGrid = { size: '20px', dot: '1px', light: 'rgb(24 24 27 / 0.09)'
 
 export const breakpoints = { xs: '36em', sm: '48em', md: '62em', lg: '75em', xl: '90em' }
 
-export const tokens = { neutrals, scales, status, accents, defaultAccent, space, radius, font, fontSize, lineHeight, shadow, dotGrid, breakpoints }
+export const tokens = { neutrals, scales, status, defaultAccent, space, radius, font, fontSize, lineHeight, shadow, dotGrid, breakpoints }
 export default tokens
