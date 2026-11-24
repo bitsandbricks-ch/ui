@@ -20,6 +20,20 @@ describe('page states', () => {
     expect(retry).toHaveBeenCalled()
   })
 
+  it('takes the error from a query, and draws nothing without one', () => {
+    const { container } = renderWithApp(<ErrorBanner error={null} />)
+    expect(container.querySelector('[role="alert"]')).toBeNull()
+    renderWithApp(<ErrorBanner error={new Error('Server down')} />)
+    expect(screen.getByRole('alert')).toHaveTextContent('Something went wrong: Server down')
+  })
+
+  it('draws the shape of a page while it loads, without a spinner', () => {
+    const { container } = renderWithApp(<LoadingState rows={3} />)
+    expect(screen.getByRole('status')).toHaveAttribute('aria-busy', 'true')
+    expect(container.querySelectorAll('.mantine-Skeleton-root')).toHaveLength(3)
+    expect(container.querySelector('.mantine-Loader-root')).toBeNull()
+  })
+
   it('says it is loading', () => {
     renderWithApp(<LoadingState />)
     expect(screen.getByRole('status')).toHaveTextContent('Loading…')

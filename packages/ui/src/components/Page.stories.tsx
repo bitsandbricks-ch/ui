@@ -113,6 +113,8 @@ export const Feedback: Story = {
       <ErrorBanner title="Couldn't load the hosts" message="The server answered 502." onRetry={() => {}} />
       <Card title="Loading"><LoadingState lines={4} /></Card>
       <LoadingState compact />
+      <LoadingState rows={2} />
+      <ErrorBanner error={new Error('The server answered 502.')} />
     </div>
   ),
 }
