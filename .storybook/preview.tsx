@@ -1,4 +1,5 @@
 import '@mantine/core/styles.css'
+import '@mantine/dates/styles.css'
 import '@mantine/notifications/styles.css'
 import '../packages/tokens/dist/tokens.css'
 import '../packages/ui/src/styles.css'
