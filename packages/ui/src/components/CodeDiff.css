@@ -19,3 +19,7 @@
 .bnb-tk-key { color: var(--bnb-info); }
 .bnb-tk-num, .bnb-tk-bool { color: var(--bnb-warn); }
 .bnb-tk-comment { color: var(--bnb-muted); font-style: italic; }
+/* On an added or removed line's tint the token colours take the same pull towards the text as light
+   buttons, so they stay 4.5:1 there (the key colour was below AA on the light tints). */
+.bnb-code-line:is(.is-add, .is-del) .bnb-tk-key { color: color-mix(in srgb, var(--bnb-info) 80%, var(--bnb-fg)); }
+.bnb-code-line:is(.is-add, .is-del) :is(.bnb-tk-num, .bnb-tk-bool) { color: color-mix(in srgb, var(--bnb-warn) 80%, var(--bnb-fg)); }
