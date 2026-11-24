@@ -15,15 +15,7 @@ once Pages is on for this repo.
 
 ## Install
 
-The packages are on GitHub Packages. Tell npm or pnpm where `@bitsandbricks` lives, in the app's
-`.npmrc`:
-
-```ini
-@bitsandbricks:registry=https://npm.pkg.github.com
-```
-
-and log in once with a GitHub token that can read packages (`npm login --registry=https://npm.pkg.github.com`).
-CI uses `GITHUB_TOKEN`.
+The packages are public on npm (npmjs.com), so apps install them without a token or an `.npmrc`.
 
 ```sh
 pnpm add @bitsandbricks/ui @bitsandbricks/tokens     # React and Mantine apps

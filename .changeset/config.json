@@ -4,7 +4,7 @@
   "commit": false,
   "fixed": [["@bitsandbricks/tokens", "@bitsandbricks/ui", "@bitsandbricks/widgets"]],
   "linked": [],
-  "access": "restricted",
+  "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": []
