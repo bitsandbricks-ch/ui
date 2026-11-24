@@ -93,3 +93,14 @@ describe('useSeen', () => {
     expect(JSON.parse(localStorage.getItem('bnb-seen:test:list') || '[]')).toEqual(['a', 'b', 'c'])
   })
 })
+
+describe('DataTable column names', () => {
+  it('names a column without a heading for screen readers', () => {
+    const columns: DataColumn<{ id: string }>[] = [
+      { id: 'name', header: 'Name', cell: (r) => r.id },
+      { id: 'del', header: '', cell: () => <button type="button">×</button> },
+    ]
+    renderWithApp(<DataTable label="Hosts" rows={[{ id: 'a' }]} columns={columns} rowKey={(r) => r.id} />)
+    expect(screen.getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['Name', 'Actions'])
+  })
+})

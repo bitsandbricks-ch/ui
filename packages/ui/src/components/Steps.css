@@ -8,7 +8,9 @@
 .bnb-step.is-done .bnb-step-mark { background: var(--bnb-ok); border-color: var(--bnb-ok); color: var(--bnb-on-status); }
 .bnb-step.is-failed .bnb-step-mark { background: var(--bnb-err); border-color: var(--bnb-err); color: var(--bnb-on-status); }
 .bnb-step.is-current .bnb-step-mark { border-color: var(--bnb-accent); color: var(--bnb-accent-text); border-width: 2px; }
-.bnb-step.is-skipped { opacity: 0.6; }
+/* Skipped: a faded mark and struck-through words; the words keep the muted colour, as fading them fell below AA. */
+.bnb-step.is-skipped .bnb-step-mark { opacity: 0.6; }
+.bnb-step.is-skipped .bnb-step-label { text-decoration: line-through; }
 .bnb-step-text { display: flex; flex-direction: column; min-width: 0; }
 .bnb-step-label { font-size: var(--bnb-fs-sm); font-weight: 600; }
 .bnb-step.is-todo .bnb-step-label, .bnb-step.is-skipped .bnb-step-label { color: var(--bnb-muted); font-weight: 500; }

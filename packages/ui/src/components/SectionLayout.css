@@ -1,0 +1,33 @@
+/* SectionLayout: rows on the hub on phones, a sticky sidebar from 48em. */
+.bnb-sections { display: block; }
+.bnb-sections-nav { display: none; }
+.bnb-sections ul { list-style: none; margin: 0; padding: 0; }
+.bnb-sections ul.bnb-sections-rows { margin-bottom: 16px; }
+.bnb-sections-rows { border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-lg); background: var(--bnb-surface); margin-bottom: 16px; overflow: hidden; }
+.bnb-sections-rows li + li { border-top: 1px solid var(--bnb-line); }
+.bnb-sections-row {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 8px 14px;
+  border: 0; background: none; color: var(--bnb-fg); text-align: left; text-decoration: none; font: inherit; cursor: pointer;
+}
+.bnb-sections-row:hover { background: var(--bnb-raised); }
+.bnb-sections-row:focus-visible, .bnb-sections-back:focus-visible { box-shadow: var(--bnb-focus-ring); outline: none; }
+.bnb-sections-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.bnb-sections-label { font-weight: 600; }
+.bnb-sections-status { color: var(--bnb-muted); font-size: var(--bnb-fs-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bnb-sections-row.has-dot .bnb-sections-status { color: var(--bnb-warn); }
+.bnb-sections-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bnb-warn); flex: none; }
+.bnb-sections-chevron { color: var(--bnb-muted); flex: none; }
+.bnb-sections-back {
+  display: inline-flex; align-items: center; gap: 4px; margin-bottom: 12px; padding: 4px 0; border: 0; background: none;
+  color: var(--bnb-muted); font: inherit; font-size: var(--bnb-fs-sm); text-decoration: none; cursor: pointer;
+}
+.bnb-sections-back:hover { color: var(--bnb-fg); }
+
+@media (min-width: 48em) {
+  .bnb-sections { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 24px; align-items: start; }
+  .bnb-sections-nav { display: block; position: sticky; top: 16px; }
+  .bnb-sections-nav .bnb-sections-row { min-height: 0; border-radius: var(--bnb-radius-md); padding: 7px 10px; }
+  .bnb-sections-nav .bnb-sections-row.is-active { background: var(--bnb-accent-soft); }
+  .bnb-sections-nav .bnb-sections-chevron { display: none; }
+  .bnb-sections-rows, .bnb-sections-back { display: none; }
+}

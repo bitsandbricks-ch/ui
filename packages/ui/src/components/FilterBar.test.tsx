@@ -21,19 +21,19 @@ describe('FilterBar', () => {
   it('keeps search and filters in the address, with counts, and clears them', async () => {
     renderWithApp(<List />, '/list?page=3')
     expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Show: All' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Show: All, 5' }))
     fireEvent.click(await screen.findByRole('menuitem', { name: /Down/ }))
     fireEvent.change(screen.getByRole('textbox', { name: 'Search' }), { target: { value: 'sw' } })
     // A new filter starts the list on its first page again.
     expect(screen.getByRole('status')).toHaveTextContent('?state=down&q=sw')
-    expect(screen.getByRole('button', { name: 'Show: Down' })).toHaveTextContent('2')
+    expect(screen.getByRole('button', { name: 'Show: Down, 2' })).toHaveTextContent('2')
     fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
     expect(screen.getByRole('status')).toBeEmptyDOMElement()
   })
 
   it('opens on the address it was given', () => {
     renderWithApp(<List />, '/list?state=down')
-    expect(screen.getByRole('button', { name: 'Show: Down' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Show: Down, 2' })).toBeInTheDocument()
   })
 
   it('shows the active filters as chips in the panel layout, and removes one', () => {
@@ -53,5 +53,18 @@ describe('FilterBar', () => {
     renderWithApp(<FilterBar groups={groups} layout="panel" />)
     fireEvent.click(screen.getByRole('button', { name: 'Remove Tier: Gold' }))
     expect(onChange).toHaveBeenCalledWith('')
+  })
+
+  it('moves between filter chips with the arrow keys, with one tab stop', async () => {
+    renderWithApp(<List layout="panel" />, '/list?state=down')
+    fireEvent.click(screen.getByRole('button', { name: /Filter/ }))
+    const all = await screen.findByRole('radio', { name: /All/ })
+    const down = screen.getByRole('radio', { name: /Down/ })
+    expect([all.tabIndex, down.tabIndex]).toEqual([-1, 0])
+    fireEvent.keyDown(down, { key: 'ArrowRight' })
+    expect(screen.getByRole('radio', { name: /All/ })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('radio', { name: /All/ })).toHaveFocus()
+    fireEvent.keyDown(screen.getByRole('radio', { name: /All/ }), { key: 'End' })
+    expect(screen.getByRole('radio', { name: /Down/ })).toHaveAttribute('aria-checked', 'true')
   })
 })

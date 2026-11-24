@@ -23,7 +23,7 @@ export const neutrals = {
     line: '#2c2c31',
     fg: '#ededef',
     muted: '#a1a1aa', // 7.4:1 on surface
-    faint: '#80808a', // 4.8:1 on surface
+    faint: '#8a8a94', // 5.3:1 on surface, 4.8:1 on raised
   },
 }
 
@@ -35,11 +35,12 @@ export const scales = {
 
 /**
  * Status colours. Fixed on purpose: no app and no theme changes what "failed" looks like, and the
- * accent is never one of them. Each passes 4.5:1 as text on the surface of its theme.
+ * accent is never one of them. Each passes 4.5:1 as text on the page, surface and raised fill of its
+ * theme; warn and err also on their own soft tint (notices, badges).
  */
 export const status = {
-  light: { ok: '#047857', warn: '#a16207', err: '#c81e1e', info: '#0e7490', off: '#6b6b75' },
-  dark: { ok: '#34d399', warn: '#fbbf24', err: '#f87171', info: '#22d3ee', off: '#80808a' },
+  light: { ok: '#047857', warn: '#8a5700', err: '#b91c1c', info: '#0e7490', off: '#6b6b75' },
+  dark: { ok: '#34d399', warn: '#fbbf24', err: '#f87171', info: '#22d3ee', off: '#8a8a94' },
 }
 
 /** The default accent where an app sets none: a quiet blue, so a missing accent is noticed. */

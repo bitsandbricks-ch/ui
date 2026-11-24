@@ -1,0 +1,21 @@
+/* A file with line numbers, coloured by token; with `before` a line diff. */
+.bnb-code { border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-md); overflow: hidden; background: var(--bnb-surface); }
+.bnb-code-head { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--bnb-line); background: var(--bnb-raised); }
+.bnb-code-file { flex: 1; min-width: 0; font-family: var(--bnb-font-mono); font-size: var(--bnb-fs-xs); font-weight: 600; overflow-wrap: anywhere; }
+.bnb-code-count { font-family: var(--bnb-font-mono); font-size: var(--bnb-fs-xs); display: inline-flex; gap: 8px; }
+.bnb-code-count .is-add { color: var(--bnb-ok); }
+.bnb-code-count .is-del { color: var(--bnb-err); }
+.bnb-code-body { font-family: var(--bnb-font-mono); font-size: var(--bnb-fs-xs); line-height: 1.75; padding: 4px 0; overflow-x: auto; }
+.bnb-code-line { display: grid; grid-template-columns: 44px 16px minmax(0, 1fr); padding-right: 14px; min-width: max-content; }
+.bnb-code-n { text-align: right; color: var(--bnb-muted); padding-right: 10px; user-select: none; }
+.bnb-code-op { color: var(--bnb-muted); user-select: none; }
+.bnb-code-text { white-space: pre; }
+.bnb-code-line.is-add { background: var(--bnb-ok-soft); }
+.bnb-code-line.is-add .bnb-code-op { color: var(--bnb-ok); }
+.bnb-code-line.is-del { background: var(--bnb-err-soft); }
+.bnb-code-line.is-del .bnb-code-op { color: var(--bnb-err); }
+.bnb-code-same { padding: 6px 14px; color: var(--bnb-muted); font-family: var(--bnb-font-sans); }
+/* Token colours come from the status colours, which stay AA as text in both themes. */
+.bnb-tk-key { color: var(--bnb-info); }
+.bnb-tk-num, .bnb-tk-bool { color: var(--bnb-warn); }
+.bnb-tk-comment { color: var(--bnb-muted); font-style: italic; }

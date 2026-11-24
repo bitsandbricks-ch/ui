@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Badge,
   Checkbox,
+  Chip,
   Combobox,
   createTheme,
   defaultVariantColorsResolver,
@@ -14,13 +15,14 @@ import {
   Select,
   Switch,
   TableScrollContainer,
+  Tabs,
   Tooltip,
   type CSSVariablesResolver,
   type MantineColorsTuple,
   type MantineThemeOverride,
   type VariantColorsResolver,
 } from '@mantine/core'
-import tokens, { INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks/tokens'
+import tokens, { accentTextOn, INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks/tokens'
 
 // The Mantine theme every React app shares, on top of @bitsandbricks/tokens. Built from Hubra's
 // packages/ui theme (contrast-aware fills) and Floorbit's theme.ts (colours as CSS variables, so
@@ -99,6 +101,7 @@ function cssAccentScale(): MantineColorsTuple {
 }
 
 const tint = (name: string, pct: number) => `color-mix(in srgb, var(--bnb-${name}) ${pct}%, transparent)`
+const onTint = (name: string) => `color-mix(in srgb, var(--bnb-${name}) 80%, var(--bnb-fg))`
 
 export const variantColorResolver: VariantColorsResolver = (input) => {
   const result = defaultVariantColorsResolver(input)
@@ -128,13 +131,15 @@ export const variantColorResolver: VariantColorsResolver = (input) => {
         ...result,
         background: tint(v, 14),
         hover: tint(v, 22),
-        color: `color-mix(in srgb, var(--bnb-${v}) 80%, var(--bnb-fg))`,
+        color: onTint(v),
         border: 'transparent',
       }
+    // Outline and subtle text often sits on a tint (an error alert, a hovered row): the same pull
+    // towards the page text keeps it 4.5:1 there (an error alert's "Try again" was 4.2:1).
     case 'outline':
-      return { ...result, background: 'transparent', hover: tint(v, 10), color: `var(--bnb-${v})`, border: `1px solid var(--bnb-${v})` }
+      return { ...result, background: 'transparent', hover: tint(v, 10), color: onTint(v), border: `1px solid var(--bnb-${v})` }
     case 'subtle':
-      return { ...result, background: 'transparent', hover: tint(v, 12), color: `var(--bnb-${v})`, border: 'transparent' }
+      return { ...result, background: 'transparent', hover: tint(v, 12), color: onTint(v), border: 'transparent' }
     default:
       return result
   }
@@ -217,7 +222,18 @@ export function createBnbTheme({ accent, fonts = {}, overrides }: BnbThemeOption
         styles: { root: { fontWeight: 600, textTransform: 'none' } },
         vars: (_t, props) => ({ root: { '--badge-fz': BADGE_FZ[String(props.size ?? 'md')] ?? BADGE_FZ.md } }),
       }),
-      Tabs: { styles: { tab: { fontWeight: 550 } } },
+      // The active pill and a picked chip sit on the accent: their text follows the text-on-accent
+      // colour too (Mantine's default is white, 2.2:1 on a bright dark-theme accent).
+      Tabs: Tabs.extend({
+        styles: { tab: { fontWeight: 550 } },
+        // Mantine reads --tabs-text-color but leaves it out of its typed variables.
+        vars: (_t, props) => ({ root: (!props.color || props.color === 'accent' ? { '--tabs-text-color': 'var(--bnb-on-accent)' } : {}) as Record<string, string> }),
+      }),
+      Chip: Chip.extend({
+        vars: (_t, props) => ({
+          root: (!props.color || props.color === 'accent') && (!props.variant || props.variant === 'filled') ? { '--chip-color': 'var(--bnb-on-accent)' } : {},
+        }),
+      }),
       // Plain thumb: Mantine 8+ puts a dot in it.
       Switch: Switch.extend({ defaultProps: { withThumbIndicator: false } }),
       // The tick and the radio dot follow the text-on-accent colour, so a bright accent gets a dark tick.
@@ -262,6 +278,8 @@ export const cssVariablesResolver: CSSVariablesResolver = (theme) => {
     '--bnb-accent-dark': accent.dark,
     '--bnb-on-accent-light': textOn(accent.light),
     '--bnb-on-accent-dark': textOn(accent.dark),
+    '--bnb-accent-text-light': accentTextOn(accent.light, tokens.neutrals.light),
+    '--bnb-accent-text-dark': accentTextOn(accent.dark, tokens.neutrals.dark),
   }
   return {
     variables: {},

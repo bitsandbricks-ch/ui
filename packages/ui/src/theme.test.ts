@@ -6,6 +6,15 @@ import { accentScale, createBnbTheme, cssVariablesResolver, resolveAccent, varia
 describe('createBnbTheme', () => {
   const theme = mergeMantineTheme(DEFAULT_THEME, createBnbTheme({ accent: { light: '#7441e0', dark: '#9f7cf8' } }))
 
+  it('puts the text-on-accent colour on active pills and picked chips', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const vars = (name: string, props: object) => (theme.components[name].vars as any)(theme, props).root
+    expect(vars('Tabs', {})).toEqual({ '--tabs-text-color': 'var(--bnb-on-accent)' })
+    expect(vars('Chip', {})).toEqual({ '--chip-color': 'var(--bnb-on-accent)' })
+    expect(vars('Chip', { variant: 'light' })).toEqual({})
+    expect(vars('Tabs', { color: 'err' })).toEqual({})
+  })
+
   it('makes the accent the primary colour, with ten shades around it', () => {
     expect(theme.primaryColor).toBe('accent')
     expect(theme.colors.accent).toHaveLength(10)
@@ -52,6 +61,9 @@ describe('accents', () => {
     const vars = cssVariablesResolver(theme)
     expect(vars.light['--bnb-accent-light']).toBe('#b85a0a')
     expect(vars.dark['--bnb-on-accent-dark']).toBe('#0f0f11') // dark text on amber, never white
+    // Text and links deepen only where the accent falls below 4.5:1 on a grey fill.
+    expect(vars.light['--bnb-accent-text-light']).toBe('#a7530b')
+    expect(vars.dark['--bnb-accent-text-dark']).toBe('#f59a23')
     expect(vars.light['--mantine-color-body']).toBe('var(--bnb-bg)')
   })
 
@@ -80,6 +92,11 @@ describe('variant colours', () => {
   it('pulls light-variant text towards the page text so it passes on its tint', () => {
     expect(resolve('light', 'warn').color).toBe('color-mix(in srgb, var(--bnb-warn) 80%, var(--bnb-fg))')
     expect(resolve('light', 'warn').background).toContain('var(--bnb-warn) 14%')
+  })
+
+  it('pulls subtle and outline text the same way, as it often sits on a tint', () => {
+    expect(resolve('subtle', 'err').color).toBe('color-mix(in srgb, var(--bnb-err) 80%, var(--bnb-fg))')
+    expect(resolve('outline', 'accent')).toMatchObject({ color: 'color-mix(in srgb, var(--bnb-accent) 80%, var(--bnb-fg))', border: '1px solid var(--bnb-accent)' })
   })
 
   it('uses the muted text for grey outlines and leaves other colours to Mantine', () => {

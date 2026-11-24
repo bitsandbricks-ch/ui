@@ -4,10 +4,8 @@ import { defineTexts } from '../i18n'
 export const texts = defineTexts({
   en: {
     'scope.all': 'All',
-    'scope.current': '{{label}}: {{value}}',
   },
   de: {
     'scope.all': 'Alle',
-    'scope.current': '{{label}}: {{value}}',
   },
 })

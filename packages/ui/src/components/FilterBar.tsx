@@ -1,6 +1,6 @@
 import { Badge, Button, CloseButton, Drawer, Group, Menu, Popover, Select, Stack, Text, TextInput, UnstyledButton, useMatches } from '@mantine/core'
 import { IconAdjustmentsHorizontal, IconCheck, IconChevronDown, IconSearch, IconX } from '@tabler/icons-react'
-import { useState, type ReactNode } from 'react'
+import { useState, type KeyboardEvent, type ReactNode } from 'react'
 import { useT } from '../i18n'
 
 // One toolbar for every list: search on the left, the filters, and the page's own buttons on the
@@ -69,12 +69,24 @@ function GroupControl({ group }: { group: FilterGroup }) {
         onChange={(v) => group.onChange(v ?? group.defaultValue)} comboboxProps={{ withinPortal: false }} />
     )
   }
+  // Radio pattern: one tab stop (the picked chip), arrows move and pick, like native radios.
+  const at = Math.max(0, options.findIndex((o) => o.value === group.value))
+  const arrows = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]
+    const to = e.key === 'Home' ? 0 : e.key === 'End' ? options.length - 1 : step ? (i + step + options.length) % options.length : -1
+    if (to < 0) return
+    e.preventDefault()
+    group.onChange(options[to].value)
+    const chips = e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')
+    chips?.[to]?.focus()
+  }
   return (
     <div role="radiogroup" aria-label={group.label} className="bnb-chips">
-      {options.map((o) => {
+      {options.map((o, i) => {
         const on = o.value === group.value
         return (
           <button key={o.value} type="button" role="radio" aria-checked={on} className={`bnb-chip${on ? ' is-on' : ''}`}
+            tabIndex={i === at ? 0 : -1} onKeyDown={(e) => arrows(e, i)}
             onClick={() => group.onChange(o.value)}>
             {o.label}
             {o.count != null && <span className="bnb-count">{o.count}</span>}
@@ -177,10 +189,11 @@ function FilterMenus({ groups }: { groups: FilterGroup[] }) {
         return (
           <Menu key={g.key} position="bottom-start">
             <Menu.Target>
+              {/* The name holds every visible word, the count too (WCAG 2.5.3); the space keeps "All 64" two words. */}
               <Button variant={active ? 'light' : 'default'} rightSection={<IconChevronDown size={14} />}
-                aria-label={`${g.label}: ${optionText(current)}`}>
+                aria-label={`${g.label}: ${optionText(current)}${current.count != null ? `, ${current.count}` : ''}`}>
                 <span className="bnb-filter-key">{g.label}:</span>&nbsp;{current.label}
-                {current.count != null && <span className="bnb-count">{current.count}</span>}
+                {current.count != null && <>{' '}<span className="bnb-count">{current.count}</span></>}
               </Button>
             </Menu.Target>
             <Menu.Dropdown>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { accentCss, renderCss } from '../src/css.js'
-import { contrastRatio, mix, readableOn, textOn } from '../src/contrast.js'
+import { accentTextOn, contrastRatio, mix, readableOn, textOn } from '../src/contrast.js'
 import tokens from '../src/tokens.js'
 
 describe('contrast', () => {
@@ -48,6 +48,29 @@ describe('tokens', () => {
     })
   }
 
+  // Apps put hints and status words on raised rows and on tinted notices and badges, not only on cards.
+  for (const scheme of /** @type {const} */ (['light', 'dark'])) {
+    const n = tokens.neutrals[scheme]
+    it(`keeps faint and status text AA on the page and raised fills too (${scheme})`, () => {
+      for (const bg of [n.bg, n.surface, n.raised]) {
+        expect(contrastRatio(n.faint, bg)).toBeGreaterThanOrEqual(4.5)
+        for (const [name, colour] of Object.entries(tokens.status[scheme])) {
+          expect(contrastRatio(colour, bg), `${name} on ${bg}`).toBeGreaterThanOrEqual(4.5)
+        }
+      }
+    })
+
+    it(`keeps warn and err AA on their own soft tint (${scheme})`, () => {
+      for (const name of /** @type {const} */ (['warn', 'err'])) {
+        const colour = tokens.status[scheme][name]
+        for (const bg of [n.bg, n.surface]) {
+          // --bnb-<name>-soft: 14% of the colour over the background
+          expect(contrastRatio(colour, mix(bg, colour, 0.14)), `${name} on its tint over ${bg}`).toBeGreaterThanOrEqual(4.5)
+        }
+      }
+    })
+  }
+
   it('keeps the default accent readable in both themes', () => {
     const accent = tokens.defaultAccent
     expect(contrastRatio(accent.light, '#ffffff')).toBeGreaterThanOrEqual(4.5)
@@ -90,7 +113,19 @@ describe('css', () => {
   --bnb-accent-dark: #f59a23;
   --bnb-on-accent-light: #ffffff;
   --bnb-on-accent-dark: #0f0f11;
+  --bnb-accent-text-light: #a7530b;
+  --bnb-accent-text-dark: #f59a23;
 }
 `)
+  })
+
+  it('deepens accent text only where the accent falls below 4.5:1 on a neutral', () => {
+    for (const n of [tokens.neutrals.light, tokens.neutrals.dark]) {
+      for (const hex of ['#b85a0a', '#f59a23', '#7441e0', '#9f7cf8', '#2ee59d']) {
+        const text = accentTextOn(hex, n)
+        for (const bg of [n.surface, n.bg, n.raised]) expect(contrastRatio(text, bg)).toBeGreaterThanOrEqual(4.5)
+      }
+    }
+    expect(accentTextOn('#7441e0', tokens.neutrals.light)).toBe('#7441e0')
   })
 })

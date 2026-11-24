@@ -1,0 +1,10 @@
+/* Before and after, one row per changed field. */
+.bnb-fdiff { width: 100%; border-collapse: collapse; font-size: var(--bnb-fs-sm); }
+.bnb-fdiff th { text-align: left; font-size: var(--bnb-fs-xs); font-weight: 600; color: var(--bnb-muted); padding: 6px 10px; border-bottom: 1px solid var(--bnb-line); }
+.bnb-fdiff td { padding: 6px 10px; border-bottom: 1px solid var(--bnb-line); vertical-align: top; overflow-wrap: anywhere; }
+.bnb-fdiff tr:last-child td { border-bottom: 0; }
+.bnb-fdiff-path { color: var(--bnb-muted); font-family: var(--bnb-font-mono); font-size: var(--bnb-fs-xs); }
+.bnb-fdiff-before { background: var(--bnb-err-soft); }
+.bnb-fdiff-after { background: var(--bnb-ok-soft); }
+.bnb-fdiff-empty { color: var(--bnb-muted); font-style: italic; }
+.bnb-fdiff-none { margin: 0; padding: 8px 0; color: var(--bnb-muted); font-size: var(--bnb-fs-sm); }
