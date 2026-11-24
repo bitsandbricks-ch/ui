@@ -39,7 +39,7 @@ export const Dialog: StoryObj = {
           onSubmit={() => setOpen(false)}
           footer={<><Button variant="default" onClick={() => setOpen(false)}>Cancel</Button><Button type="submit">Create</Button></>}>
           <TextInput label="Name" data-autofocus />
-          <Textarea label="About" autosize minRows={2} />
+          <Textarea label="About" rows={2} />
         </FormDialog>
       </>
     )
