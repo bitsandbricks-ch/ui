@@ -1,0 +1,5 @@
+/* A row of state cells, oldest on the left. */
+.bnb-strip { display: flex; gap: 2px; }
+.bnb-strip-cell { flex: 1; min-width: 2px; border-radius: 2px; background: var(--bnb-tone, var(--bnb-raised)); }
+.bnb-strip-cell.is-off { background: var(--bnb-line); }
+.bnb-strip-cell.is-none { background: var(--bnb-raised); }

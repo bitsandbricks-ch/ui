@@ -1,0 +1,9 @@
+/* A percentage as a short bar: blue, then amber, then red. */
+.bnb-usage { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.bnb-usage-bar { flex: 1; min-width: 40px; max-width: 90px; height: 4px; border-radius: 2px; background: var(--bnb-raised); overflow: hidden; }
+.bnb-usage-bar > span { display: block; height: 100%; background: var(--bnb-info); }
+.bnb-usage.is-warn .bnb-usage-bar > span { background: var(--bnb-warn); }
+.bnb-usage.is-err .bnb-usage-bar > span { background: var(--bnb-err); }
+.bnb-usage-n { font-family: var(--bnb-font-mono); font-size: var(--bnb-fs-xs); min-width: 4ch; text-align: right; font-variant-numeric: tabular-nums; }
+.bnb-usage.is-err .bnb-usage-n { color: var(--bnb-err); font-weight: 600; }
+.bnb-usage-none { color: var(--bnb-faint); }

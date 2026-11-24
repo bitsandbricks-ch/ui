@@ -1,0 +1,13 @@
+/* What needs a look, each row with its one action. */
+/* info has no shared tone class; the row sets it for its bit. */
+.bnb-attention-row.is-info { --bnb-tone: var(--bnb-info); }
+.bnb-attention { list-style: none; margin: 0; padding: 0; }
+.bnb-attention-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--bnb-line); }
+.bnb-attention-row:last-child { border-bottom: 0; }
+.bnb-attention-text { flex: 1; min-width: 0; }
+.bnb-attention-title { font-size: var(--bnb-fs-sm); font-weight: 600; overflow-wrap: anywhere; }
+.bnb-attention-detail { font-size: var(--bnb-fs-xs); color: var(--bnb-muted); overflow-wrap: anywhere; }
+.bnb-attention-empty { display: flex; align-items: center; gap: 8px; padding: 14px 16px; font-size: var(--bnb-fs-sm); color: var(--bnb-muted); }
+@media (max-width: 48em) {
+  .bnb-attention-row { flex-wrap: wrap; }
+}

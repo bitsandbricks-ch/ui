@@ -26,6 +26,10 @@
       "types": "./dist/spotlight.d.ts",
       "default": "./dist/spotlight.js"
     },
+    "./dates": {
+      "types": "./dist/dates/index.d.ts",
+      "default": "./dist/dates/index.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./theme-script.js": "./theme-script.js"
   },
@@ -42,15 +46,21 @@
   },
   "peerDependencies": {
     "@mantine/core": "^9.7.4",
+    "@mantine/dates": "^9.7.4",
     "@mantine/hooks": "^9.7.4",
     "@mantine/notifications": "^9.7.4",
     "@mantine/spotlight": "^9.7.4",
     "@tabler/icons-react": "^3.40.0",
+    "dayjs": "^1.11.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "peerDependenciesMeta": {
     "@mantine/spotlight": {
+    "@mantine/dates": {
+      "optional": true
+    },
+    "dayjs": {
       "optional": true
     }
   }
