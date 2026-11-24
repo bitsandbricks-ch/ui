@@ -1,6 +1,6 @@
 {
   "name": "@bitsandbricks/tokens",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "BitsAndBricks design tokens: CSS variables and JSON for every app",
   "license": "MIT",
   "type": "module",
