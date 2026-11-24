@@ -1,0 +1,4 @@
+/* Text people typed, drawn from a small Markdown subset. */
+.bnb-markdown > :last-child { margin-bottom: 0; }
+.bnb-markdown { overflow-wrap: anywhere; }
+.bnb-md-link { color: var(--mantine-color-anchor); }
