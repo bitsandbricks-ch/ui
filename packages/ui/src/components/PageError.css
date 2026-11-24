@@ -1,0 +1,5 @@
+/* A page that failed to draw: what happened and the way on. */
+.bnb-page-error { padding: var(--mantine-spacing-lg) 0; }
+.bnb-page-error.is-full { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--mantine-spacing-lg); }
+.bnb-page-error-icon { color: var(--bnb-warn); }
+.bnb-page-error details summary { cursor: pointer; color: var(--bnb-muted); font-size: var(--mantine-font-size-sm); }
