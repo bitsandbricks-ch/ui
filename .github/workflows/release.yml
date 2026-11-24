@@ -1,0 +1,47 @@
+# Publishes the packages to GitHub Packages when Mike pushes a release tag (v0.2.0). Versions come
+# from changesets: `pnpm version-packages` in a pull request, merged, then the tag. Nothing here
+# changes a version or pushes a tag.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish to GitHub Packages
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # Mike approves each publish (Settings > Environments > release > required reviewers).
+    environment: release
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://npm.pkg.github.com
+          scope: '@bitsandbricks'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      # Every package's version must match the tag, so a tag never publishes something else.
+      - name: Check versions against the tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: node scripts/check-versions.mjs "$TAG"
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm -r publish --no-git-checks --access restricted

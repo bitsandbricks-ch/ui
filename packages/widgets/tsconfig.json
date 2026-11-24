@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["vitest/globals"],
+    "paths": {
+      "@bitsandbricks/tokens": ["../tokens/src/index.js"],
+      "@bitsandbricks/ui": ["../ui/src/index.ts"]
+    },
+    "allowJs": true
+  },
+  "include": ["src", "../../test"]
+}

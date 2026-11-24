@@ -1,0 +1,51 @@
+{
+  "name": "bitsandbricks-ui",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -o storybook-static",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "2.29.7",
+    "@types/react-dom": "19.2.3",
+    "@eslint/js": "10.0.1",
+    "@mantine/core": "9.7.4",
+    "@mantine/hooks": "9.7.4",
+    "@mantine/notifications": "9.7.4",
+    "@storybook/react-vite": "10.6.8",
+    "@tabler/icons-react": "3.44.0",
+    "@tanstack/react-table": "8.21.3",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.8",
+    "@types/node": "24.13.1",
+    "@types/react": "19.2.17",
+    "@vitejs/plugin-react": "6.0.2",
+    "eslint": "10.14.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.6.0",
+    "jsdom": "30.1.2",
+    "postcss": "8.5.32",
+    "postcss-preset-mantine": "1.18.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "storybook": "10.6.8",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vite": "8.3.5",
+    "vitest": "5.0.4"
+  }
+}
