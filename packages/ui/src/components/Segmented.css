@@ -1,0 +1,7 @@
+/* Segmented: counts and a corner dot inside SegmentedControl's labels. */
+.bnb-segmented { max-width: 100%; overflow-x: auto; }
+.bnb-segmented.is-fill { width: 100%; }
+@media (min-width: 48em) { .bnb-segmented.is-fill { display: inline-flex; width: auto; } }
+.bnb-segmented-option { position: relative; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.bnb-segmented-count { font-family: var(--bnb-font-mono); font-size: var(--bnb-fs-xs); color: var(--bnb-muted); }
+.bnb-segmented-dot { position: absolute; top: -2px; right: -9px; width: 6px; height: 6px; border-radius: 50%; background: var(--bnb-warn); }
