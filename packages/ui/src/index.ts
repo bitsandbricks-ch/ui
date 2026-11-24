@@ -2,7 +2,7 @@
 // Import the styles once: import '@bitsandbricks/tokens/tokens.css' and '@bitsandbricks/ui/styles.css'.
 export { default as tokens } from '@bitsandbricks/tokens'
 export { BnbProvider } from './BnbProvider'
-export { accentScale, createBnbTheme, cssVariablesResolver, resolveAccent, STATUS_COLORS, variantColorResolver, type Accent, type BnbThemeOptions, type StatusColor } from './theme'
+export { accentScale, createBnbTheme, cssVariablesResolver, isCssAccent, resolveAccent, STATUS_COLORS, variantColorResolver, type Accent, type BnbThemeOptions, type StatusColor } from './theme'
 export { createColorSchemeManager, readColorScheme, type ColorSchemeOptions } from './colorScheme'
 export { createT, de, en, I18nProvider, interpolate, registerMessages, useT, type Locale, type Messages, type T, type Translate, type Vars } from './i18n'
 export { SearchParamsProvider, useSearchParamsAdapter, useWindowSearchParams, type SetSearchParams, type UseSearchParams } from './urlState'

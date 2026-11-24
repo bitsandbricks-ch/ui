@@ -28,10 +28,15 @@ import tokens, { INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks/toke
 //
 //   <BnbProvider theme={createBnbTheme({ accent: { light: '#b85a0a', dark: '#f59a23' } })}>
 
+/**
+ * One hex, a light and a dark hex, or `'css'`: the app sets `--bnb-accent-light`/`--bnb-accent-dark`
+ * (and `--bnb-on-accent-*`) in its own stylesheet, so an admin's colour or a preset applies at run
+ * time without rebuilding the theme. `accentCss()` from @bitsandbricks/tokens writes that block.
+ */
 export type Accent = string | { light: string; dark: string }
 
 export interface BnbThemeOptions {
-  /** The app's brand colour: one hex, or a light one (readable on white) and a dark one. */
+  /** The app's brand colour: one hex, a light one (readable on white) and a dark one, or `'css'`. */
   accent: Accent
   /** Font stacks; Geist and Geist Mono unless the app brings its own. */
   fonts?: { sans?: string; mono?: string; headings?: string }
@@ -45,14 +50,19 @@ export type StatusColor = (typeof STATUS_COLORS)[number]
 
 const asVar = (name: string) => Array(10).fill(`var(--bnb-${name})`) as unknown as MantineColorsTuple
 
+/** The accent comes from the app's CSS variables rather than from the theme. */
+export const isCssAccent = (accent: Accent | undefined): accent is 'css' => accent === 'css'
+
 /** The accent for each theme. One hex gets a deeper shade for text on white in the light theme. */
 export function resolveAccent(accent: Accent): { light: string; dark: string } {
+  if (isCssAccent(accent)) return { light: 'var(--bnb-accent-light)', dark: 'var(--bnb-accent-dark)' }
   if (typeof accent !== 'string') return accent
   return { light: readableOn(accent, [WHITE, tokens.neutrals.light.bg]), dark: accent }
 }
 
 /** Ten shades around the accent, for the places Mantine reads a scale (light tints, hovers). */
 export function accentScale(accent: Accent): MantineColorsTuple {
+  if (isCssAccent(accent)) return cssAccentScale()
   const { light, dark } = resolveAccent(accent)
   return [
     mix(light, WHITE, 0.92),
@@ -65,6 +75,26 @@ export function accentScale(accent: Accent): MantineColorsTuple {
     mix(light, INK, 0.15),
     mix(light, INK, 0.3),
     mix(light, INK, 0.45),
+  ] as unknown as MantineColorsTuple
+}
+
+/** The same ten shades as accentScale, mixed by the browser from the accent variables. */
+function cssAccentScale(): MantineColorsTuple {
+  const m = (a: string, b: string, pct: number) => `color-mix(in srgb, ${a}, ${b} ${pct}%)`
+  const light = 'var(--bnb-accent-light)'
+  const dark = 'var(--bnb-accent-dark)'
+  const ink = INK
+  return [
+    m(light, WHITE, 92),
+    m(light, WHITE, 82),
+    m(light, WHITE, 64),
+    m(dark, WHITE, 30),
+    dark,
+    m(light, dark, 50),
+    light,
+    m(light, ink, 15),
+    m(light, ink, 30),
+    m(light, ink, 45),
   ] as unknown as MantineColorsTuple
 }
 
@@ -117,7 +147,7 @@ const BADGE_FZ: Record<string, string> = { xs: fs(11), sm: fs(12), md: fs(13), l
 
 /** The Mantine theme for an app: shared tokens, the app's accent. */
 export function createBnbTheme({ accent, fonts = {}, overrides }: BnbThemeOptions): MantineThemeOverride {
-  const resolved = resolveAccent(accent)
+  const resolved = isCssAccent(accent) ? 'css' : resolveAccent(accent)
   const sans = fonts.sans ?? 'var(--bnb-font-sans)'
   const headings = fonts.headings ?? sans
   const base = createTheme({
@@ -223,7 +253,10 @@ const mantineVars = {
  * per theme. Read from `theme.other.bnbAccent`, which createBnbTheme sets.
  */
 export const cssVariablesResolver: CSSVariablesResolver = (theme) => {
-  const accent = (theme.other?.bnbAccent as { light: string; dark: string } | undefined) ?? tokens.defaultAccent
+  const set = theme.other?.bnbAccent as { light: string; dark: string } | 'css' | undefined
+  // A CSS accent is the app's stylesheet's to set; writing it here would cover it.
+  if (set === 'css') return { variables: {}, light: mantineVars, dark: mantineVars }
+  const accent = set ?? tokens.defaultAccent
   const accentVars = {
     '--bnb-accent-light': accent.light,
     '--bnb-accent-dark': accent.dark,

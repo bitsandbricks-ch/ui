@@ -54,6 +54,17 @@ describe('accents', () => {
     expect(vars.dark['--bnb-on-accent-dark']).toBe('#0f0f11') // dark text on amber, never white
     expect(vars.light['--mantine-color-body']).toBe('var(--bnb-bg)')
   })
+
+  it("leaves a 'css' accent to the app's stylesheet", () => {
+    const theme = mergeMantineTheme(DEFAULT_THEME, createBnbTheme({ accent: 'css' }))
+    expect(theme.colors.accent[6]).toBe('var(--bnb-accent-light)')
+    expect(theme.colors.accent[4]).toBe('var(--bnb-accent-dark)')
+    expect(theme.colors.accent[0]).toContain('color-mix(')
+    const vars = cssVariablesResolver(theme)
+    expect(vars.light['--bnb-accent-light']).toBeUndefined()
+    expect(vars.dark['--bnb-on-accent-dark']).toBeUndefined()
+    expect(vars.dark['--mantine-primary-color-contrast']).toBe('var(--bnb-on-accent)')
+  })
 })
 
 describe('variant colours', () => {
