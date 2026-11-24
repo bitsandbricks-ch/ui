@@ -13,6 +13,7 @@ export function kindsFor(w: Widget): Kind[] {
     case 'table': return numberColumns(w).length ? ['table', 'bar', 'column', 'histogram', 'stat', 'list'] : ['table', 'stat', 'list']
     case 'sparkline': return w.max != null ? ['graph', 'column', 'histogram', 'stat', 'gauge'] : ['graph', 'column', 'histogram', 'stat']
     case 'series': return ['graph', 'column', 'histogram', 'stat']
+    case 'text': return ['text']
     default: return ['stat']
   }
 }
@@ -61,6 +62,7 @@ export function statOf(w: Widget, lang?: string, style: NumberStyle = {}): StatD
     }
     case 'list': return { value: w.items.length.toLocaleString(lang), unit: '', tone: '' }
     case 'table': return { value: w.rows.length.toLocaleString(lang), unit: '', tone: '' }
+    case 'text': return { value: '–', unit: '', tone: '' }
     case 'sparkline': {
       const v = w.value ?? w.points[w.points.length - 1]
       return v == null ? { value: '–', unit: w.unit, tone: '' } : { ...formatValue(v, w.unit, lang, style), tone: '' }
@@ -75,7 +77,14 @@ export function statOf(w: Widget, lang?: string, style: NumberStyle = {}): StatD
 
 export interface Column { key: string; label: string }
 /** ``device``: the inventory device the row is about, for its glance in a large widget (#925). */
-export interface Row { cells: Record<string, string>; state?: State; tone?: Tone; device?: string }
+export interface Row { cells: Record<string, string>; state?: State; tone?: Tone; device?: string; sub?: string; link?: string }
+
+/** A link a plugin sent, if it is safe to follow: a path in the app or an http(s) address. Anything
+ *  else (javascript:, data:, a protocol-relative //host) is dropped, since the data comes from plugins. */
+export function safeLink(link: string | null | undefined): string | undefined {
+  if (!link) return undefined
+  return /^(https?:\/\/|\/(?!\/))/i.test(link.trim()) ? link.trim() : undefined
+}
 
 /** Rows for a list or table: status items worst first, so the problem is what fits. */
 export function rowsOf(w: Widget, labels: { name: string; value: string; state: string }): { columns: Column[]; rows: Row[] } {
@@ -89,7 +98,7 @@ export function rowsOf(w: Widget, labels: { name: string; value: string; state: 
     case 'list':
       return {
         columns: [{ key: 'label', label: labels.name }, { key: 'value', label: labels.value }],
-        rows: w.items.map((i) => ({ cells: { label: i.label, value: i.value }, tone: i.tone, device: i.device })),
+        rows: w.items.map((i) => ({ cells: { label: i.label, value: i.value }, tone: i.tone, device: i.device, sub: i.sub || undefined, link: safeLink(i.link) })),
       }
     case 'table':
       return { columns: w.columns, rows: w.rows.map((r) => ({ cells: r })) }

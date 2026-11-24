@@ -1,7 +1,8 @@
-import { Group, Table, Text } from '@mantine/core'
+import { Anchor, Group, Table, Text } from '@mantine/core'
 import { useT as useTranslation } from '@bitsandbricks/ui'
 import type { MaybeTone as Tone, Widget } from '@bitsandbricks/ui'
 import { FitWidget } from './FitWidget'
+import { safeLink } from './kinds/shape'
 import { Sparkline } from '@bitsandbricks/ui'
 import { registerWidgetMessages } from './messages'
 
@@ -59,9 +60,12 @@ export function WidgetBody({ widget }: { widget: Widget }) {
           {widget.items.map((item, i) => (
             <li key={i} style={ROW}>
               <Group gap={8} justify="space-between" wrap="nowrap">
-                <Text size="sm" style={{ flex: 1, minWidth: 0 }} truncate>
-                  {item.label}
-                </Text>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Text size="sm" truncate>
+                    {safeLink(item.link) ? <Anchor href={safeLink(item.link)} inherit c="inherit">{item.label}</Anchor> : item.label}
+                  </Text>
+                  {item.sub && <span className="bnb-w-row-sub" title={item.sub}>{item.sub}</span>}
+                </div>
                 <Text size="sm" ff="monospace" className={toneClass(item.tone)} c={item.tone ? undefined : 'dimmed'}
                   style={SIDE} truncate title={item.value || undefined}>
                   {item.value}
@@ -69,8 +73,15 @@ export function WidgetBody({ widget }: { widget: Widget }) {
               </Group>
             </li>
           ))}
+          {widget.total != null && widget.total > widget.items.length && (
+            <li><Text size="xs" c="dimmed">{t('widgets.kind.more', { count: widget.total - widget.items.length })}</Text></li>
+          )}
         </ul>
       )
+    case 'text':
+      return widget.text.trim()
+        ? <Text size="sm" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{widget.text}</Text>
+        : <Text size="sm" c="dimmed">{t('widgets.kind.noData')}</Text>
     case 'table':
       return (
         <Table.ScrollContainer minWidth={320}>

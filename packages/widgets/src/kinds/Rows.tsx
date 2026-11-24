@@ -65,7 +65,9 @@ export function RowsKind({ widget, kind, level, box, onMore }: {
   const fit = shown.length > room ? Math.max(1, room - 1) : room
   // Medium shows what fits, worst first; large pages and sorts the rest inside the box.
   const slice = big ? shown : shown.slice(0, fit)
-  const more = big ? 0 : shown.length - slice.length
+  // Rows the source left out ("total" on a list) count as more too, but only when nobody filters.
+  const unsent = widget.type === 'list' && widget.total != null && !query ? Math.max(0, widget.total - widget.items.length) : 0
+  const more = (big ? 0 : shown.length - slice.length) + unsent
   const pages = big ? Math.max(1, Math.ceil(shown.length / fit)) : 1
   const at = Math.min(page, pages - 1)
 
@@ -77,11 +79,12 @@ export function RowsKind({ widget, kind, level, box, onMore }: {
     cell: (r) => {
       const v = r.cells[c.key] ?? ''
       return (
-        <span title={v || undefined} className={j > 0 && !table && r.tone ? `bnb-tone-${r.tone}` : undefined}>
+        // A row's sub line would break the fixed row height the fit counts with: it goes in the tooltip.
+        <span title={(j === 0 && r.sub ? `${v}\n${r.sub}` : v) || undefined} className={j > 0 && !table && r.tone ? `bnb-tone-${r.tone}` : undefined}>
           {j === 0 && r.state && <span className={`bnb-dot ${r.state}`} role="img" aria-label={t(`widgets.state.${r.state}`)} title={t(`widgets.state.${r.state}`)} />}
           {j === 0 && big && drill && r.device
             ? <UnstyledButton className="bnb-w-pick" onClick={() => drill(r.device!)}>{v}</UnstyledButton>
-            : v}
+            : j === 0 && r.link ? <a className="bnb-w-link" href={r.link}>{v}</a> : v}
         </span>
       )
     },

@@ -22,8 +22,10 @@ export function calc(values: number[], c: Calc): number | null {
   }
 }
 
-type Family = 'time' | 'steps' | 'number' | 'rows'
+type Family = 'time' | 'steps' | 'number' | 'rows' | 'text'
 function family(w: Widget): Family {
+  // Text joins nothing: a note stays the note it is.
+  if (w.type === 'text') return 'text'
   if (w.type === 'series') return 'time'
   if (w.type === 'sparkline') return 'steps'
   if (w.type === 'stat') return 'number'

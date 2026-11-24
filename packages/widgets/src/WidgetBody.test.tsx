@@ -53,6 +53,22 @@ describe('WidgetBody', () => {
     renderWithApp(<WidgetBody widget={{ ...base, type: 'pie' } as unknown as Widget} />)
     expect(screen.getByText("This tile can't be drawn.")).toBeInTheDocument()
   })
+
+  it('draws list rows with a sub line, a safe link and how many more there are', () => {
+    renderWithApp(<WidgetBody widget={{ ...base, type: 'list', total: 9, items: [
+      { label: 'Anna Muster', value: '', tone: '', sub: 'joined today', link: '/members/1' },
+      { label: 'Ben', value: '', tone: '', link: 'javascript:alert(1)' }] }} />)
+    expect(screen.getByRole('link', { name: 'Anna Muster' })).toHaveAttribute('href', '/members/1')
+    expect(screen.getByText('joined today')).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Ben' })).toBeNull()
+    expect(screen.getByText('+7 more')).toBeInTheDocument()
+  })
+
+  it('draws text as plain text with its line breaks', () => {
+    renderWithApp(<WidgetBody widget={{ ...base, type: 'text', text: 'Key in the box.\n<b>Not bold</b>' }} />)
+    expect(screen.getByText(/Key in the box\./)).toHaveTextContent('<b>Not bold</b>')
+    expect(document.querySelector('b')).toBeNull()
+  })
 })
 
 describe('sparkPoints', () => {
