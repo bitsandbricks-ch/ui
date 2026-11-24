@@ -19,8 +19,12 @@ jobs:
     timeout-minutes: 15
     # Mike approves each publish (Settings > Environments > release > required reviewers).
     environment: release
+    # id-token: write lets npm trusted publishing (OIDC) publish without a token and add provenance.
+    # Each package's Trusted Publisher on npmjs.com names bitsandbricks-ch/ui, release.yml and the
+    # release environment.
     permissions:
       contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -30,8 +34,6 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
-          scope: '@bitsandbricks'
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
@@ -42,10 +44,17 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
         run: node scripts/check-versions.mjs "$TAG"
+      # pnpm packs (it turns workspace:^ into real versions); npm publishes, because trusted
+      # publishing needs npm 11.5.1 or later. No token: npm gets a short-lived one through OIDC.
       - name: Publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm -r publish --no-git-checks --access public
+          PACK_DIR: ${{ runner.temp }}/pack
+        run: |
+          node -e 'const v = process.argv[1].split(".").map(Number); if (v[0] < 11 || (v[0] === 11 && (v[1] < 5 || (v[1] === 5 && v[2] < 1)))) { console.error(`npm ${process.argv[1]} is older than 11.5.1, which trusted publishing needs`); process.exit(1) }' "$(npm --version)"
+          pnpm -r pack --pack-destination "$PACK_DIR"
+          for tarball in "$PACK_DIR"/*.tgz; do
+            npm publish "$tarball" --access public
+          done
 
   github-release:
     name: Create the GitHub release
