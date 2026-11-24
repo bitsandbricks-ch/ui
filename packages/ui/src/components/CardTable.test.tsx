@@ -58,4 +58,11 @@ describe('CardTable', () => {
     renderWithApp(<CardTable<W> items={[]} itemKey={(w) => w.id} label="Widgets" renderCard={() => null} empty={<p>No widgets yet</p>} />)
     expect(screen.getByText('No widgets yet')).toBeInTheDocument()
   })
+
+  it('leaves out search and filters when there is nothing to search', () => {
+    renderWithApp(<CardTable<W> items={[]} itemKey={(w) => w.id} label="Widgets" renderCard={() => null} searchText={(w) => w.name}
+      filters={[area]} empty={<p>No widgets yet</p>} />)
+    expect(screen.queryByRole('textbox')).toBeNull()
+    expect(screen.queryByRole('button', { name: /Area/ })).toBeNull()
+  })
 })
