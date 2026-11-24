@@ -1,0 +1,4 @@
+/* LinkedText: text with its links made clickable. */
+.bnb-linked { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bnb-linked.is-mono { margin: 6px 0 0; padding: 8px 10px; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--bnb-font-mono);
+  font-size: var(--bnb-fs-xs); background: var(--bnb-raised); border-radius: var(--bnb-radius-sm); max-height: 320px; overflow: auto; }
