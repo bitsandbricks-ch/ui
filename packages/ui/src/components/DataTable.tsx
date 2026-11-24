@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Button, Checkbox, Group, Pagination, Paper, Table, Text, UnstyledButton } from '@mantine/core'
+import { ActionIcon, Box, Button, Checkbox, Group, Pagination, Paper, Table, Text, UnstyledButton, VisuallyHidden } from '@mantine/core'
 import { IconChevronDown, IconChevronLeft, IconChevronRight, IconChevronUp, IconDownload, IconSelector } from '@tabler/icons-react'
 import {
   flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable,
@@ -278,7 +278,10 @@ export function DataTable<T>(props: DataTableProps<T>) {
                           {sorted === 'asc' ? <IconChevronUp size={12} /> : sorted === 'desc' ? <IconChevronDown size={12} />
                             : <IconSelector size={12} className="bnb-dt-sortable" aria-hidden />}
                         </UnstyledButton>
-                      ) : flexRender(h.column.columnDef.header, h.getContext())}
+                      ) : c && (c.header === '' || c.header == null)
+                        // A column without a heading (row actions) still needs a name for screen readers.
+                        ? <VisuallyHidden>{t('table.actions')}</VisuallyHidden>
+                        : flexRender(h.column.columnDef.header, h.getContext())}
                     </Table.Th>
                   )
                 })}

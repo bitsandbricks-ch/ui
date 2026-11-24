@@ -1,4 +1,4 @@
-import { Menu, UnstyledButton } from '@mantine/core'
+import { Menu, UnstyledButton, VisuallyHidden } from '@mantine/core'
 import { IconCheck, IconSelector } from '@tabler/icons-react'
 import type { ReactNode } from 'react'
 import { useT } from '../i18n'
@@ -36,10 +36,11 @@ export function ScopeSwitcher({ label, value, options, onChange, allLabel, withA
   return (
     <Menu position="bottom-start" width="target" withinPortal>
       <Menu.Target>
-        <UnstyledButton className="bnb-scope" aria-label={t('scope.current', { label, value: current })}>
+        {/* The visible words are the button's name (WCAG 2.5.3); the hidden colon reads "Site: Zürich". */}
+        <UnstyledButton className="bnb-scope">
           {icon && <span className="bnb-scope-icon" aria-hidden="true">{icon}</span>}
           <span className="bnb-scope-text">
-            <span className="bnb-scope-label">{label}</span>
+            <span className="bnb-scope-label">{label}</span><VisuallyHidden>:</VisuallyHidden>{' '}
             <span className="bnb-scope-value">{current}</span>
           </span>
           <IconSelector size={15} className="bnb-scope-caret" aria-hidden="true" />

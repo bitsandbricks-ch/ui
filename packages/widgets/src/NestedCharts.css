@@ -1,0 +1,53 @@
+/* NestedColumns and NestedBars. */
+.bnb-nested { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.bnb-nested-caption { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: var(--bnb-fs-xs, 12px); color: var(--bnb-muted); }
+.bnb-nested-key { display: inline-flex; align-items: center; gap: 6px; }
+.bnb-nested-swatch { width: 10px; height: 10px; border-radius: 3px; }
+.bnb-nested-max { margin-left: auto; color: var(--bnb-faint); font-variant-numeric: tabular-nums; }
+.bnb-nested-scroll { overflow-x: auto; }
+.bnb-nested-cols, .bnb-nested-labels, .bnb-nested-rows { list-style: none; margin: 0; padding: 0; }
+.bnb-nested-cols { display: flex; align-items: flex-end; gap: 4px; min-width: 100%; border-bottom: 1px solid var(--bnb-line); }
+.bnb-nested-col { position: relative; flex: 1; min-width: 0; height: 100%; outline-offset: 2px; }
+.bnb-nested-colfill { position: absolute; bottom: 0; left: var(--inset); right: var(--inset); border-radius: 3px 3px 0 0; }
+.bnb-nested-labels { display: flex; gap: 4px; min-width: 100%; margin-top: 4px; }
+.bnb-nested-labels li { flex: 1; min-width: 0; text-align: center; white-space: nowrap; font-size: 10px; color: var(--bnb-faint); }
+@media (min-width: 40em) {
+  .bnb-nested-cols, .bnb-nested-labels { gap: 6px; }
+  .bnb-nested-labels li { font-size: var(--bnb-fs-xs, 12px); }
+}
+
+.bnb-nested-tip {
+  position: absolute; z-index: 10; display: none; flex-direction: column; width: max-content; max-width: 16rem;
+  padding: 8px 12px; border: 1px solid var(--bnb-line); border-radius: 6px; background: var(--bnb-surface);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.18); font-size: var(--bnb-fs-xs, 12px); color: var(--bnb-muted);
+  font-variant-numeric: tabular-nums; pointer-events: none;
+}
+.bnb-nested-tip strong { color: var(--bnb-fg); font-weight: 500; }
+.bnb-nested-tip.start { top: 0; left: 0; }
+.bnb-nested-tip.end { top: 0; right: 0; }
+.bnb-nested-tip.row { right: 8px; bottom: 100%; margin-bottom: 4px; }
+.bnb-nested-col:hover .bnb-nested-tip, .bnb-nested-col:focus-visible .bnb-nested-tip,
+.bnb-nested-row:hover .bnb-nested-tip, .bnb-nested-row:focus-visible .bnb-nested-tip { display: flex; }
+
+.bnb-nested-rows { display: flex; flex-direction: column; gap: 4px; }
+.bnb-nested-row {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; margin: 0 -8px; padding: 8px;
+  border-radius: 6px; color: inherit; text-decoration: none;
+}
+a.bnb-nested-row:hover { background: var(--bnb-raised); }
+.bnb-nested-rowhead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
+.bnb-nested-rowlabel { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 500; }
+.bnb-nested-rowsub { flex-shrink: 0; font-size: var(--bnb-fs-xs, 12px); color: var(--bnb-muted); font-variant-numeric: tabular-nums; }
+.bnb-nested-rowplot { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.bnb-nested-track { position: relative; flex: 1; min-width: 0; height: 12px; }
+.bnb-nested-barfill { position: absolute; inset: 0 auto 0 0; border-radius: 0 4px 4px 0; }
+/* A gap in the surface colour around each part, so it stands out from the one behind it. */
+.bnb-nested-barfill + .bnb-nested-barfill { box-shadow: 0 0 0 2px var(--bnb-surface); }
+.bnb-nested-nums { flex-shrink: 0; width: 6rem; text-align: right; font-size: var(--bnb-fs-xs, 12px); color: var(--bnb-muted); font-variant-numeric: tabular-nums; }
+.bnb-nested-nums strong { color: var(--bnb-fg); }
+.bnb-nested-foot { margin: 0; font-size: var(--bnb-fs-xs, 12px); color: var(--bnb-faint); }
+@media (min-width: 40em) {
+  .bnb-nested-row { grid-template-columns: 13rem minmax(0, 1fr); align-items: center; gap: 12px; }
+  .bnb-nested-rowhead { display: block; }
+  .bnb-nested-rowhead > span { display: block; }
+}

@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Badge,
   Checkbox,
+  Chip,
   Combobox,
   createTheme,
   defaultVariantColorsResolver,
@@ -14,6 +15,7 @@ import {
   Select,
   Switch,
   TableScrollContainer,
+  Tabs,
   Tooltip,
   type CSSVariablesResolver,
   type MantineColorsTuple,
@@ -217,7 +219,18 @@ export function createBnbTheme({ accent, fonts = {}, overrides }: BnbThemeOption
         styles: { root: { fontWeight: 600, textTransform: 'none' } },
         vars: (_t, props) => ({ root: { '--badge-fz': BADGE_FZ[String(props.size ?? 'md')] ?? BADGE_FZ.md } }),
       }),
-      Tabs: { styles: { tab: { fontWeight: 550 } } },
+      // The active pill and a picked chip sit on the accent: their text follows the text-on-accent
+      // colour too (Mantine's default is white, 2.2:1 on a bright dark-theme accent).
+      Tabs: Tabs.extend({
+        styles: { tab: { fontWeight: 550 } },
+        // Mantine reads --tabs-text-color but leaves it out of its typed variables.
+        vars: (_t, props) => ({ root: (!props.color || props.color === 'accent' ? { '--tabs-text-color': 'var(--bnb-on-accent)' } : {}) as Record<string, string> }),
+      }),
+      Chip: Chip.extend({
+        vars: (_t, props) => ({
+          root: (!props.color || props.color === 'accent') && (!props.variant || props.variant === 'filled') ? { '--chip-color': 'var(--bnb-on-accent)' } : {},
+        }),
+      }),
       // Plain thumb: Mantine 8+ puts a dot in it.
       Switch: Switch.extend({ defaultProps: { withThumbIndicator: false } }),
       // The tick and the radio dot follow the text-on-accent colour, so a bright accent gets a dark tick.

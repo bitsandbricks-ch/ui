@@ -42,7 +42,7 @@ export function WidgetBody({ widget }: { widget: Widget }) {
           {widget.items.map((item, i) => (
             <li key={i} style={ROW}>
               <Group gap={8} wrap="nowrap">
-                <span className={`bnb-dot ${item.state}`} role="img" aria-label={item.state} title={item.state} />
+                <span className={`bnb-dot ${item.state}`} role="img" aria-label={t(`widgets.state.${item.state}`)} title={t(`widgets.state.${item.state}`)} />
                 <Text size="sm" style={{ flex: 1, minWidth: 0 }} truncate>
                   {item.label}
                 </Text>
