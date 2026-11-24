@@ -78,7 +78,27 @@ jobs:
           npm --version
           pnpm -r pack --pack-destination "$PACK_DIR"
           # tokens first: ui and widgets depend on it at the same dev version.
+          version=$(node -p 'require("./packages/ui/package.json").version')
           for name in tokens ui widgets; do
-            # verbose shows npm's "oidc" lines: whether the token exchange worked and why not.
-            npm publish "$PACK_DIR"/bitsandbricks-"$name"-*.tgz --access public --tag dev --loglevel verbose
+            # A re-run skips what an earlier attempt already published (a version is published once).
+            if npm view "@bitsandbricks/$name@$version" version >/dev/null 2>&1; then
+              echo "@bitsandbricks/$name@$version is published already"
+              continue
+            fi
+            # Up to three tries: signing (sigstore) and the registry fail now and then for a moment.
+            for try in 1 2 3; do
+              # verbose shows npm's "oidc" lines: whether the token exchange worked and why not.
+              if npm publish "$PACK_DIR"/bitsandbricks-"$name"-*.tgz --access public --tag dev --loglevel verbose 2>&1 | tee "$RUNNER_TEMP/publish.log"; [ "${PIPESTATUS[0]}" = 0 ]; then
+                break
+              fi
+              # The registry shows a new version only after a minute or two, but refuses it at once.
+              if grep -q 'cannot publish over' "$RUNNER_TEMP/publish.log"; then
+                echo "@bitsandbricks/$name@$version is published already"
+                break
+              fi
+              if [ "$try" = 3 ]; then exit 1; fi
+              # The publish may have gone through even though npm reported an error.
+              sleep 20
+              if npm view "@bitsandbricks/$name@$version" version >/dev/null 2>&1; then break; fi
+            done
           done
