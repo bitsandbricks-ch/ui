@@ -1,6 +1,7 @@
 import { Drawer, Kbd, Text } from '@mantine/core'
 import { useCallback, useState } from 'react'
 import { useT } from '../i18n'
+import { texts } from './KeysSheet.texts'
 import { keysOn, type KeyRow } from '../keys'
 
 export interface KeySection {
@@ -26,7 +27,7 @@ export function KeysSheet({ opened, onClose, everywhere = NO_KEYS, sections = NO
   /** A line at the bottom. */
   note?: string
 }) {
-  const { t } = useT()
+  const { t } = useT(texts)
   const [here, setHere] = useState<KeyRow[]>([])
   // Read when the sheet's body mounts, which is every time it opens: what is on screen then.
   const read = useCallback((body: HTMLDivElement | null) => {

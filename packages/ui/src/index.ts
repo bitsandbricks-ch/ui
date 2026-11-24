@@ -1,31 +1,7 @@
 // @bitsandbricks/ui: the React and Mantine pieces every BitsAndBricks app shares.
 // Import the styles once: import '@bitsandbricks/tokens/tokens.css' and '@bitsandbricks/ui/styles.css'.
+//
+// Everything a module in src/ exports is public: scripts/exports.mjs lists them all in
+// exports.gen.ts, so a new component or hook never edits this file.
 export { default as tokens } from '@bitsandbricks/tokens'
-export { BnbProvider } from './BnbProvider'
-export { accentScale, createBnbTheme, cssVariablesResolver, isCssAccent, resolveAccent, STATUS_COLORS, variantColorResolver, type Accent, type BnbThemeOptions, type StatusColor } from './theme'
-export { createColorSchemeManager, readColorScheme, type ColorSchemeOptions } from './colorScheme'
-export { createT, de, en, I18nProvider, interpolate, registerMessages, useT, type Locale, type Messages, type T, type Translate, type Vars } from './i18n'
-export { SearchParamsProvider, useSearchParamsAdapter, useWindowSearchParams, type SetSearchParams, type UseSearchParams } from './urlState'
-export { normalizeTone, STATE_TONE, toneColor, toneOf, type MaybeTone, type State, type Tone } from './status'
-export { toastDone, toastFailed, toastInfo } from './toast'
-export { dialogOpen, isTyping, keysOn, useKeys, useModKey, type KeyMap, type KeyRow, type UseKeysOptions } from './keys'
-export { matchScore, rankItems, rememberRecent, type Rankable } from './rank'
-export { useFilters, type FilterDef } from './useFilters'
-export * from './plugin'
-
-export { AppShell, SideNav, type NavGroup, type NavItem } from './components/AppShell'
-export { ConfirmButton, ConfirmIcon, ConfirmModal } from './components/Confirm'
-export { InPanel, useInPanel } from './components/context'
-export { DataTable, type DataColumn, type DataTableProps } from './components/DataTable'
-export { Card, EmptyState, ErrorBanner, LoadingState } from './components/feedback'
-export { ActiveFilterChips, activeFilters, FilterBar, FilterButton, type FilterGroup, type FilterOption } from './components/FilterBar'
-export { PageHead } from './components/PageHead'
-export { pageCount, Pager, type Page, type PagerState } from './components/Pager'
-export { JumpBox, type JumpItem } from './components/JumpBox'
-export { KeysSheet, type KeySection } from './components/KeysSheet'
-export { LinkContext, PanelField, PanelSection, SidePanel } from './components/SidePanel'
-export { Sparkline, sparkPoints } from './components/Sparkline'
-export { StatGrid, StatTile, type StatChange } from './components/StatTile'
-export { StatusBadge, StatusBit } from './components/StatusBadge'
-export { PageTabs, type TabDef } from './components/Tabs'
-export { ThemeSwitch, ThemeToggle } from './components/ThemeSwitch'
+export * from './exports.gen'

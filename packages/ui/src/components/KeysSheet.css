@@ -1,0 +1,8 @@
+/* Keys sheet (?). Built into @bitsandbricks/ui/styles.css after the shared styles. */
+.bnb-keys-section + .bnb-keys-section { margin-top: 20px; }
+.bnb-keys-title { margin: 0 0 8px; font-size: var(--bnb-fs-sm); font-weight: 650; color: var(--bnb-muted); }
+.bnb-keys-list { margin: 0; display: grid; gap: 6px; }
+.bnb-keys-row { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: baseline; }
+.bnb-keys-row dt { margin: 0; }
+.bnb-keys-row dd { margin: 0; }
+.bnb-keys-row[data-off] dd, .bnb-keys-off { color: var(--bnb-muted); }

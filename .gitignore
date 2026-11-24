@@ -4,3 +4,5 @@ storybook-static/
 coverage/
 *.log
 .DS_Store
+# Written by scripts/exports.mjs on install, lint, typecheck, test, build and Storybook.
+packages/*/src/exports.gen.ts
