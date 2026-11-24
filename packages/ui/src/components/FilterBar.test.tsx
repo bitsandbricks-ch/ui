@@ -54,4 +54,17 @@ describe('FilterBar', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Remove Tier: Gold' }))
     expect(onChange).toHaveBeenCalledWith('')
   })
+
+  it('moves between filter chips with the arrow keys, with one tab stop', async () => {
+    renderWithApp(<List layout="panel" />, '/list?state=down')
+    fireEvent.click(screen.getByRole('button', { name: /Filter/ }))
+    const all = await screen.findByRole('radio', { name: /All/ })
+    const down = screen.getByRole('radio', { name: /Down/ })
+    expect([all.tabIndex, down.tabIndex]).toEqual([-1, 0])
+    fireEvent.keyDown(down, { key: 'ArrowRight' })
+    expect(screen.getByRole('radio', { name: /All/ })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('radio', { name: /All/ })).toHaveFocus()
+    fireEvent.keyDown(screen.getByRole('radio', { name: /All/ }), { key: 'End' })
+    expect(screen.getByRole('radio', { name: /Down/ })).toHaveAttribute('aria-checked', 'true')
+  })
 })
