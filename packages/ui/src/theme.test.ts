@@ -6,6 +6,15 @@ import { accentScale, createBnbTheme, cssVariablesResolver, resolveAccent, varia
 describe('createBnbTheme', () => {
   const theme = mergeMantineTheme(DEFAULT_THEME, createBnbTheme({ accent: { light: '#7441e0', dark: '#9f7cf8' } }))
 
+  it('puts the text-on-accent colour on active pills and picked chips', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const vars = (name: string, props: object) => (theme.components[name].vars as any)(theme, props).root
+    expect(vars('Tabs', {})).toEqual({ '--tabs-text-color': 'var(--bnb-on-accent)' })
+    expect(vars('Chip', {})).toEqual({ '--chip-color': 'var(--bnb-on-accent)' })
+    expect(vars('Chip', { variant: 'light' })).toEqual({})
+    expect(vars('Tabs', { color: 'err' })).toEqual({})
+  })
+
   it('makes the accent the primary colour, with ten shades around it', () => {
     expect(theme.primaryColor).toBe('accent')
     expect(theme.colors.accent).toHaveLength(10)
