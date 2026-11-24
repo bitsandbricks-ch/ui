@@ -26,7 +26,7 @@ function Tokens() {
       </section>
       <section>
         <h2>Radii</h2>
-        <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
           {Object.entries(tokens.radius).map(([k, v]) => (
             <div key={k} style={{ textAlign: 'center' }}>
               <div style={{ width: 64, height: 48, borderRadius: v, background: 'var(--bnb-surface)', border: '1px solid var(--bnb-line)' }} />

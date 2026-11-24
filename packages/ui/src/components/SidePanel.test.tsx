@@ -14,6 +14,10 @@ describe('SidePanel', () => {
     expect(await screen.findByRole('dialog', { name: 'sw-12' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Open' })).toHaveAttribute('href', '/switches/12')
     expect(screen.getByText('Ports')).toBeInTheDocument()
+    // The panel's look sits on the content, not on the wrapper that places it on the right.
+    const dialog = screen.getByRole('dialog', { name: 'sw-12' })
+    expect(dialog).toHaveClass('bnb-side')
+    expect(dialog.parentElement).not.toHaveClass('bnb-side')
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(close).toHaveBeenCalled()
   })

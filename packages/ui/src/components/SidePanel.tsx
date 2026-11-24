@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Drawer, Group, useMatches } from '@mantine/core'
 import { IconArrowRight, IconX } from '@tabler/icons-react'
-import { createContext, useContext, type ElementType, type ReactNode } from 'react'
+import { createContext, useContext, type CSSProperties, type ElementType, type ReactNode } from 'react'
 import { useT } from '../i18n'
 
 /** The app's link component (React Router's Link takes `to`); a plain <a href> without one. */
@@ -37,9 +37,12 @@ export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, ic
       : <Button component="a" href={href} size="xs" rightSection={<IconArrowRight size={14} aria-hidden="true" />}>{openLabel ?? t('common.open')}</Button>
     : null
   return (
-    <Drawer.Root opened={opened} onClose={onClose} position="right" size={size} padding={0}>
+    // The class goes on the content only: Drawer.Content puts its className on the wrapper too,
+    // and the column layout then dropped the panel into the bottom left corner.
+    <Drawer.Root opened={opened} onClose={onClose} position="right" size={size} padding={0}
+      classNames={{ content: 'bnb-side' }} scrollAreaComponent={SideScroll}>
       <Drawer.Overlay backgroundOpacity={0.18} />
-      <Drawer.Content className="bnb-side">
+      <Drawer.Content>
         <div className="bnb-side-head">
           {icon && <div className="bnb-side-icon">{icon}</div>}
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -60,6 +63,11 @@ export function SidePanel({ opened = true, onClose, title, eyebrow, subtitle, ic
       </Drawer.Content>
     </Drawer.Root>
   )
+}
+
+/** The panel's column: a fixed head, a body that scrolls and a fixed foot. */
+function SideScroll({ children, style }: { children?: ReactNode; style?: CSSProperties }) {
+  return <div className="bnb-side-column" style={style}>{children}</div>
 }
 
 /** A block of a side panel with an optional small heading and something on its right. */

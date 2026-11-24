@@ -5,14 +5,21 @@ import '../packages/ui/src/styles.css'
 import '../packages/widgets/src/styles.css'
 import { useMantineColorScheme } from '@mantine/core'
 import type { Decorator, Preview } from '@storybook/react-vite'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { accents, BnbProvider, createBnbTheme } from '../packages/ui/src'
 
 const themes = Object.fromEntries(Object.entries(accents).map(([name, accent]) => [name, createBnbTheme({ accent })]))
 
+// Applies the toolbar's Theme only when it changes. setColorScheme is a new function on every
+// render, so depending on it reset the scheme after each click on a story's own theme switch.
 function Scheme({ scheme, children }: { scheme: 'light' | 'dark'; children: ReactNode }) {
   const { setColorScheme } = useMantineColorScheme()
-  useEffect(() => setColorScheme(scheme), [scheme, setColorScheme])
+  const applied = useRef<string | null>(null)
+  useEffect(() => {
+    if (applied.current === scheme) return
+    applied.current = scheme
+    setColorScheme(scheme)
+  }, [scheme, setColorScheme])
   return <>{children}</>
 }
 
