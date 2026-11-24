@@ -1,0 +1,7 @@
+/* Error details and the offline banner. */
+.bnb-error-details { margin: 8px 0 0; padding: 8px 10px; max-height: 240px; overflow: auto; white-space: pre-wrap; word-break: break-word;
+  font-family: var(--bnb-font-mono); font-size: var(--bnb-fs-xs); background: var(--bnb-surface); border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-sm); }
+.bnb-offline { display: flex; align-items: center; gap: 8px; padding: 6px 12px; color: var(--bnb-err); background: color-mix(in srgb, var(--bnb-err) 10%, var(--bnb-surface));
+  border-bottom: 1px solid color-mix(in srgb, var(--bnb-err) 30%, var(--bnb-line)); font-size: var(--bnb-fs-sm); }
+.bnb-offline-text { flex: 1; min-width: 0; }
+.bnb-offline-when { color: var(--bnb-muted); }
