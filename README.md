@@ -4,13 +4,16 @@ The tokens, React components and dashboard widgets the BitsAndBricks apps share,
 Floorbit, Labdex, Seatbit and Mason read as siblings: one set of neutrals, status colours, radii,
 type and the dot grid, and each app its own accent.
 
+**Accents and themes live in the app.** The packages hold no app's colours: each app keeps its
+accent (and its fonts) in its own code and passes them in, as shown below.
+
 | Package | What |
 | --- | --- |
 | [`@bitsandbricks/tokens`](packages/tokens) | CSS variables (`--bnb-*`), light and dark, plus the same values as JSON |
 | [`@bitsandbricks/ui`](packages/ui) | React 19 and Mantine 9: `createBnbTheme`, page head, stat tile, data table with pager and filters, empty and error states, confirm dialogs, side panel, status badges, app shell, theme switch, toasts, and the shared plugin types |
 | [`@bitsandbricks/widgets`](packages/widgets) | Stat, gauge, graph, bars, columns, pie, histogram, rows and time chart, drawn from plugin widget data in plain SVG |
 
-Storybook shows every component in each app's accent, light and dark: TODO: the GitHub Pages link
+Storybook shows every component with sample accents, light and dark: TODO: the GitHub Pages link
 once Pages is on for this repo.
 
 ## Install
@@ -37,10 +40,14 @@ import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 import '@bitsandbricks/tokens/tokens.css'
 import '@bitsandbricks/ui/styles.css'
-import { accents, BnbProvider, createBnbTheme, createColorSchemeManager } from '@bitsandbricks/ui'
+import { BnbProvider, createBnbTheme, createColorSchemeManager } from '@bitsandbricks/ui'
 import { Link, useSearchParams } from 'react-router-dom'
 
-const theme = createBnbTheme({ accent: accents.hubra })
+// The app's own accent and fonts, kept in the app.
+const theme = createBnbTheme({
+  accent: { light: '#7441e0', dark: '#9f7cf8' },
+  fonts: { sans: '"Hanken Grotesk", sans-serif', headings: '"Bricolage Grotesque", sans-serif' },
+})
 
 <BnbProvider theme={theme} locale="de" translate={i18n.t} link={Link} useSearchParams={useSearchParams}
   colorSchemeManager={createColorSchemeManager({ cookie: 'hubra_theme', parentDomain: true })}>
@@ -59,11 +66,19 @@ const theme = createBnbTheme({ accent: accents.hubra })
 
 ## Vue, Astro and Tailwind apps
 
-Load the tokens and the app's accent, then use the variables:
+Load the tokens, set the app's accent in the app's own stylesheet, then use the variables:
 
 ```css
 @import '@bitsandbricks/tokens/tokens.css';
-@import '@bitsandbricks/tokens/accents/labdex.css';   /* or your own accentCss() */
+
+/* The app's accent, kept in the app. accentCss({ light, dark }) from @bitsandbricks/tokens writes
+   this block, with the text colour on the accent worked out per theme. */
+:root {
+  --bnb-accent-light: #b85a0a;
+  --bnb-accent-dark: #f59a23;
+  --bnb-on-accent-light: #ffffff;
+  --bnb-on-accent-dark: #0f0f11;
+}
 
 .card { background: var(--bnb-surface); border: 1px solid var(--bnb-line); border-radius: var(--bnb-radius-lg); }
 .button-primary { background: var(--bnb-accent); color: var(--bnb-on-accent); }

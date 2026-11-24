@@ -8,7 +8,7 @@ import { SearchParamsProvider, type UseSearchParams } from './urlState'
 
 /** Everything the components need, once at the top of the app:
  *
- *    <BnbProvider theme={createBnbTheme({ accent: accents.hubra })} locale="de"
+ *    <BnbProvider theme={createBnbTheme({ accent: { light: '#7441e0', dark: '#9f7cf8' } })} locale="de"
  *      translate={i18n.t} link={Link} useSearchParams={useSearchParams}>
  */
 export function BnbProvider({ theme, locale = 'en', translate, messages, link, useSearchParams, colorSchemeManager,

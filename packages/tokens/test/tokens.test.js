@@ -48,11 +48,14 @@ describe('tokens', () => {
     })
   }
 
-  it('gives every app accent a light shade readable on white', () => {
-    for (const [name, accent] of Object.entries(tokens.accents)) {
-      expect(contrastRatio(accent.light, '#ffffff'), name).toBeGreaterThanOrEqual(4.5)
-      expect(contrastRatio(accent.dark, tokens.neutrals.dark.surface), name).toBeGreaterThanOrEqual(4.5)
-    }
+  it('keeps the default accent readable in both themes', () => {
+    const accent = tokens.defaultAccent
+    expect(contrastRatio(accent.light, '#ffffff')).toBeGreaterThanOrEqual(4.5)
+    expect(contrastRatio(accent.dark, tokens.neutrals.dark.surface)).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('carries no app accents: they live in the apps', () => {
+    expect(tokens).not.toHaveProperty('accents')
   })
 
   it('keeps the grey scales at ten steps', () => {
@@ -82,7 +85,7 @@ describe('css', () => {
   })
 
   it('writes an app accent with its text colours', () => {
-    expect(accentCss(tokens.accents.labdex)).toBe(`:root {
+    expect(accentCss({ light: '#b85a0a', dark: '#f59a23' })).toBe(`:root {
   --bnb-accent-light: #b85a0a;
   --bnb-accent-dark: #f59a23;
   --bnb-on-accent-light: #ffffff;

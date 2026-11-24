@@ -90,8 +90,8 @@ ${block(schemeVars('dark'), '    ')}
 }
 
 /**
- * The CSS an app adds to set its accent: `accentCss(accents.labdex)`. Text on the fill is worked
- * out per theme. @param {{ light: string, dark: string }} accent @param {string} [selector]
+ * The CSS an app adds to set its own accent: `accentCss({ light: '#b85a0a', dark: '#f59a23' })`.
+ * Text on the fill is worked out per theme. @param {{ light: string, dark: string }} accent @param {string} [selector]
  */
 export function accentCss(accent, selector = ':root') {
   return `${selector} {
