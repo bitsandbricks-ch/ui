@@ -189,10 +189,11 @@ function FilterMenus({ groups }: { groups: FilterGroup[] }) {
         return (
           <Menu key={g.key} position="bottom-start">
             <Menu.Target>
+              {/* The name holds every visible word, the count too (WCAG 2.5.3); the space keeps "All 64" two words. */}
               <Button variant={active ? 'light' : 'default'} rightSection={<IconChevronDown size={14} />}
-                aria-label={`${g.label}: ${optionText(current)}`}>
+                aria-label={`${g.label}: ${optionText(current)}${current.count != null ? `, ${current.count}` : ''}`}>
                 <span className="bnb-filter-key">{g.label}:</span>&nbsp;{current.label}
-                {current.count != null && <span className="bnb-count">{current.count}</span>}
+                {current.count != null && <>{' '}<span className="bnb-count">{current.count}</span></>}
               </Button>
             </Menu.Target>
             <Menu.Dropdown>
