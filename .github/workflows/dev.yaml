@@ -57,7 +57,7 @@ jobs:
       - name: Set the dev version
         run: node scripts/dev-version.mjs "$(git rev-parse HEAD)" "$(git log -1 --format=%cI)"
       # What npm's trusted publisher is matched against. If the publish fails with ENEEDAUTH, compare
-      # these with the publisher on npmjs.com (workflow dev.yml, environment dev). Claims only, never
+      # these with the publisher on npmjs.com (workflow dev.yaml, environment dev). Claims only, never
       # the token itself.
       - name: Show the OIDC claims
         run: |
