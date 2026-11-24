@@ -9,6 +9,10 @@ CI takes a screenshot of every Storybook story in three ways and compares it wit
 | `dark` | 1280 × 800 | dark |
 | `phone` | 390 × 844 | light |
 
+In `light` and `dark` each story also runs [axe](https://github.com/dequelabs/axe-core) in the
+browser (WCAG 2.2 A and AA plus best practices); any finding fails the test with the rule and the
+element. Unlike the Vitest axe tests, this one measures colour contrast.
+
 The pictures show the whole page, with the sample accent `labdex`, English texts and the clock held
 at 16 March 2026, 10:30 in Zurich. Any changed pixel fails the `Screenshots` job and with it
 `CI passed`.
