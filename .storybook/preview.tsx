@@ -6,9 +6,12 @@ import '../packages/widgets/src/styles.css'
 import { useMantineColorScheme } from '@mantine/core'
 import type { Decorator, Preview } from '@storybook/react-vite'
 import { useEffect, type ReactNode } from 'react'
-import { accents, BnbProvider, createBnbTheme } from '../packages/ui/src'
+import { BnbProvider, createBnbTheme, tokens } from '../packages/ui/src'
+import { sampleAccents } from './accents'
 
-const themes = Object.fromEntries(Object.entries(accents).map(([name, accent]) => [name, createBnbTheme({ accent })]))
+const themes = Object.fromEntries(
+  Object.entries(sampleAccents).map(([name, accent]) => [name, createBnbTheme({ accent: accent ?? tokens.defaultAccent })]),
+)
 
 function Scheme({ scheme, children }: { scheme: 'light' | 'dark'; children: ReactNode }) {
   const { setColorScheme } = useMantineColorScheme()
@@ -34,8 +37,8 @@ const preview: Preview = {
   parameters: { layout: 'fullscreen', controls: { expanded: true } },
   globalTypes: {
     accent: {
-      description: 'App accent',
-      toolbar: { title: 'Accent', icon: 'paintbrush', items: Object.keys(accents), dynamicTitle: true },
+      description: 'Sample accent (the real ones live in the apps)',
+      toolbar: { title: 'Accent', icon: 'paintbrush', items: Object.keys(sampleAccents), dynamicTitle: true },
     },
     scheme: {
       description: 'Light or dark',

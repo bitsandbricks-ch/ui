@@ -30,6 +30,8 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook
 
 - **Tokens:** edit `packages/tokens/src/tokens.js` only; `dist/` is generated. A colour change keeps
   the contrast tests green (`packages/tokens/test`). Status colours are never an app's accent.
+- **Accents and themes live in the app:** no app's accent, fonts or theme in a package. Storybook
+  uses sample accents (`.storybook/accents.ts`), which are not exported.
 - **Nothing app-specific:** no app's API client, routes, texts or names in a package. Apps pass
   what differs: the accent (`createBnbTheme({ accent })`), their router (`link`, `useSearchParams`),
   their translate function.

@@ -24,9 +24,9 @@ import tokens, { INK, mix, readableOn, textOn, WHITE } from '@bitsandbricks/toke
 
 // The Mantine theme every React app shares, on top of @bitsandbricks/tokens. Built from Hubra's
 // packages/ui theme (contrast-aware fills) and Floorbit's theme.ts (colours as CSS variables, so
-// light and dark switch without a rebuild). An app sets only its accent:
+// light and dark switch without a rebuild). An app sets only its accent, which lives in the app:
 //
-//   <BnbProvider theme={createBnbTheme({ accent: accents.labdex })}>
+//   <BnbProvider theme={createBnbTheme({ accent: { light: '#b85a0a', dark: '#f59a23' } })}>
 
 export type Accent = string | { light: string; dark: string }
 

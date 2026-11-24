@@ -21,8 +21,7 @@
       "default": "./dist/index.js"
     },
     "./tokens.css": "./dist/tokens.css",
-    "./tokens.json": "./dist/tokens.json",
-    "./accents/*.css": "./dist/accents/*.css"
+    "./tokens.json": "./dist/tokens.json"
   },
   "sideEffects": [
     "*.css"
