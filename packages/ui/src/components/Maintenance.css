@@ -1,0 +1,8 @@
+/* Planned or ongoing maintenance: a strip above the page, or a cover over the whole app. */
+.bnb-maintenance-banner { display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+  background: var(--bnb-raised); border-bottom: 1px solid var(--bnb-line); color: var(--bnb-fg); }
+.bnb-maintenance-banner.is-now { background: color-mix(in srgb, var(--bnb-warn) 14%, var(--bnb-surface));
+  border-bottom-color: color-mix(in srgb, var(--bnb-warn) 40%, var(--bnb-line)); }
+.bnb-maintenance-icon { flex: none; color: var(--bnb-warn); }
+.bnb-maintenance-screen { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center;
+  padding: var(--mantine-spacing-md); background: var(--bnb-bg); overflow: auto; }
