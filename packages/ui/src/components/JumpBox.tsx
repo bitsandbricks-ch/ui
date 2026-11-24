@@ -2,6 +2,7 @@ import { Kbd, Loader, Modal, TextInput } from '@mantine/core'
 import { IconSearch } from '@tabler/icons-react'
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { useT } from '../i18n'
+import { texts } from './JumpBox.texts'
 import { rankItems } from '../rank'
 
 export interface JumpItem {
@@ -39,7 +40,7 @@ export function JumpBox({ opened, onClose, items, recent = [], kinds = {}, onNav
   limit?: number
   placeholder?: string
 }) {
-  const { t } = useT()
+  const { t } = useT(texts)
   const [query, setQuery] = useState('')
   const [at, setAt] = useState(0)
   const input = useRef<HTMLInputElement>(null)

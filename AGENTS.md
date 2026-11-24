@@ -35,8 +35,21 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook
 - **Nothing app-specific:** no app's API client, routes, texts or names in a package. Apps pass
   what differs: the accent (`createBnbTheme({ accent })`), their router (`link`, `useSearchParams`),
   their translate function.
-- **Texts:** a component's words come from `useT()`, in English and German (`packages/ui/src/i18n.tsx`,
-  Swiss spelling, no ß). Keys follow Floorbit's names so Floorbit's i18next texts apply as they are.
+- **Texts:** a component's words come from `useT()`, in English and German (Swiss spelling, no ß).
+  Keys follow Floorbit's names so Floorbit's i18next texts apply as they are. A new component keeps
+  its texts next to it in `Name.texts.ts` (`export const texts = defineTexts({ en, de })`) and reads
+  them with `useT(texts)`. Only texts several components share (`common.*`, `state.*`) go into
+  `packages/ui/src/i18n.tsx`.
+- **A component pull request touches only its own files,** so parallel pull requests don't conflict:
+  - texts in `Name.texts.ts` (above);
+  - CSS in `Name.css` next to the component. The build appends every such file to
+    `dist/styles.css` after `src/styles.css`, and Storybook loads them the same way. Only shared
+    rules (Mantine controls, tokens) go into `src/styles.css`;
+  - exports: don't edit `packages/ui/src/index.ts`. `scripts/exports.mjs` writes `exports.gen.ts`
+    (not committed) with an `export *` for every module in `src/`, so whatever a module exports is
+    public. Keep helpers unexported. A folder with its own `index.ts` (a subpath entry such as
+    `src/dates` for `@bitsandbricks/ui/dates`, which needs an optional peer) is left out. `pnpm install` and every check write it; after adding a file
+    while Storybook or an editor is open, run `pnpm exports`.
 - **Every component** has a unit test and a story. Stories are the visual reference on GitHub Pages.
 - **Changesets:** a change to a package adds one with `pnpm changeset`. Never edit a version or a
   `CHANGELOG.md` by hand, never push a tag; Mike releases.

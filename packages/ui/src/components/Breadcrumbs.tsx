@@ -1,6 +1,7 @@
 import { IconChevronRight } from '@tabler/icons-react'
 import { createElement, Fragment, useContext, type ReactNode } from 'react'
 import { useT } from '../i18n'
+import { texts } from './Breadcrumbs.texts'
 import { LinkContext } from './SidePanel'
 
 export interface Crumb {
@@ -12,7 +13,7 @@ export interface Crumb {
 /** Where you are: Section › Page › the item. The last crumb is the page shown now and never a
  *  link. Long names are cut at the end, so the bar keeps one line. Fits AppShell's `title`. */
 export function Breadcrumbs({ items }: { items: Crumb[] }) {
-  const { t } = useT()
+  const { t } = useT(texts)
   const Link = useContext(LinkContext)
   return (
     <nav className="bnb-crumbs" aria-label={t('nav.breadcrumbs')}>

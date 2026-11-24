@@ -2,6 +2,7 @@ import { Menu, UnstyledButton } from '@mantine/core'
 import { IconCheck, IconSelector } from '@tabler/icons-react'
 import type { ReactNode } from 'react'
 import { useT } from '../i18n'
+import { texts } from './ScopeSwitcher.texts'
 
 export interface ScopeOption {
   value: string
@@ -25,7 +26,7 @@ export function ScopeSwitcher({ label, value, options, onChange, allLabel, withA
   withAll?: boolean
   icon?: ReactNode
 }) {
-  const { t } = useT()
+  const { t } = useT(texts)
   if (options.length < 2) return null
   const all = allLabel ?? t('scope.all')
   // A value that is no longer offered (a deleted site) shows as all, or as the first option.

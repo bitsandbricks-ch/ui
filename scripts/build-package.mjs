@@ -6,17 +6,29 @@ import { dirname, join, relative, resolve } from 'node:path'
 const root = process.cwd()
 const dist = join(root, 'dist')
 rmSync(dist, { recursive: true, force: true })
+execFileSync(process.execPath, [join(import.meta.dirname, 'exports.mjs')], { stdio: 'inherit' })
 const tsc = join(import.meta.dirname, '../node_modules/typescript/bin/tsc')
 execFileSync(process.execPath, [tsc, '-p', join(root, 'tsconfig.build.json')], { stdio: 'inherit' })
 
-function copyCss(dir) {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+// src/styles.css is the package's one stylesheet. A component keeps its own CSS next to it
+// (`Name.css`); those files are appended to dist/styles.css after the shared styles, sorted by
+// path, so adding a component never edits a shared stylesheet. A package without src/styles.css
+// (tokens) has its CSS copied as it is.
+const src = join(root, 'src')
+function cssFiles(dir) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name)
-    if (entry.isDirectory()) copyCss(path)
-    else if (entry.name.endsWith('.css')) cpSync(path, join(dist, relative(join(root, 'src'), path)))
-  }
+    if (entry.isDirectory()) return cssFiles(path)
+    return entry.name.endsWith('.css') ? [relative(src, path).replace(/\\/g, '/')] : []
+  })
 }
-copyCss(join(root, 'src'))
+const css = cssFiles(src).sort((a, b) => a.localeCompare(b, 'en'))
+if (css.includes('styles.css')) {
+  const parts = ['styles.css', ...css.filter((file) => file !== 'styles.css')]
+  writeFileSync(join(dist, 'styles.css'), parts.map((file) => readFileSync(join(src, file), 'utf8').trimEnd() + '\n').join('\n'))
+} else {
+  for (const file of css) cpSync(join(src, file), join(dist, file))
+}
 
 // tsc keeps import paths as written ('./theme'); Node's ESM loader (Vitest in an app, SSR) needs
 // the file: './theme.js', or './kinds/index.js' for a folder.

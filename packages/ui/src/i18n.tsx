@@ -3,6 +3,10 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react'
 // The package's own texts, in English and German. An app with i18next passes its `t` to
 // BnbProvider: a key the app knows wins (Floorbit's keys are the same), anything else falls back
 // to these. Plurals follow i18next: `key_one` and `key_other` with a `count`.
+//
+// The lists below are the shared texts. A new component keeps its own texts next to it, in
+// `Name.texts.ts` with defineTexts, and reads them with `useT(texts)`, so adding a component never
+// touches this file (see AGENTS.md).
 
 export type Messages = Record<string, string>
 export type Vars = Record<string, string | number | undefined>
@@ -71,21 +75,7 @@ export const en: Messages = {
   'shell.menu': 'Menu',
   'shell.nav': 'Main',
   'shell.skip': 'Skip to content',
-  'nav.breadcrumbs': 'Where you are',
   'nav.statusLine': 'Status',
-  'scope.all': 'All',
-  'scope.current': '{{label}}: {{value}}',
-  'jump.label': 'Jump to',
-  'jump.placeholder': 'Jump to a page or run a command',
-  'jump.none': 'Nothing matches',
-  'jump.recent': 'Recent',
-  'jump.pick': 'pick',
-  'jump.go': 'go',
-  'jump.close': 'close',
-  'keys.title': 'Keys',
-  'keys.here': 'On this page',
-  'keys.everywhere': 'Everywhere',
-  'keys.notNow': '(not now)',
   'keys.none': 'No keys here.',
 }
 
@@ -152,25 +142,22 @@ export const de: Messages = {
   'shell.menu': 'Menü',
   'shell.nav': 'Hauptmenü',
   'shell.skip': 'Zum Inhalt springen',
-  'nav.breadcrumbs': 'Wo du bist',
   'nav.statusLine': 'Status',
-  'scope.all': 'Alle',
-  'scope.current': '{{label}}: {{value}}',
-  'jump.label': 'Springen zu',
-  'jump.placeholder': 'Zu einer Seite springen oder einen Befehl ausführen',
-  'jump.none': 'Nichts passt',
-  'jump.recent': 'Zuletzt',
-  'jump.pick': 'wählen',
-  'jump.go': 'los',
-  'jump.close': 'schliessen',
-  'keys.title': 'Tasten',
-  'keys.here': 'Auf dieser Seite',
-  'keys.everywhere': 'Überall',
-  'keys.notNow': '(gerade nicht)',
   'keys.none': 'Hier gibt es keine Tasten.',
 }
 
 const BUILT_IN: Record<Locale, Messages> = { en: { ...en }, de: { ...de } }
+
+/** A component's own texts, in every language. */
+export interface Texts { en: Messages; de: Messages }
+
+/**
+ * A component's own texts, kept next to it in `Name.texts.ts`. TypeScript fails when a key is
+ * missing in one language. Pass the result to `useT(texts)`.
+ */
+export function defineTexts<K extends string>(texts: { en: Record<K, string>; de: Record<K, string> }): Texts {
+  return texts
+}
 
 /** Adds a package's own texts (the widgets do this on import). App texts still win. */
 export function registerMessages(locale: Locale, messages: Messages) {
@@ -185,10 +172,13 @@ export function interpolate(text: string, vars: Vars = {}) {
   return text.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, name: string) => String(vars[name] ?? ''))
 }
 
-/** A `t` over built-in texts in `locale`, the app's own `translate` first, then `messages`. */
-export function createT(locale: Locale = 'en', translate?: Translate, messages: Messages = {}) {
+/**
+ * A `t` over built-in texts in `locale`: the app's own `translate` first, then `messages`, then a
+ * component's own `texts`, then the shared texts.
+ */
+export function createT(locale: Locale = 'en', translate?: Translate, messages: Messages = {}, texts?: Texts) {
   const plural = new Intl.PluralRules(locale)
-  const lookup = (key: string) => messages[key] ?? BUILT_IN[locale][key]
+  const lookup = (key: string) => messages[key] ?? texts?.[locale][key] ?? BUILT_IN[locale][key]
   return (key: string, vars?: Vars): string => {
     const fromApp = translate?.(key, vars)
     if (fromApp !== undefined && fromApp !== key) return fromApp
@@ -197,7 +187,7 @@ export function createT(locale: Locale = 'en', translate?: Translate, messages: 
       const form = plural.select(Number(vars.count))
       text = lookup(`${key}_${form}`) ?? lookup(`${key}_other`) ?? text
     }
-    return interpolate(text ?? BUILT_IN.en[key] ?? key, vars)
+    return interpolate(text ?? texts?.en[key] ?? BUILT_IN.en[key] ?? key, vars)
   }
 }
 
@@ -206,6 +196,8 @@ export type T = ReturnType<typeof createT>
 interface I18n {
   t: T
   locale: Locale
+  translate?: Translate
+  messages?: Messages
 }
 
 const I18nContext = createContext<I18n>({ t: createT('en'), locale: 'en' })
@@ -216,12 +208,16 @@ export function I18nProvider({ locale = 'en', translate, messages, children }: {
   messages?: Messages
   children: ReactNode
 }) {
-  const value = useMemo(() => ({ t: createT(locale, translate, messages), locale }), [locale, translate, messages])
+  const value = useMemo(() => ({ t: createT(locale, translate, messages), locale, translate, messages }), [locale, translate, messages])
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
 }
 
-/** The package's texts in the app's language. Shaped like react-i18next's hook. */
-export function useT() {
-  const { t, locale } = useContext(I18nContext)
+/**
+ * The package's texts in the app's language. Shaped like react-i18next's hook. Pass a component's
+ * own `texts` (from defineTexts) to read those too.
+ */
+export function useT(texts?: Texts) {
+  const { t: shared, locale, translate, messages } = useContext(I18nContext)
+  const t = useMemo(() => (texts ? createT(locale, translate, messages, texts) : shared), [texts, shared, locale, translate, messages])
   return { t, locale, i18n: { language: locale } }
 }

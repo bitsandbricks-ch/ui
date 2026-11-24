@@ -1,0 +1,8 @@
+/* Status line. Built into @bitsandbricks/ui/styles.css after the shared styles. */
+.bnb-status-line { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; }
+.bnb-status-item { display: inline-flex; align-items: center; gap: 6px; color: var(--bnb-muted); text-decoration: none; }
+a.bnb-status-item:hover { color: var(--bnb-fg); }
+.bnb-status-end { margin-left: auto; display: inline-flex; align-items: center; gap: 12px; }
+@media (max-width: 48em) {
+  .bnb-status-item.is-phone-hidden { display: none; }
+}
