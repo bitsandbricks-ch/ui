@@ -72,6 +72,35 @@ const theme = createBnbTheme({
 - `theme-script.js` (`@bitsandbricks/ui/theme-script.js`) paints the saved light or dark theme
   before the app loads; serve it as a file and load it in `<head>`.
 
+Widgets bring their own stylesheet: with `@bitsandbricks/widgets`, also import
+`@bitsandbricks/widgets/styles.css`.
+
+### Extra entries with optional peers
+
+A few components need a library most apps don't. They live on their own entry, so the main
+`@bitsandbricks/ui` import never pulls that library in. The library is an optional peer
+dependency: install it only in an app that imports the entry.
+
+| Import from | What | Install too | Styles |
+| --- | --- | --- | --- |
+| `@bitsandbricks/ui/dates` | `DateTimeField` and the date helpers | `@mantine/dates` `dayjs` | `@mantine/dates/styles.css` |
+| `@bitsandbricks/ui/spotlight` | `CommandPalette` (ctrl+k) | `@mantine/spotlight` | `@mantine/spotlight/styles.css` |
+| `@bitsandbricks/ui/qr` | `QrCode`, `qrMatrix` | `qrcode-generator` | none |
+
+```sh
+pnpm add @mantine/dates dayjs              # for @bitsandbricks/ui/dates
+pnpm add @mantine/spotlight                # for @bitsandbricks/ui/spotlight
+pnpm add qrcode-generator                  # for @bitsandbricks/ui/qr
+```
+
+```tsx
+import '@mantine/dates/styles.css'
+import { DateTimeField } from '@bitsandbricks/ui/dates'
+```
+
+Keep the Mantine add-ons on the same version as `@mantine/core`. Without the peer installed, the
+app's build fails on that entry's import with a missing module; the rest of the package works.
+
 ## Vue, Astro and Tailwind apps
 
 Load the tokens, set the app's accent in the app's own stylesheet, then use the variables:
