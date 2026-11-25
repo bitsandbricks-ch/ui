@@ -1,7 +1,7 @@
 import { Kbd, Loader } from '@mantine/core'
 import { createSpotlight, Spotlight, type SpotlightStore } from '@mantine/spotlight'
 import { IconSearch } from '@tabler/icons-react'
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useT } from '../i18n'
 import { rankItems } from '../rank'
 import { texts } from './CommandPalette.texts'
@@ -107,6 +107,14 @@ export function CommandPalette({ groups, search, debounce = 250, minQuery = 2, r
     return [...own, ...theirs]
   }, [groups, query, q, limit, wanted, found, recent, t])
 
+  // Mantine picks the first row when the text changes, but the app's results come later: when
+  // nothing is picked once they are in (only they match), pick the first so Enter goes there.
+  const list = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = list.current
+    if (el && !el.querySelector('[data-selected]')) el.querySelector('[data-action]')?.setAttribute('data-selected', 'true')
+  }, [shown])
+
   function go(item: PaletteItem) {
     if (item.onSelect) item.onSelect()
     else if (item.href) {
@@ -120,7 +128,7 @@ export function CommandPalette({ groups, search, debounce = 250, minQuery = 2, r
       scrollable maxHeight="min(60vh, 460px)" size="lg" classNames={{ content: 'bnb-palette' }}>
       <Spotlight.Search placeholder={placeholder ?? t('palette.placeholder')} aria-label={t('palette.label')}
         leftSection={<IconSearch size={16} aria-hidden="true" />} rightSection={loading ? <Loader size={14} aria-label={t('palette.searching')} /> : null} />
-      <Spotlight.ActionsList aria-label={t('palette.label')}>
+      <Spotlight.ActionsList ref={list} aria-label={t('palette.label')}>
         {shown.map((g) => (
           <Spotlight.ActionsGroup key={g.id} label={g.label} role="group" aria-label={g.label}>
             {g.items.map((it) => (
