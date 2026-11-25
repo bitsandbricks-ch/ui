@@ -17,10 +17,15 @@ describe('NotificationsBell', () => {
   it('says the count in its name and paints it red when something is down', () => {
     const click = vi.fn()
     renderWithApp(<NotificationsBell count={4} alarm onClick={click} />)
-    const bell = screen.getByRole('button', { name: 'Notifications (4)' })
+    const bell = screen.getByRole('button', { name: 'Notifications 4' })
     expect(bell.querySelector('.bnb-bell-count')).toHaveClass('is-alarm')
     fireEvent.click(bell)
     expect(click).toHaveBeenCalled()
+  })
+
+  it('caps the count it shows at 99+, and says the same', () => {
+    renderWithApp(<NotificationsBell count={120} onClick={() => {}} />)
+    expect(screen.getByRole('button', { name: 'Notifications 99+' })).toBeInTheDocument()
   })
 
   it('has no count when nothing is open, in German too', () => {
