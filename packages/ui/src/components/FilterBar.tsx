@@ -2,6 +2,7 @@ import { Badge, Button, CloseButton, Drawer, Group, Menu, Popover, Select, Stack
 import { IconAdjustmentsHorizontal, IconCheck, IconChevronDown, IconSearch, IconX } from '@tabler/icons-react'
 import { useState, type KeyboardEvent, type ReactNode } from 'react'
 import { useT } from '../i18n'
+import { texts } from './FilterBar.texts'
 
 // One toolbar for every list: search on the left, the filters, and the page's own buttons on the
 // right. Two looks over one data shape:
@@ -36,12 +37,30 @@ export interface FilterGroup {
   hidden?: boolean
   /** The sort order: last in the panel, shown as a chip like a filter. */
   sort?: boolean
+  /** Several choices at once: `value` holds them comma-separated ("a,b"), and the default (usually
+   *  '') means none picked, so every row shows. The menu stays open while ticking. */
+  multiple?: boolean
+}
+
+/** The choices picked in a `multiple` group, in the order of its options. */
+export function pickedValues(group: Pick<FilterGroup, 'value' | 'options'>): string[] {
+  const set = new Set(group.value.split(',').filter(Boolean))
+  return (group.options ?? []).map((o) => o.value).filter((v) => set.has(v))
+}
+
+/** `value` with `choice` ticked or unticked, kept in the options' order. */
+function toggled(group: FilterGroup, choice: string): string {
+  const picked = new Set(pickedValues(group))
+  if (picked.has(choice)) picked.delete(choice)
+  else picked.add(choice)
+  return (group.options ?? []).map((o) => o.value).filter((v) => picked.has(v)).join(',')
 }
 
 const optionText = (o: FilterOption) => o.text ?? (typeof o.label === 'string' ? o.label : o.value)
 
 function valueText(group: FilterGroup, value: string): string {
   if (group.kind === 'date') return value
+  if (group.multiple) return pickedValues({ ...group, value }).map((v) => valueText({ ...group, multiple: false }, v)).join(', ')
   const opt = group.options?.find((o) => o.value === value)
   return opt ? optionText(opt) : value
 }
@@ -60,6 +79,23 @@ function GroupControl({ group }: { group: FilterGroup }) {
       <TextInput type="date" size="sm" aria-label={group.label} value={group.value} min={group.min} max={group.max}
         onChange={(e) => group.onChange(e.currentTarget.value)}
         rightSection={group.value ? <CloseButton size="sm" aria-label={group.label} onClick={() => group.onChange('')} /> : null} />
+    )
+  }
+  if (group.multiple) {
+    const picked = new Set(pickedValues(group))
+    return (
+      <div role="group" aria-label={group.label} className="bnb-chips">
+        {options.map((o) => {
+          const on = picked.has(o.value)
+          return (
+            <button key={o.value} type="button" aria-pressed={on} className={`bnb-chip${on ? ' is-on' : ''}`}
+              onClick={() => group.onChange(toggled(group, o.value))}>
+              {o.label}
+              {o.count != null && <span className="bnb-count">{o.count}</span>}
+            </button>
+          )
+        })}
+      </div>
     )
   }
   if (group.kind === 'select' || options.length > 8) {
@@ -160,20 +196,63 @@ export function ActiveFilterChips({ groups }: { groups: FilterGroup[] }) {
   if (!active.length) return null
   return (
     <Group gap={6} wrap="wrap" className="bnb-active-chips">
-      {active.map((g) => {
-        const text = `${g.label}: ${valueText(g, g.value)}`
-        return (
-          <span key={g.key} className="bnb-chip is-on">
+      {active.flatMap((g) => (g.multiple ? pickedValues(g).map((v) => ({ g, key: `${g.key}:${v}`, text: `${g.label}: ${valueText({ ...g, multiple: false }, v)}`, off: () => g.onChange(toggled(g, v)) }))
+        : [{ g, key: g.key, text: `${g.label}: ${valueText(g, g.value)}`, off: () => g.onChange(g.defaultValue) }]))
+        .map(({ key, text, off }) => (
+          <span key={key} className="bnb-chip is-on">
             {text}
             <UnstyledButton aria-label={t('filters.remove', { chip: text })} title={t('filters.remove', { chip: text })}
-              onClick={() => g.onChange(g.defaultValue)} className="bnb-chip-x">
+              onClick={off} className="bnb-chip-x">
               <IconX size={14} />
             </UnstyledButton>
           </span>
-        )
-      })}
+        ))}
       {active.length > 1 && <Button variant="subtle" size="compact-sm" onClick={() => resetAll(active)}>{t('filters.reset')}</Button>}
     </Group>
+  )
+}
+
+/** A `multiple` filter as one menu button: "Type: Security, Service +1", ticking choices in a menu
+ *  that stays open, with a find field past 8 choices. */
+function MultiMenu({ group: g }: { group: FilterGroup }) {
+  const { t } = useT(texts)
+  const [find, setFind] = useState('')
+  const options = g.options ?? []
+  const picked = pickedValues(g)
+  const names = picked.map((v) => valueText({ ...g, multiple: false }, v))
+  const shown = names.length ? names.slice(0, 2).join(', ') + (names.length > 2 ? ` ${t('filters.more', { count: names.length - 2 })}` : '') : t('filters.any')
+  const needle = find.trim().toLowerCase()
+  const listed = needle ? options.filter((o) => optionText(o).toLowerCase().includes(needle)) : options
+  return (
+    <Menu position="bottom-start" onClose={() => setFind('')}>
+      <Menu.Target>
+        <Button variant={picked.length ? 'light' : 'default'} rightSection={<IconChevronDown size={14} />}
+          aria-label={`${g.label}: ${names.length ? names.join(', ') : t('filters.any')}`}>
+          <span className="bnb-filter-key">{g.label}:</span>&nbsp;{shown}
+        </Button>
+      </Menu.Target>
+      <Menu.Dropdown>
+        {options.length > 8 && (
+          <TextInput size="xs" mb={4} leftSection={<IconSearch size={14} />} placeholder={t('filters.find')} aria-label={t('filters.find')}
+            value={find} onChange={(e) => setFind(e.currentTarget.value)} onKeyDown={(e) => e.stopPropagation()} />
+        )}
+        {listed.map((o) => {
+          const on = picked.includes(o.value)
+          return (
+            <Menu.CheckboxItem key={o.value} checked={on} onChange={() => g.onChange(toggled(g, o.value))}
+              rightSection={o.count != null ? <span className="bnb-count">{o.count}</span> : null}>
+              {o.label}
+            </Menu.CheckboxItem>
+          )
+        })}
+        {picked.length > 0 && (
+          <>
+            <Menu.Divider />
+            <Menu.Item onClick={() => g.onChange(g.defaultValue)}>{t('filters.reset')}</Menu.Item>
+          </>
+        )}
+      </Menu.Dropdown>
+    </Menu>
   )
 }
 
@@ -182,6 +261,7 @@ function FilterMenus({ groups }: { groups: FilterGroup[] }) {
   return (
     <>
       {groups.filter((g) => !g.hidden).map((g) => {
+        if (g.multiple) return <MultiMenu key={g.key} group={g} />
         const options = g.options ?? []
         const current = options.find((o) => o.value === g.value) ?? options[0]
         const active = g.value !== g.defaultValue
