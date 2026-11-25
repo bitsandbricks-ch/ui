@@ -1,7 +1,9 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { renderWithApp } from '../../../../test/render'
-import { DangerZone, ItemPage } from './ItemPage'
+import { BnbProvider } from '../BnbProvider'
+import { createBnbTheme } from '../theme'
+import { BackLink, DangerZone, ItemPage } from './ItemPage'
 
 const back = { href: '/hosts', label: 'Hosts' }
 
@@ -35,5 +37,20 @@ describe('DangerZone', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Delete host' }))
     expect(remove).not.toHaveBeenCalled()
     expect(await screen.findByText('Delete web-01?')).toBeInTheDocument()
+  })
+})
+
+describe('BackLink', () => {
+  it('is a plain link without a router', () => {
+    renderWithApp(<BackLink href="/hosts" label="Hosts" />)
+    expect(screen.getByRole('link', { name: 'Hosts' })).toHaveAttribute('href', '/hosts')
+  })
+
+  it("goes through the app's router link when there is one", () => {
+    const RouterLink = ({ to, ...props }: { to: string } & Record<string, unknown>) => <a data-router="yes" href={`#${to}`} {...props} />
+    render(<BnbProvider theme={createBnbTheme({ accent: '#7441e0' })} link={RouterLink} notifications={false}><BackLink href="/hosts" label="Hosts" /></BnbProvider>)
+    const link = screen.getByRole('link', { name: 'Hosts' })
+    expect(link).toHaveAttribute('data-router', 'yes')
+    expect(link).toHaveAttribute('href', '#/hosts')
   })
 })
