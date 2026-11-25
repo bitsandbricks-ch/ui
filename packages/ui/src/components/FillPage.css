@@ -1,0 +1,11 @@
+/* FillPage: on a desktop tall enough, the shell is one screen high and the page fills what the top
+   bar, banners and status line leave; the table inside it scrolls (DataTable.css). */
+@media (min-width: 48em) and (min-height: 560px) {
+  .bnb-shell:has(.bnb-fill-page) { height: 100dvh; }
+  .bnb-shell:has(.bnb-fill-page) .bnb-shell-main { height: 100dvh; min-height: 0; }
+  .bnb-main:has(.bnb-fill-page) { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  /* An app's own wrappers between the main area and the page, and the page's between it and the table. */
+  .bnb-main :has(.bnb-fill-page),
+  .bnb-fill-page :has(.bnb-dt-fill) { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .bnb-fill-page { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+}

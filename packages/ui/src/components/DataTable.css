@@ -19,3 +19,12 @@
 .bnb-dt-fold-icon { flex: none; transition: transform 120ms ease; transform: rotate(90deg); }
 .bnb-dt-fold[aria-expanded='false'] .bnb-dt-fold-icon { transform: none; }
 @media (prefers-reduced-motion: reduce) { .bnb-dt-fold-icon { transition: none; } }
+
+/* A table that fills a FillPage (desktop): the rows scroll under a header that stays put. */
+@media (min-width: 48em) {
+  .bnb-fill-page .bnb-dt-fill { display: flex; flex-direction: column; flex: 1; min-height: 12rem; }
+  .bnb-fill-page .bnb-dt-fill > .bnb-dt-box,
+  .bnb-fill-page .bnb-dt-fill > .bnb-dt-scroll { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .bnb-fill-page .bnb-dt-fill .bnb-dt-scroll { flex: 1; min-height: 0; overflow: auto; }
+  .bnb-fill-page .bnb-dt-fill thead th { position: sticky; top: 0; z-index: 1; background: var(--bnb-surface); }
+}

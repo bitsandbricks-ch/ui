@@ -80,6 +80,10 @@ export interface DataTableProps<T> {
    *  shows only when there is more than one page, and not on phones, so the first rows come first.
    *  Turning the page below scrolls back up to the top of the table. */
   pagerAt?: 'top' | 'bottom' | 'both'
+  /** Fill the room left on a page that fits the screen (a ``FillPage``): on a desktop only the
+   *  rows scroll, under a header that stays put, and the page buttons stay in view. Elsewhere,
+   *  and on phones, the table is as tall as its rows. */
+  fill?: boolean
   /** The page shown, counted from 0, when the caller turns pages itself. */
   page?: number
   onPage?: (index: number) => void
@@ -158,6 +162,11 @@ function ownClick(e: { target: EventTarget; currentTarget: Element }) {
 /** The one table every page uses: sorting on the columns that can, paging, the empty state and
  *  the count. Search and filters sit above it (FilterBar) and narrow `rows`. From Floorbit. */
 export function DataTable<T>(props: DataTableProps<T>) {
+  const table = <TableBody {...props} />
+  return props.fill ? <div className="bnb-dt-fill">{table}</div> : table
+}
+
+function TableBody<T>(props: DataTableProps<T>) {
   const { rows, columns, rowKey, label, defaultSort, pageSize = 50, empty, loading, count, rowStyle, rowProps, onRowClick,
     urlState = true, density = 'default', minWidth, bare, className, striped, cards, head = true, pager = 'full', pagerAt = 'both', page, onPage,
     selected, onSelect, picked, onPick, rowLabel, exportName, isNew, groupBy, groupOrder, groupHeader, foldable, folded, onFold } = props
