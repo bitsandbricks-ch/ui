@@ -1,0 +1,15 @@
+/* The announcement badge in the top bar: tinted by level while new, an outline once read. */
+.bnb-notice-badge {
+  display: flex; align-items: center; gap: 6px; height: 28px; max-width: 260px; padding: 0 10px; flex: none;
+  border: 1px solid transparent; border-radius: var(--bnb-radius-pill); font: inherit; font-size: var(--bnb-fs-sm); font-weight: 550; cursor: pointer;
+}
+.bnb-notice-badge.is-compact { width: 36px; height: 36px; padding: 0; justify-content: center; }
+.bnb-notice-badge-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bnb-notice-badge.is-info { background: var(--bnb-info-soft); color: var(--bnb-fg); }
+.bnb-notice-badge.is-warn { background: var(--bnb-warn-soft); color: var(--bnb-fg); }
+.bnb-notice-badge.is-info svg { color: var(--bnb-info); }
+.bnb-notice-badge.is-warn svg { color: var(--bnb-warn); }
+.bnb-notice-badge.is-quiet { background: transparent; border-color: var(--bnb-line); color: var(--bnb-muted); }
+.bnb-notice-badge:focus-visible { outline: 2px solid var(--bnb-focus-ring); outline-offset: 2px; }
+.bnb-notice-head { color: var(--bnb-info); }
+.bnb-notice-head.is-warn { color: var(--bnb-warn); }
