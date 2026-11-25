@@ -21,10 +21,13 @@ at 16 March 2026, 10:30 in Zurich. Any changed pixel fails the `Screenshots` job
 
 1. Open the failing run's summary and download the `screenshot-report` artifact to see what changed
    (open `index.html`; each failure shows expected, actual and the diff).
-2. If the change is meant, download the `screenshots` artifact. It holds every picture, with the
-   changed and new ones retaken in CI. Unpack it over `visual/__screenshots__/` and commit.
+2. If the change is meant, add the label `update-screenshots` to the pull request. The
+   **Update screenshots** workflow takes the changed and new pictures in the Playwright image,
+   commits them to the branch, removes the label and starts CI again. For a branch without a pull
+   request: Actions > Update screenshots > Run workflow.
 
-Or take them locally in the same image (needs Docker):
+Or unpack the `screenshots` artifact over `visual/__screenshots__/` and commit, or take them locally
+in the same image (needs Docker):
 
 ```sh
 pnpm build && pnpm build-storybook
@@ -38,5 +41,5 @@ anti-aliasing, so never commit those.
 ## A new story
 
 Nothing to do in this folder: the stories come from the built Storybook's `index.json`. The first
-run fails because the picture is missing; commit the ones from the `screenshots` artifact. A story
+run fails because the picture is missing; add the `update-screenshots` label. A story
 that can't hold still (live data, random values) gets `tags: ['!visual']` and is left out.
