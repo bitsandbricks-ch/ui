@@ -1,0 +1,84 @@
+# Takes the reference pictures for the Screenshots check in the same Playwright image CI uses, and
+# commits the changed and new ones to the branch. Use it when a change to how a story looks is meant
+# (visual/README.md):
+#   - on a pull request: add the label `update-screenshots` (it is removed again after the run);
+#   - on any branch: Actions > Update screenshots > Run workflow.
+# A push made with the workflow's token doesn't start CI, so it starts CI on the branch itself.
+name: Update screenshots
+
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: screenshots-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  update:
+    name: Take and commit pictures
+    # Only for branches in this repo: a fork's pull request gets no write token.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.label.name == 'update-screenshots' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: write
+      pull-requests: write
+    container:
+      image: mcr.microsoft.com/playwright:v1.65.1-noble@sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579
+      options: --ipc=host
+    env:
+      BRANCH: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.BRANCH }}
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm build-storybook
+      # An accessibility finding fails the test but still writes its picture; CI reports it.
+      - run: pnpm visual --update-snapshots=changed || true
+      - name: Commit the pictures
+        id: commit
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git add visual/__screenshots__
+          if git diff --cached --quiet; then
+            echo "No picture changed."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "test(visual): update reference screenshots"
+          git push origin "HEAD:$BRANCH"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+      - name: Start CI on the new commit
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          curl -sSf -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"
+          "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/dispatches"
+          -d "{\"ref\":\"$BRANCH\"}"
+      - name: Remove the label
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: >-
+          curl -sS -X DELETE -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"
+          "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/$PR/labels/update-screenshots" || true
