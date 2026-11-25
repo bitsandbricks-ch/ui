@@ -357,7 +357,9 @@ function TableBody<T>(props: DataTableProps<T>) {
     )
   }
   const body = (
-    <div ref={box} className="bnb-dt-scroll" style={minWidth ? ({ '--bnb-dt-min': `${minWidth}px` } as CSSProperties) : undefined}>
+    <div ref={box} className="bnb-dt-scroll" style={minWidth ? ({ '--bnb-dt-min': `${minWidth}px` } as CSSProperties) : undefined}
+      // A filled table scrolls inside this box, so keyboard people need to reach it (unless the table takes focus itself).
+      {...(props.fill && !onSelect ? { tabIndex: 0, role: 'region', 'aria-label': label } : {})}>
       <Table highlightOnHover striped={striped} verticalSpacing={density === 'compact' ? 4 : 8} fz="sm" aria-label={label}
         className={['bnb-dt', density === 'compact' && 'is-compact', cards && 'bnb-table-stack', (onRowClick || onSelect) && 'is-clickable', onSelect && 'is-keyed', className].filter(Boolean).join(' ')}
         tabIndex={onSelect ? 0 : undefined} onKeyDown={onSelect ? onKeys : undefined}>

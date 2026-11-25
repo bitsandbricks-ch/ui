@@ -22,6 +22,8 @@ describe('FillPage', () => {
     )
     expect(container.querySelector('.bnb-fill-page > .bnb-dt-fill .bnb-dt-scroll')).not.toBeNull()
     expect(screen.getByRole('table', { name: 'Things' })).toBeInTheDocument()
+    // It scrolls on its own, so the keyboard must reach it.
+    expect(screen.getByRole('region', { name: 'Things' })).toHaveAttribute('tabindex', '0')
   })
 
   it('leaves a table without fill as it was', () => {
@@ -30,5 +32,6 @@ describe('FillPage', () => {
         columns={[{ id: 'id', header: 'Id', cell: (r) => r.id }]} />,
     )
     expect(container.querySelector('.bnb-dt-fill')).toBeNull()
+    expect(container.querySelector('.bnb-dt-scroll')).not.toHaveAttribute('tabindex')
   })
 })
