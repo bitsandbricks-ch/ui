@@ -83,8 +83,9 @@ export interface DataTableProps<T> {
   /** The page shown, counted from 0, when the caller turns pages itself. */
   page?: number
   onPage?: (index: number) => void
-  /** The selected row's key. With `onSelect` the table takes the keys: ↑↓ (or j k) move, Home End
-   *  (g G) jump, Enter is a row click, Space picks. A click selects too. From Mason. */
+  /** The selected row's key, marked: the row whose SidePanel is open, on a list-and-panel page.
+   *  With `onSelect` the table also takes the keys: ↑↓ (or j k) move, Home End (g G) jump, Enter is a
+   *  row click, Space picks. A click selects too. From Mason. */
   selected?: string | null
   onSelect?: (key: string, row: T) => void
   /** The keys of the rows picked to act on at once; with `onPick` a box column shows. Shift+click
@@ -291,12 +292,13 @@ export function DataTable<T>(props: DataTableProps<T>) {
         )}
         <Table.Tbody>
           {pageRows.map((row) => {
-            const isSel = !!onSelect && row.id === selected
+            const isSel = selected != null && row.id === selected
             const isPicked = pickedSet.has(row.id)
             const extra = rowProps?.(row.original)
             return (
               <Table.Tr key={row.id} {...extra} style={rowStyle?.(row.original)}
-                aria-selected={onSelect ? isSel : extra?.['aria-selected']} data-selected={isSel || undefined} data-picked={isPicked || undefined}
+                aria-selected={onSelect ? isSel : extra?.['aria-selected']} aria-current={!onSelect && isSel ? 'true' : extra?.['aria-current']}
+                data-selected={isSel || undefined} data-picked={isPicked || undefined}
                 onClick={onRowClick || onSelect ? (e) => { if (!ownClick(e)) return; onSelect?.(row.id, row.original); onRowClick?.(row.original) } : undefined}
                 onKeyDown={onRowClick && !onSelect ? (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) onRowClick(row.original) } : undefined}
                 tabIndex={onRowClick && !onSelect ? 0 : undefined}>
