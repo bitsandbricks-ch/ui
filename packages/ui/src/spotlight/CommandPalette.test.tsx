@@ -67,6 +67,18 @@ describe('CommandPalette', () => {
     await waitFor(() => expect(search).toHaveBeenCalledTimes(1))
   })
 
+  it('picks the first of the app results when only they match, so Enter goes there', async () => {
+    const onNavigate = vi.fn()
+    const search = vi.fn(async (q: string) => [{ id: 'hosts-found', label: 'Hosts found', items: [{ id: `h:${q}`, label: `${q}-db`, href: `/hosts/${q}-db` }] }])
+    setup({ search, debounce: 0, onNavigate })
+    const box = await screen.findByPlaceholderText('Jump to a page or run a command')
+    fireEvent.change(box, { target: { value: 'qx' } })
+    const row = (await screen.findByText('qx-db')).closest('[data-action]')
+    await waitFor(() => expect(row).toHaveAttribute('data-selected', 'true'))
+    fireEvent.keyDown(box, { key: 'Enter', code: 'Enter' })
+    expect(onNavigate).toHaveBeenCalledWith('/hosts/qx-db', expect.objectContaining({ id: 'h:qx' }))
+  })
+
   it('says when nothing matches, in German', async () => {
     setup({}, 'de')
     fireEvent.change(await screen.findByPlaceholderText('Zu einer Seite springen oder einen Befehl ausführen'), { target: { value: 'qqq' } })
