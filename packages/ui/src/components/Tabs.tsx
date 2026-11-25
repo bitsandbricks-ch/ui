@@ -1,7 +1,8 @@
 import { Tabs as MantineTabs } from '@mantine/core'
 import { IconEyeOff } from '@tabler/icons-react'
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useContext, useEffect, useRef, type ReactNode } from 'react'
 import type { State } from '../status'
+import { LinkContext } from './SidePanel'
 import { StatusBit } from './StatusBadge'
 
 export interface TabDef {
@@ -17,6 +18,22 @@ export interface TabDef {
   hidden?: string
 }
 
+/** Keeps the active tab in view when the row scrolls on a narrow screen, so a tab far to the right
+ *  (opened by a link) doesn't look unselected. */
+function useActiveInView(active: string) {
+  const list = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const row = list.current
+    const on = row?.querySelector<HTMLElement>('[data-active], [aria-current="page"]')
+    if (!row || !on || row.scrollWidth <= row.clientWidth) return
+    const left = on.offsetLeft - row.offsetLeft
+    if (left < row.scrollLeft || left + on.offsetWidth > row.scrollLeft + row.clientWidth) {
+      row.scrollTo?.({ left: Math.max(0, left - 16) })
+    }
+  }, [active])
+  return list
+}
+
 /** A page's tabs: an underline, never a pill. `sub` gives the smaller pill row under a tab.
  *  The row scrolls sideways when the tabs don't fit, so a page can grow tabs without wrapping. */
 export function PageTabs({ tabs, active, onChange, label, sub }: {
@@ -27,18 +44,7 @@ export function PageTabs({ tabs, active, onChange, label, sub }: {
   label?: string
   sub?: boolean
 }) {
-  // On a narrow screen the row scrolls; keep the active tab in view, so a tab far to the right
-  // (opened by a link) doesn't look unselected.
-  const list = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const row = list.current
-    const on = row?.querySelector<HTMLElement>('[data-active]')
-    if (!row || !on || row.scrollWidth <= row.clientWidth) return
-    const left = on.offsetLeft - row.offsetLeft
-    if (left < row.scrollLeft || left + on.offsetWidth > row.scrollLeft + row.clientWidth) {
-      row.scrollTo?.({ left: Math.max(0, left - 16) })
-    }
-  }, [active])
+  const list = useActiveInView(active)
   return (
     <MantineTabs value={active} onChange={(v) => v && onChange(v)} mb={sub ? 16 : 24}
       variant={sub ? 'pills' : 'default'} radius={sub ? 'xl' : undefined} className={sub ? 'bnb-subtabs' : 'bnb-tabs'}>
@@ -59,5 +65,49 @@ export function PageTabs({ tabs, active, onChange, label, sub }: {
         ))}
       </MantineTabs.List>
     </MantineTabs>
+  )
+}
+
+export interface LinkTabDef extends TabDef {
+  /** The tab's own address. */
+  href: string
+}
+
+/** Tabs where each tab is a page of its own, with its own address (Helpdesk: Problems, Incidents,
+ *  Handover): links, so a tab opens in a new browser tab too. Looks like PageTabs. Links go through
+ *  the app's router link (BnbProvider `link`) when it has one. */
+export function LinkTabs({ tabs, active, label, sub }: {
+  tabs: LinkTabDef[]
+  /** The id of the page being shown. */
+  active: string
+  /** Screen-reader name of the row. */
+  label: string
+  sub?: boolean
+}) {
+  const Link = useContext(LinkContext)
+  const list = useActiveInView(active)
+  return (
+    <nav aria-label={label} className={sub ? 'bnb-linktabs bnb-linktabs-sub' : 'bnb-linktabs'}>
+      <div className="bnb-linktabs-list" ref={list}>
+        {tabs.map((t) => {
+          const props = {
+            className: t.hidden ? 'bnb-linktab bnb-tab-hidden' : 'bnb-linktab',
+            'aria-current': t.id === active ? 'page' as const : undefined,
+            title: t.hidden,
+          }
+          const body = (<>
+            {t.icon}
+            {t.hidden && <IconEyeOff size={14} aria-hidden="true" />}
+            <span>{t.label}</span>
+            {t.hidden && <span className="bnb-sr-only">, {t.hidden}</span>}
+            {t.count != null && <span className="bnb-tab-count">{t.count}</span>}
+            {t.alert && <StatusBit state={t.alert} />}
+          </>)
+          return Link
+            ? <Link key={t.id} to={t.href} {...props}>{body}</Link>
+            : <a key={t.id} href={t.href} {...props}>{body}</a>
+        })}
+      </div>
+    </nav>
   )
 }
