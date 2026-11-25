@@ -43,5 +43,14 @@ describe('page states', () => {
     renderWithApp(<Card title="Members" actions={<button type="button">Add</button>}>body</Card>)
     expect(screen.getByText('Members')).toBeInTheDocument()
     expect(screen.getByText('body')).toBeInTheDocument()
+    expect(screen.queryByRole('heading')).toBeNull()
+    expect(screen.queryByRole('region')).toBeNull()
+  })
+
+  it('makes the title a heading and the card a section named by it', () => {
+    renderWithApp(<><Card title="Members" heading={2}>body</Card><Card heading={3} aria-label="Totals">42</Card></>)
+    expect(screen.getByRole('heading', { level: 2, name: 'Members' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Members' })).toHaveTextContent('body')
+    expect(screen.getByRole('region', { name: 'Totals' })).toHaveTextContent('42')
   })
 })

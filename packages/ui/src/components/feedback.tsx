@@ -1,4 +1,4 @@
-import { Alert, Button, Center, Group, Loader, Paper, Skeleton, Stack, Text, ThemeIcon, type MantineSpacing } from '@mantine/core'
+import { Alert, Button, Center, Group, Loader, Paper, Skeleton, Stack, Text, ThemeIcon, Title, type MantineSpacing } from '@mantine/core'
 import { IconAlertTriangle, IconFilterOff, IconInbox, IconPlugConnectedX, IconRefresh } from '@tabler/icons-react'
 import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react'
 import { useT } from '../i18n'
@@ -109,9 +109,12 @@ export function LoadingState({ message, lines, rows, compact }: {
   )
 }
 
+type HeadingLevel = 2 | 3 | 4 | 5 | 6
+
 /** The bordered card every list and form sits in, with an optional header row: the title, a line
- *  under it (`desc`) and `actions` at the end. */
-export function Card({ title, desc, actions, children, padded = true, style, className }: {
+ *  under it (`desc`) and `actions` at the end. With `heading`, the title is a heading of that level
+ *  and the card a section named by it, so a page of several cards reads as its parts. */
+export function Card({ title, desc, actions, children, padded = true, heading, style, className, id, 'aria-label': ariaLabel }: {
   title?: ReactNode
   /** One line under the title. */
   desc?: ReactNode
@@ -119,25 +122,39 @@ export function Card({ title, desc, actions, children, padded = true, style, cla
   children: ReactNode
   /** False when the content runs to the edges (a table, a list) or brings its own `Card.Header`. */
   padded?: boolean
+  /** The title's heading level (2 under the page's title); the card becomes a named section. */
+  heading?: HeadingLevel
   style?: CSSProperties
   className?: string
+  id?: string
+  /** Names a section that has no title. */
+  'aria-label'?: string
 }) {
+  const headingId = useId()
+  const named = heading !== undefined && !!title
   return (
-    <Paper withBorder className={className ? `bnb-card ${className}` : 'bnb-card'} style={{ overflow: 'hidden', ...style }}>
-      {(title || desc || actions) && <CardHeader title={title} desc={desc}>{actions}</CardHeader>}
+    <Paper withBorder className={className ? `bnb-card ${className}` : 'bnb-card'} style={{ overflow: 'hidden', ...style }}
+      component={heading !== undefined ? 'section' : 'div'} id={id}
+      aria-labelledby={named && !ariaLabel ? headingId : undefined} aria-label={ariaLabel}>
+      {(title || desc || actions) && <CardHeader title={title} desc={desc} heading={heading} headingId={headingId}>{actions}</CardHeader>}
       <div className={padded ? 'bnb-card-body' : undefined}>{children}</div>
     </Paper>
   )
 }
 
 /** A card's header row on its own, for an unpadded card whose header holds more than buttons
- *  (tabs, a search) or sits between parts: `<Card padded={false}><Card.Header title="Members">…`. From Hubra. */
-function CardHeader({ title, desc, children }: { title?: ReactNode; desc?: ReactNode; children?: ReactNode }) {
+ *  (tabs, a search) or sits between parts: `<Card padded={false}><Card.Header title="Members">…`. From Hubra.
+ *  `heading` makes the title a heading of that level, `headingId` its id. */
+function CardHeader({ title, desc, heading, headingId, children }: {
+  title?: ReactNode; desc?: ReactNode; heading?: HeadingLevel; headingId?: string; children?: ReactNode
+}) {
   return (
     <Group justify="space-between" align="center" gap="sm" className="bnb-card-head" wrap="wrap">
       {(title || desc) && (
         <div style={{ minWidth: 0, flex: '1 1 200px' }}>
-          {title && <Text fw={650} fz="md">{title}</Text>}
+          {title && (heading !== undefined
+            ? <Title order={heading} fw={650} fz="md" lh="inherit" id={headingId}>{title}</Title>
+            : <Text fw={650} fz="md" id={headingId}>{title}</Text>)}
           {desc && <Text size="sm" c="dimmed">{desc}</Text>}
         </div>
       )}

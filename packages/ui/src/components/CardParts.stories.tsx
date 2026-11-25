@@ -28,6 +28,18 @@ export const Cards: StoryObj = {
   ),
 }
 
+/** With `heading`, each title is a heading and each card a section named by it (screen readers list them). */
+export const Sections: StoryObj = {
+  render: () => (
+    <Stack gap="md">
+      <Card heading={2} title="Switches" desc="Live from monitoring.">
+        <Text size="sm">38 up, 2 down.</Text>
+      </Card>
+      <Card heading={2} title="Services"><Text size="sm">All answering.</Text></Card>
+    </Stack>
+  ),
+}
+
 /** Enter in a field or the main button sends it. */
 export const Dialog: StoryObj = {
   render: function Render() {
