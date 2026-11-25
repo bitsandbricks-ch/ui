@@ -104,3 +104,16 @@ describe('DataTable column names', () => {
     expect(screen.getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['Name', 'Actions'])
   })
 })
+
+describe('DataTable open row', () => {
+  it('marks the row whose panel is open, without taking the keys', () => {
+    renderWithApp(<DataTable label="Apps" urlState={false} rowKey={(r) => r.id} selected="b" onRowClick={vi.fn()}
+      rows={[{ id: 'a', name: 'Steam' }, { id: 'b', name: 'Riot' }]}
+      columns={[{ id: 'name', header: 'Name', cell: (r: { id: string; name: string }) => r.name }]} />)
+    const row = screen.getByText('Riot').closest('tr')
+    expect(row).toHaveAttribute('data-selected')
+    expect(row).toHaveAttribute('aria-current', 'true')
+    expect(screen.getByText('Steam').closest('tr')).not.toHaveAttribute('data-selected')
+    expect(screen.getByRole('table')).not.toHaveClass('is-keyed')
+  })
+})

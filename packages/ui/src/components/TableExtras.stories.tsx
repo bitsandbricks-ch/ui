@@ -30,3 +30,14 @@ export const KeysPicksExport: StoryObj = {
     )
   },
 }
+
+/** A list next to a side panel: the row whose panel is open stays marked; the keys stay with the page. */
+export const OpenRow: StoryObj = {
+  render: function Render() {
+    const [open, setOpen] = useState<string | null>('h3')
+    return (
+      <DataTable label="Hosts" rows={hosts.slice(0, 6)} columns={columns} rowKey={(r) => r.id} defaultSort={{ id: 'name' }} urlState={false}
+        selected={open} onRowClick={(r) => setOpen(r.id)} pageSize={0} />
+    )
+  },
+}
