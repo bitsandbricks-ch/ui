@@ -136,7 +136,7 @@ pnpm install
 pnpm test            # Vitest and Testing Library
 pnpm storybook       # http://localhost:6006
 pnpm lint && pnpm typecheck && pnpm build
-pnpm build-storybook && pnpm visual:docker   # screenshot of every story, see visual/README.md
+pnpm build-storybook && pnpm visual:docker   # axe and pictures of every story, see visual/README.md
 ```
 
 A change to a package adds a changeset (`pnpm changeset`). Releases: see

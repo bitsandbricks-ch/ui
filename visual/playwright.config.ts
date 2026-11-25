@@ -1,8 +1,9 @@
 import { defineConfig, devices } from '@playwright/test'
 
-// Screenshot checks: every Storybook story in light, dark and at phone width, compared with the
-// pictures in visual/__screenshots__. CI runs them in the Playwright image (same browser and fonts
-// every time); `pnpm visual:docker` does the same locally. See visual/README.md.
+// Browser checks on every Storybook story: axe in light and dark (a11y.spec.ts, blocks CI) and a
+// picture in light, dark and at phone width (screenshots.spec.ts, only reported). CI runs them in
+// the Playwright image (same browser and fonts every time); `pnpm visual:docker` does the same
+// locally. See visual/README.md.
 const port = 6007
 const ci = !!process.env.CI
 
@@ -32,6 +33,7 @@ export default defineConfig({
     { name: 'dark', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 800 } }, metadata: { scheme: 'dark' } },
     {
       name: 'phone',
+      testIgnore: /a11y\.spec/,
       use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 }, isMobile: false, hasTouch: true },
       metadata: { scheme: 'light' },
     },
