@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from 'vitest'
 import { renderWithApp } from '../../../../test/render'
 import { Where } from '../../../../test/Where'
 import { useFilters } from '../useFilters'
-import { activeFilters, FilterBar, type FilterGroup } from './FilterBar'
+import { useState } from 'react'
+import { activeFilters, FilterBar, pickedValues, type FilterGroup } from './FilterBar'
 
 
 function List({ layout }: { layout?: 'menus' | 'panel' }) {
@@ -66,5 +67,33 @@ describe('FilterBar', () => {
     expect(screen.getByRole('radio', { name: /All/ })).toHaveFocus()
     fireEvent.keyDown(screen.getByRole('radio', { name: /All/ }), { key: 'End' })
     expect(screen.getByRole('radio', { name: /Down/ })).toHaveAttribute('aria-checked', 'true')
+  })
+})
+
+describe('FilterBar with several choices', () => {
+  function Types({ layout, start = '' }: { layout?: 'menus' | 'panel'; start?: string }) {
+    const [value, setValue] = useState(start)
+    const group: FilterGroup = { key: 'type', label: 'Type', value, defaultValue: '', onChange: setValue, multiple: true,
+      options: [{ value: 'a', label: 'Alpha', count: 3 }, { value: 'b', label: 'Beta', count: 2 }, { value: 'c', label: 'Gamma', count: 1 }] }
+    return <><FilterBar groups={[group]} layout={layout} /><output>{value}</output></>
+  }
+
+  it('ticks several choices in a menu that stays open, in the options\' order', async () => {
+    renderWithApp(<Types />)
+    fireEvent.click(screen.getByRole('button', { name: 'Type: All' }))
+    fireEvent.click(await screen.findByRole('menuitemcheckbox', { name: /Gamma/, hidden: true }))
+    fireEvent.click(screen.getByRole('menuitemcheckbox', { name: /Alpha/, hidden: true }))
+    expect(screen.getByRole('status')).toHaveTextContent('a,c')
+    expect(screen.getByRole('menuitemcheckbox', { name: /Alpha/, hidden: true })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('button', { name: 'Type: Alpha, Gamma' })).toHaveTextContent('Type: Alpha, Gamma')
+    fireEvent.click(screen.getByRole('menuitemcheckbox', { name: /Beta/, hidden: true }))
+    expect(screen.getByRole('button', { name: 'Type: Alpha, Beta, Gamma' })).toHaveTextContent('Alpha, Beta +1')
+  })
+
+  it('shows each pick as its own chip in the panel layout, and removes one', () => {
+    renderWithApp(<Types layout="panel" start="a,b" />)
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Type: Alpha' }))
+    expect(screen.getByRole('status')).toHaveTextContent('b')
+    expect(pickedValues({ value: 'c,a,x', options: [{ value: 'a', label: 'A' }, { value: 'c', label: 'C' }] })).toEqual(['a', 'c'])
   })
 })

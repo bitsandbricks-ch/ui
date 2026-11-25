@@ -6,6 +6,7 @@ export interface FilterDef<K extends string> {
   label: string
   options?: FilterOption[]
   kind?: FilterGroup['kind']
+  multiple?: boolean
   hidden?: boolean
   sort?: boolean
 }
