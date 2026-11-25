@@ -1,5 +1,6 @@
 import { Button } from '@mantine/core'
-import { IconBell, IconHome, IconNetwork, IconServer, IconSettings } from '@tabler/icons-react'
+import { IconBell, IconHome, IconNetwork, IconServer, IconSettings, IconStar } from '@tabler/icons-react'
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { AppShell } from './AppShell'
 import { Breadcrumbs } from './Breadcrumbs'
@@ -40,3 +41,28 @@ function Page({ actionsInTopBar }: { actionsInTopBar?: boolean }) {
 
 export const Frame: StoryObj = { render: () => <Page /> }
 export const ActionsInTopBar: StoryObj = { name: 'Buttons in the top bar', render: () => <Page actionsInTopBar /> }
+
+function Folding() {
+  const [folded, setFolded] = useState(false)
+  const [open, setOpen] = useState(true)
+  const groups = [
+    { items: [{ id: 'home', label: 'Overview', href: '#', icon: <IconHome size={18} />, active: true }] },
+    { id: 'inventory', label: 'Inventory', collapsible: true, open, onToggle: () => setOpen((o) => !o), items: [
+      { id: 'hosts', label: 'Hosts', href: '#', icon: <IconServer size={18} />, badge: 48,
+        action: <Button size="compact-xs" variant="subtle" aria-label="Pin Hosts"><IconStar size={14} /></Button> },
+      { id: 'networks', label: 'Networks', href: '#', icon: <IconNetwork size={18} /> },
+    ] },
+    { label: 'Admin', items: [{ id: 'settings', label: 'Settings', href: '#', icon: <IconSettings size={18} /> }] },
+  ]
+  return (
+    <div style={{ margin: -24 }}>
+      <AppShell brand={<strong>{folded ? 'B' : 'BitsAndBricks'}</strong>} nav={groups} folded={folded} onFoldedChange={setFolded}
+        navTop={folded ? null : <Button variant="default" size="xs" fullWidth>Scope: Spring event</Button>} navFooter={folded ? null : <ThemeSwitch />}
+        title="Overview">
+        <PageHead title="Overview" desc="Fold the sidebar from its foot, and the Inventory group from its heading." />
+      </AppShell>
+    </div>
+  )
+}
+
+export const FoldingSidebar: StoryObj = { name: 'Folding sidebar', render: () => <Folding /> }
