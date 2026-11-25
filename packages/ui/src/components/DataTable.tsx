@@ -98,6 +98,50 @@ export interface DataTableProps<T> {
   exportName?: string
   /** Marks a row as new since the last visit (see useSeen). */
   isNew?: (row: T) => boolean
+  /** Splits the rows into groups, each under a header row of its own (agents by site, problems
+   *  by switch). One table: one column header, the same widths, the sort inside each group.
+   *  Groups come in the order of `groupOrder`, else in the order their first row has in `rows`.
+   *  Paging counts rows, not groups; a group that runs onto the next page shows its header again. */
+  groupBy?: (row: T) => string
+  groupOrder?: string[]
+  /** What the group's header row says; default its key and how many rows it has. */
+  groupHeader?: (key: string, rows: T[]) => ReactNode
+  /** The group headers fold their rows away. `folded` and `onFold` hold the folded keys; without
+   *  them the table keeps them itself. */
+  foldable?: boolean
+  folded?: string[]
+  onFold?: (keys: string[]) => void
+}
+
+interface Section<R> { key: string; rows: R[]; all: R[]; folded: boolean }
+
+/** The groups in order, each with its rows as sorted. Folded groups keep their place, empty. */
+function sections<R extends { original: T }, T>(sorted: R[], groupBy: (row: T) => string, source: T[], order: string[] | undefined, folded: Set<string>) {
+  const keys: string[] = [...(order ?? [])]
+  for (const r of source) { const k = groupBy(r); if (!keys.includes(k)) keys.push(k) }
+  const by = new Map<string, R[]>(keys.map((k) => [k, []]))
+  for (const r of sorted) by.get(groupBy(r.original))?.push(r)
+  return keys.filter((k) => by.get(k)?.length).map((key): Section<R> => {
+    const rows = by.get(key) ?? []
+    return { key, rows: folded.has(key) ? [] : rows, all: rows, folded: folded.has(key) }
+  })
+}
+
+/** The part of each group on one page: a group cut by the page break shows on both pages. */
+function slicePage<R>(groups: Section<R>[], first: number, last: number, total: number) {
+  const out: Section<R>[] = []
+  let at = 0
+  for (const g of groups) {
+    if (g.folded) {
+      // A folded group sits where its rows would start; after the last row, on the last page.
+      if ((at >= first && at < last) || (at >= total && last >= total)) out.push(g)
+      continue
+    }
+    const from = Math.max(first, at), to = Math.min(last, at + g.rows.length)
+    if (from < to) out.push({ ...g, rows: g.rows.slice(from - at, to - at) })
+    at += g.rows.length
+  }
+  return out
 }
 
 const CONTROLS = 'a, button, input, select, textarea, label, [role="menuitem"], [role="checkbox"], [role="switch"]'
@@ -116,12 +160,18 @@ function ownClick(e: { target: EventTarget; currentTarget: Element }) {
 export function DataTable<T>(props: DataTableProps<T>) {
   const { rows, columns, rowKey, label, defaultSort, pageSize = 50, empty, loading, count, rowStyle, rowProps, onRowClick,
     urlState = true, density = 'default', minWidth, bare, className, striped, cards, head = true, pager = 'full', pagerAt = 'both', page, onPage,
-    selected, onSelect, picked, onPick, rowLabel, exportName, isNew } = props
+    selected, onSelect, picked, onPick, rowLabel, exportName, isNew, groupBy, groupOrder, groupHeader, foldable, folded, onFold } = props
   const { t } = useT(texts)
   const [params, setParams] = useSearchParamsAdapter()
   const initialSort: SortingState = defaultSort ? [{ id: defaultSort.id, desc: !!defaultSort.desc }] : []
   const [localSort, setLocalSort] = useState<SortingState>(initialSort)
   const [localPage, setLocalPage] = useState(0)
+  const [localFolded, setLocalFolded] = useState<string[]>([])
+  const foldedKeys = new Set(foldable ? (folded ?? localFolded) : [])
+  const toggleFold = (key: string) => {
+    const next = foldedKeys.has(key) ? [...foldedKeys].filter((k) => k !== key) : [...foldedKeys, key]
+    if (onFold) onFold(next); else setLocalFolded(next)
+  }
 
   // In the address: ?sort=name or ?sort=-name, and ?page=2 (counted from 1 for people).
   const sorting: SortingState = (() => {
@@ -165,16 +215,21 @@ export function DataTable<T>(props: DataTableProps<T>) {
   })), [columns])
 
   const paged = pageSize > 0
-  const pages = paged ? Math.max(1, Math.ceil(rows.length / pageSize)) : 1
-  const pagination: PaginationState = { pageIndex: Math.min(pageIndex, pages - 1), pageSize: paged ? pageSize : Math.max(1, rows.length) }
+  // Grouped, the table only sorts; the groups are paged below, counting the rows that show.
+  const grouped = !!groupBy
+  const paging = (n: number): PaginationState => {
+    const count = paged ? Math.max(1, Math.ceil(n / pageSize)) : 1
+    return { pageIndex: Math.min(pageIndex, count - 1), pageSize: paged ? pageSize : Math.max(1, n) }
+  }
+  const flat = paging(rows.length)
   // The table's functions are only read while rendering, so the compiler not memoizing it is fine.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: rows,
     columns: defs,
-    state: { sorting, pagination },
+    state: { sorting, pagination: grouped ? { pageIndex: 0, pageSize: Math.max(1, rows.length) } : flat },
     onSortingChange: (u) => setSorting(typeof u === 'function' ? u(sorting) : u),
-    onPaginationChange: (u) => setPage((typeof u === 'function' ? u(pagination) : u).pageIndex),
+    onPaginationChange: (u) => setPage((typeof u === 'function' ? u(flat) : u).pageIndex),
     getRowId: (row, index) => rowKey(row, index),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -191,11 +246,18 @@ export function DataTable<T>(props: DataTableProps<T>) {
   }, [selected, onSelect])
   const lastPick = useRef<string | null>(null)
 
+  const allGroups = groupBy ? sections(table.getSortedRowModel().rows, groupBy, rows, groupOrder, foldedKeys) : []
+  const shown = grouped ? allGroups.reduce((n, g) => n + g.rows.length, 0) : rows.length
+  const pagination = grouped ? paging(shown) : flat
+  const pages = paged ? Math.max(1, Math.ceil(shown / pageSize)) : 1
+
   if (loading) return <LoadingState lines={5} />
   if (!rows.length) return <>{empty ?? <Text c="dimmed">{t('table.empty')}</Text>}</>
 
   const byId = new Map(columns.map((c) => [c.id, c]))
-  const pageRows = table.getRowModel().rows
+  const first = pagination.pageIndex * pagination.pageSize
+  const groups = slicePage(allGroups, first, first + pagination.pageSize, shown)
+  const pageRows = grouped ? groups.flatMap((g) => g.rows) : table.getRowModel().rows
   const picks = !!onPick
   const pickedSet = new Set(picked ?? [])
   const order = () => table.getSortedRowModel().rows.map((r) => r.id)
@@ -252,6 +314,39 @@ export function DataTable<T>(props: DataTableProps<T>) {
     c?.className, c?.hideOnPhone && 'bnb-dt-phone-hide', c?.mono && 'bnb-dt-mono', c?.wrap && 'bnb-dt-wrap', c?.numeric && 'bnb-dt-num',
     cards && c?.card === 'inline' && 'bnb-stack-inline', cards && c?.card === 'actions' && 'bnb-stack-actions',
   ].filter(Boolean).join(' ') || undefined
+  const drawRow = (row: (typeof pageRows)[number]) => {
+    const isSel = selected != null && row.id === selected
+    const isPicked = pickedSet.has(row.id)
+    const extra = rowProps?.(row.original)
+    return (
+      <Table.Tr key={row.id} {...extra} style={rowStyle?.(row.original)}
+        aria-selected={onSelect ? isSel : extra?.['aria-selected']} aria-current={!onSelect && isSel ? 'true' : extra?.['aria-current']}
+        data-selected={isSel || undefined} data-picked={isPicked || undefined}
+        onClick={onRowClick || onSelect ? (e) => { if (!ownClick(e)) return; onSelect?.(row.id, row.original); onRowClick?.(row.original) } : undefined}
+        onKeyDown={onRowClick && !onSelect ? (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) onRowClick(row.original) } : undefined}
+        tabIndex={onRowClick && !onSelect ? 0 : undefined}>
+        {picks && (
+          <Table.Td className="bnb-dt-pick">
+            <Checkbox size="xs" checked={isPicked} tabIndex={onSelect ? -1 : undefined}
+              aria-label={t('table.pickRow', { row: rowLabel?.(row.original) ?? row.id })}
+              onChange={(e) => pick(row.id, (e.nativeEvent as MouseEvent).shiftKey === true)} />
+          </Table.Td>
+        )}
+        {row.getVisibleCells().map((cell, i) => {
+          const c = byId.get(cell.column.id)
+          return (
+            <Table.Td key={cell.id} className={cellClass(c)}
+              data-label={cards && c?.card === 'label' && typeof c.header === 'string' ? c.header : undefined}>
+              {i === 0 && isNew?.(row.original) && (
+                <span className="bnb-dt-new" title={t('table.new')}><span className="bnb-sr-only">{t('table.new')}</span></span>
+              )}
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </Table.Td>
+          )
+        })}
+      </Table.Tr>
+    )
+  }
   const body = (
     <div ref={box} className="bnb-dt-scroll" style={minWidth ? ({ '--bnb-dt-min': `${minWidth}px` } as CSSProperties) : undefined}>
       <Table highlightOnHover striped={striped} verticalSpacing={density === 'compact' ? 4 : 8} fz="sm" aria-label={label}
@@ -291,45 +386,30 @@ export function DataTable<T>(props: DataTableProps<T>) {
           </Table.Thead>
         )}
         <Table.Tbody>
-          {pageRows.map((row) => {
-            const isSel = selected != null && row.id === selected
-            const isPicked = pickedSet.has(row.id)
-            const extra = rowProps?.(row.original)
-            return (
-              <Table.Tr key={row.id} {...extra} style={rowStyle?.(row.original)}
-                aria-selected={onSelect ? isSel : extra?.['aria-selected']} aria-current={!onSelect && isSel ? 'true' : extra?.['aria-current']}
-                data-selected={isSel || undefined} data-picked={isPicked || undefined}
-                onClick={onRowClick || onSelect ? (e) => { if (!ownClick(e)) return; onSelect?.(row.id, row.original); onRowClick?.(row.original) } : undefined}
-                onKeyDown={onRowClick && !onSelect ? (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) onRowClick(row.original) } : undefined}
-                tabIndex={onRowClick && !onSelect ? 0 : undefined}>
-                {picks && (
-                  <Table.Td className="bnb-dt-pick">
-                    <Checkbox size="xs" checked={isPicked} tabIndex={onSelect ? -1 : undefined}
-                      aria-label={t('table.pickRow', { row: rowLabel?.(row.original) ?? row.id })}
-                      onChange={(e) => pick(row.id, (e.nativeEvent as MouseEvent).shiftKey === true)} />
-                  </Table.Td>
-                )}
-                {row.getVisibleCells().map((cell, i) => {
-                  const c = byId.get(cell.column.id)
-                  return (
-                    <Table.Td key={cell.id} className={cellClass(c)}
-                      data-label={cards && c?.card === 'label' && typeof c.header === 'string' ? c.header : undefined}>
-                      {i === 0 && isNew?.(row.original) && (
-                        <span className="bnb-dt-new" title={t('table.new')}><span className="bnb-sr-only">{t('table.new')}</span></span>
-                      )}
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </Table.Td>
-                  )
-                })}
-              </Table.Tr>
-            )
-          })}
+          {grouped ? null : pageRows.map(drawRow)}
         </Table.Tbody>
+        {groups.map((g) => {
+          const head = groupHeader ? groupHeader(g.key, g.all.map((r) => r.original)) : <>{g.key} <span className="bnb-tab-count">{g.all.length}</span></>
+          return (
+            <Table.Tbody key={`g:${g.key}`} className="bnb-dt-group">
+              <Table.Tr className="bnb-dt-group-head" data-folded={g.folded || undefined}>
+                <Table.Th scope="rowgroup" colSpan={columns.length + (picks ? 1 : 0)}>
+                  {foldable ? (
+                    <UnstyledButton className="bnb-dt-fold" aria-expanded={!g.folded} onClick={() => toggleFold(g.key)}>
+                      <IconChevronRight size={14} aria-hidden="true" className="bnb-dt-fold-icon" />
+                      {head}
+                    </UnstyledButton>
+                  ) : head}
+                </Table.Th>
+              </Table.Tr>
+              {g.rows.map(drawRow)}
+            </Table.Tbody>
+          )
+        })}
       </Table>
     </div>
   )
-  const first = pagination.pageIndex * pagination.pageSize
-  const range = t('table.rowsOf', { from: first + 1, to: Math.min(rows.length, first + pagination.pageSize), count: rows.length })
+  const range = t('table.rowsOf', { from: Math.min(shown, first + 1), to: Math.min(shown, first + pagination.pageSize), count: shown })
   const pagesTop = pages > 1 && pagerAt !== 'bottom'
   const pagesBottom = pages > 1 && pagerAt !== 'top'
   // A page turned below the table: back up to its top, unless that is already in view.

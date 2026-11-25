@@ -7,3 +7,15 @@
 .bnb-dt-new { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--bnb-accent); vertical-align: middle; }
 /* DataTable: the page buttons above the table. */
 .bnb-dt-pager.is-top { margin-bottom: 4px; }
+
+/* Row groups: a header row per group, inside the one table, so the columns line up. */
+.bnb-dt .bnb-dt-group-head > th {
+  background: var(--bnb-raised); color: var(--bnb-fg); font-weight: 600; text-align: left;
+  border-top: 1px solid var(--bnb-line); white-space: normal;
+}
+.bnb-dt .bnb-dt-group:first-of-type .bnb-dt-group-head > th { border-top: 0; }
+.bnb-dt-fold { display: inline-flex; align-items: center; gap: 6px; width: 100%; font: inherit; color: inherit; }
+.bnb-dt-fold:focus-visible { outline: 2px solid var(--bnb-focus-ring); outline-offset: 2px; border-radius: var(--bnb-radius-sm); }
+.bnb-dt-fold-icon { flex: none; transition: transform 120ms ease; transform: rotate(90deg); }
+.bnb-dt-fold[aria-expanded='false'] .bnb-dt-fold-icon { transform: none; }
+@media (prefers-reduced-motion: reduce) { .bnb-dt-fold-icon { transition: none; } }
