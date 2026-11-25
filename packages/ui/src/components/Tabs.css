@@ -6,3 +6,21 @@
 .bnb-tabs .mantine-Tabs-tabSection[data-position='right'] { display: inline-flex; align-items: center; gap: 6px; }
 .bnb-tabs .mantine-Tabs-tab.bnb-tab-hidden:not([data-active]),
 .bnb-subtabs .mantine-Tabs-tab.bnb-tab-hidden:not([data-active]) { color: var(--bnb-faint); }
+
+/* LinkTabs: the same underline as PageTabs, drawn on links. */
+.bnb-linktabs { margin-bottom: 24px; }
+.bnb-linktabs-sub { margin-bottom: 16px; }
+.bnb-linktabs-list { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: thin; border-bottom: 1px solid var(--bnb-line); }
+.bnb-linktab {
+  display: inline-flex; align-items: center; gap: 6px; flex: none; white-space: nowrap;
+  padding: 10px 14px 9px; margin-bottom: -1px; border-bottom: 2px solid transparent;
+  color: var(--bnb-muted); font-size: var(--bnb-fs-sm); font-weight: 500; text-decoration: none;
+}
+.bnb-linktab:hover { color: var(--bnb-fg); background: var(--bnb-raised); }
+.bnb-linktab:focus-visible { outline: 2px solid var(--bnb-focus-ring); outline-offset: -2px; border-radius: var(--bnb-radius-sm); }
+.bnb-linktab[aria-current='page'] { color: var(--bnb-fg); font-weight: 600; border-bottom-color: var(--bnb-accent); }
+.bnb-linktab.bnb-tab-hidden:not([aria-current]) { color: var(--bnb-faint); }
+.bnb-linktabs-sub .bnb-linktabs-list { border-bottom: 0; gap: 6px; }
+.bnb-linktabs-sub .bnb-linktab { padding: 6px 12px; margin: 0; border: 0; border-radius: var(--bnb-radius-pill); }
+.bnb-linktabs-sub .bnb-linktab[aria-current='page'] { background: var(--bnb-accent); color: var(--bnb-on-accent); }
+.bnb-linktabs-sub .bnb-linktab[aria-current='page'] .bnb-tab-count { color: inherit; }
