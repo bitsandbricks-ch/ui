@@ -1,6 +1,6 @@
 # Checks on every pull request and on main: lint, typecheck, unit tests, the package builds, the
-# Storybook build and a screenshot of every story (visual/README.md). "CI passed" is the one
-# required check (handbook: core/github.md).
+# Storybook build and axe on every story in a browser; screenshots of every story are only reported
+# (visual/README.md). "CI passed" is the one required check (handbook: core/github.md).
 name: CI
 
 on:
@@ -44,7 +44,7 @@ jobs:
         run: pnpm -r exec pnpm pack --pack-destination "$RUNNER_TEMP/packs"
 
   visual:
-    name: Screenshots
+    name: Accessibility and screenshots
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     # The Playwright image pins the browser and fonts, so pictures match to the pixel on every run
@@ -64,19 +64,25 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm build-storybook
-      - run: pnpm visual
-      # A changed or new story: take its new pictures so they can be reviewed and committed
-      # (download the "screenshots" artifact and unpack it into visual/__screenshots__).
-      - name: New pictures for the stories that changed
-        if: failure()
-        run: pnpm visual --last-failed --update-snapshots=changed || true
+      # Blocks the merge: an accessibility finding is a bug.
+      - name: Accessibility (axe, light and dark)
+        run: pnpm visual a11y --reporter=list
+      # Only reports: a changed picture is often intended, so it never blocks a merge or auto-merge.
+      - name: Screenshots (report only)
+        id: pictures
+        continue-on-error: true
+        run: pnpm visual screenshots
+      - name: Note the changed pictures
+        if: steps.pictures.outcome == 'failure'
+        run: |
+          echo "::warning title=Screenshots differ::Some stories look different from visual/__screenshots__. See the screenshot-report artifact. If the change is meant, add the label update-screenshots to the pull request."
+          {
+            echo "### Screenshots differ"
+            echo "Some stories look different from the reference pictures. This doesn't block the merge."
+            echo "Download **screenshot-report** below to see expected, actual and diff. If the change is meant, add the label \`update-screenshots\` to the pull request."
+          } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        if: failure()
-        with:
-          name: screenshots
-          path: visual/__screenshots__
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        if: failure()
+        if: always() && (steps.pictures.outcome == 'failure' || failure())
         with:
           name: screenshot-report
           path: playwright-report

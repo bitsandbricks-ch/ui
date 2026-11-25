@@ -1,4 +1,4 @@
-# Takes the reference pictures for the Screenshots check in the same Playwright image CI uses, and
+# Takes the reference pictures for the screenshot report in the same Playwright image CI uses, and
 # commits the changed and new ones to the branch. Use it when a change to how a story looks is meant
 # (visual/README.md):
 #   - on a pull request: add the label `update-screenshots` (it is removed again after the run);
@@ -49,8 +49,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm build-storybook
-      # An accessibility finding fails the test but still writes its picture; CI reports it.
-      - run: pnpm visual --update-snapshots=changed || true
+      - run: pnpm visual screenshots --update-snapshots=changed || true
       - name: Commit the pictures
         id: commit
         run: |
