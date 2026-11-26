@@ -30,6 +30,20 @@ export const PhoneBar: StoryObj = {
   ),
 }
 
+/** The page shown is under More (Settings): More is lit with a dot, and the status line sits in its sheet. */
+export const PhoneBarElsewhere: StoryObj = {
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  render: () => (
+    <>
+      <Text size="sm">Settings is open: "More" carries a dot. The status line is in the sheet, not above the bar.</Text>
+      <PhoneDock items={dock.map((d) => ({ ...d, active: false }))} current="Settings"
+        status={<span>2 down · 5 need a look</span>}
+        more={[{ items: dock }, { label: 'Setup', items: [{ id: 'settings', label: 'Settings', href: '#', active: true, icon: <IconSettings size={18} /> }] }]}
+        moreFooter={<ThemeSwitch />} />
+    </>
+  ),
+}
+
 export const SaveView: StoryObj = {
   render: function Render() {
     const [views, setViews] = useState<SavedView[]>([{ name: 'Zurich', path: '/hosts?zone=zurich' }])
