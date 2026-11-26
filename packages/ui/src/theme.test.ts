@@ -1,6 +1,7 @@
 import { DEFAULT_THEME, defaultVariantColorsResolver, mergeMantineTheme } from '@mantine/core'
 import { contrastRatio } from '@bitsandbricks/tokens'
 import { describe, expect, it } from 'vitest'
+import source from './theme.ts?raw'
 import { accentScale, createBnbTheme, cssVariablesResolver, resolveAccent, variantColorResolver } from './theme'
 
 describe('createBnbTheme', () => {
@@ -102,5 +103,19 @@ describe('variant colours', () => {
   it('uses the muted text for grey outlines and leaves other colours to Mantine', () => {
     expect(resolve('outline', 'gray').color).toBe('var(--bnb-muted)')
     expect(resolve('light', 'gray')).toEqual(defaultVariantColorsResolver({ variant: 'light', color: 'gray', theme, autoContrast: false }))
+  })
+})
+
+describe('the theme stays light', () => {
+  // A component's .extend() only returns its argument, but calling it imports the whole component:
+  // every app then shipped Menu, MultiSelect, Tabs and more on its first page, used or not.
+  it('names Mantine components only as types', () => {
+    expect(source).not.toMatch(/\b[A-Z]\w*\.extend\(/)
+  })
+
+  it('keeps the component defaults', () => {
+    const theme = createBnbTheme({ accent: '#0e7490' })
+    expect(theme.components?.Switch?.defaultProps).toEqual({ withThumbIndicator: false })
+    expect(theme.components?.Menu?.defaultProps).toMatchObject({ position: 'bottom-end', shadow: 'md' })
   })
 })
