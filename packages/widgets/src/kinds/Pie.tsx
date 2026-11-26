@@ -37,7 +37,7 @@ export function PieKind({ widget, level, box }: { widget: Widget; level: Level; 
           )
         })}
         </g>
-        <text x={50} y={focus ? 50 : 55} className="bnb-w-pie-total">{focus ? focus.text : centre(total, i18n.language, style)}</text>
+        <text x={50} y={focus ? 50 : 55} className="bnb-w-pie-total">{focus ? focus.text : centre(total, widget.type === 'list' ? widget.unit : undefined, i18n.language, style)}</text>
         {focus && <text x={50} y={64} className="bnb-w-pie-sub">{`${pct(focus.value)} %`}</text>}
       </svg>
       {legend && (
@@ -56,8 +56,10 @@ export function PieKind({ widget, level, box }: { widget: Widget; level: Level; 
   )
 }
 
-/** The whole in the middle of the ring: short (1.1T, not 1,105,774,540,503), so it fits. */
-function centre(total: number, lang: string, style: { decimals?: number; short?: boolean }) {
+/** The whole in the middle of the ring: short (1.1 TB, not 1,105,774,540,503), so it fits, and with
+ *  the list's unit when it has one. */
+function centre(total: number, unit: string | undefined, lang: string, style: { decimals?: number; short?: boolean }) {
   // Spread would let an unset ``short`` (undefined) switch it back off.
-  return formatValue(total, '', lang, { short: true, decimals: style.decimals }).value
+  const f = formatValue(total, unit ?? '', lang, { short: true, decimals: style.decimals })
+  return f.unit ? `${f.value} ${f.unit}` : f.value
 }

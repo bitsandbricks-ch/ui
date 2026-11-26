@@ -132,6 +132,8 @@ export type Widget = WidgetBase & (
       type: 'list'
       items: { label: string; value: string; tone: MaybeTone; number?: number; max?: number; colour?: string; device?: string; sub?: string; link?: string }[]
       total?: number
+      /** The unit of the items' numbers ("B", "bit/s"), so a sum such as a donut's centre can name it. */
+      unit?: string
     }
   | { type: 'table'; columns: { key: string; label: string }[]; rows: Record<string, string>[] }
   /** Plain text, such as a note: line breaks kept, never read as HTML or Markdown. */
