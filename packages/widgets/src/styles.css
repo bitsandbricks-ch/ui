@@ -107,7 +107,10 @@ button.bnb-w-more:hover { text-decoration: underline; }
 /* Bars */
 .bnb-w-bars { list-style: none; margin: 0; padding: 0; }
 .bnb-w-bars li { display: grid; grid-template-columns: var(--label-w) 1fr auto; align-items: center; gap: 10px; font-size: 13px; }
-.bnb-w-bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* A long name (an uplink's "core-01 Ethernet1/49") takes a second line inside the row instead of
+   being cut after a few letters; past two lines it still ends in an ellipsis. */
+.bnb-w-bar-label { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2;
+  overflow: hidden; overflow-wrap: anywhere; line-height: 14px; }
 .bnb-w-bar-track { height: 10px; border-radius: 3px; overflow: hidden; }
 .bnb-w-bar-track.gauge { background: var(--bnb-line); }
 .bnb-w-bar-fill { display: block; height: 100%; border-radius: 3px; min-width: 2px; }

@@ -53,3 +53,12 @@ export const Chart: StoryObj = {
     </TileCard>
   ),
 }
+
+const uplinks: Widget = { ...base, label: 'Uplinks', type: 'list', items: [
+  ['core-01 Ethernet1/49', 65], ['core-01 Ethernet1/50', 31], ['sw-b-03 TenGigabitEthernet1/1/1', 4], ['dist-01 Te1/5', 2],
+].map(([label, pct]) => ({ label: String(label), value: `${pct} %`, number: Number(pct), max: 100, tone: '' })) }
+
+export const LongBarLabels: StoryObj = {
+  name: 'Bars with long names',
+  render: () => <Box w={360} h={180}><FitWidget widget={uplinks} pick="bar" /></Box>,
+}
