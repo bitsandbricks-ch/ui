@@ -1,22 +1,22 @@
 import {
-  Autocomplete,
-  Badge,
-  Checkbox,
-  Chip,
-  Combobox,
+  type Autocomplete,
+  type Badge,
+  type Checkbox,
+  type Chip,
+  type Combobox,
   createTheme,
   defaultVariantColorsResolver,
-  Menu,
+  type Menu,
   mergeThemeOverrides,
-  MultiSelect,
-  Popover,
-  Radio,
+  type MultiSelect,
+  type Popover,
+  type Radio,
   rem,
-  Select,
-  Switch,
-  TableScrollContainer,
-  Tabs,
-  Tooltip,
+  type Select,
+  type Switch,
+  type TableScrollContainer,
+  type Tabs,
+  type Tooltip,
   type CSSVariablesResolver,
   type MantineColorsTuple,
   type MantineThemeOverride,
@@ -145,6 +145,11 @@ export const variantColorResolver: VariantColorsResolver = (input) => {
   }
 }
 
+// A component's theme entry, typed as its .extend() would type it. Calling .extend() (which only
+// returns its argument) imports the whole component, so every app shipped Menu, MultiSelect, Tabs
+// and the rest on its first page, used there or not. Type imports cost nothing.
+const ext = <C extends { extend: (input: never) => unknown }>(input: Parameters<C['extend']>[0]) => input
+
 // Dropdowns open like an app's menu: a quick pop from where they were opened (Floorbit).
 const POP = { offset: 6, transitionProps: { transition: 'pop-top-left' as const, duration: 120 } }
 const fs = (px: number) => `calc(${rem(px)} * var(--bnb-text, 1))`
@@ -206,13 +211,13 @@ export function createBnbTheme({ accent, fonts = {}, overrides }: BnbThemeOption
       Button: { defaultProps: { size: 'sm' }, styles: { root: { fontWeight: 600 } } },
       ActionIcon: { defaultProps: { color: 'gray', variant: 'subtle' } },
       // Clicking the chosen entry again keeps it: Mantine's default empties required fields.
-      Select: Select.extend({ defaultProps: { checkIconPosition: 'right', allowDeselect: false, maxDropdownHeight: 320, comboboxProps: POP } }),
-      MultiSelect: MultiSelect.extend({ defaultProps: { checkIconPosition: 'right', maxDropdownHeight: 320, comboboxProps: POP } }),
-      Autocomplete: Autocomplete.extend({ defaultProps: { maxDropdownHeight: 320, comboboxProps: POP } }),
-      Combobox: Combobox.extend({ defaultProps: POP }),
-      Menu: Menu.extend({ defaultProps: { ...POP, position: 'bottom-end', shadow: 'md' } }),
-      Popover: Popover.extend({ defaultProps: { ...POP, shadow: 'md' } }),
-      Tooltip: Tooltip.extend({ defaultProps: { openDelay: 250, color: 'dark', transitionProps: { transition: 'fade', duration: 100 } } }),
+      Select: ext<typeof Select>({ defaultProps: { checkIconPosition: 'right', allowDeselect: false, maxDropdownHeight: 320, comboboxProps: POP } }),
+      MultiSelect: ext<typeof MultiSelect>({ defaultProps: { checkIconPosition: 'right', maxDropdownHeight: 320, comboboxProps: POP } }),
+      Autocomplete: ext<typeof Autocomplete>({ defaultProps: { maxDropdownHeight: 320, comboboxProps: POP } }),
+      Combobox: ext<typeof Combobox>({ defaultProps: POP }),
+      Menu: ext<typeof Menu>({ defaultProps: { ...POP, position: 'bottom-end', shadow: 'md' } }),
+      Popover: ext<typeof Popover>({ defaultProps: { ...POP, shadow: 'md' } }),
+      Tooltip: ext<typeof Tooltip>({ defaultProps: { openDelay: 250, color: 'dark', transitionProps: { transition: 'fade', duration: 100 } } }),
       // A dialog's <header> is not the page's banner: without the role, axe and screen readers count
       // a second banner next to the shell's top bar.
       Modal: { defaultProps: { radius: 'lg', centered: true, overlayProps: { backgroundOpacity: 0.4, blur: 2 }, attributes: { header: { role: 'presentation' } } } },
@@ -220,34 +225,34 @@ export function createBnbTheme({ accent, fonts = {}, overrides }: BnbThemeOption
       Paper: { defaultProps: { radius: 'lg' } },
       Card: { defaultProps: { radius: 'lg', withBorder: true } },
       // Mantine's badge text (9 to 11 px) is made for uppercase labels; ours are words in sentence case.
-      Badge: Badge.extend({
+      Badge: ext<typeof Badge>({
         defaultProps: { radius: 'sm', variant: 'light' },
         styles: { root: { fontWeight: 600, textTransform: 'none' } },
         vars: (_t, props) => ({ root: { '--badge-fz': BADGE_FZ[String(props.size ?? 'md')] ?? BADGE_FZ.md } }),
       }),
       // The active pill and a picked chip sit on the accent: their text follows the text-on-accent
       // colour too (Mantine's default is white, 2.2:1 on a bright dark-theme accent).
-      Tabs: Tabs.extend({
+      Tabs: ext<typeof Tabs>({
         styles: { tab: { fontWeight: 550 } },
         // Mantine reads --tabs-text-color but leaves it out of its typed variables.
         vars: (_t, props) => ({ root: (!props.color || props.color === 'accent' ? { '--tabs-text-color': 'var(--bnb-on-accent)' } : {}) as Record<string, string> }),
       }),
-      Chip: Chip.extend({
+      Chip: ext<typeof Chip>({
         vars: (_t, props) => ({
           root: (!props.color || props.color === 'accent') && (!props.variant || props.variant === 'filled') ? { '--chip-color': 'var(--bnb-on-accent)' } : {},
         }),
       }),
       // Plain thumb: Mantine 8+ puts a dot in it.
-      Switch: Switch.extend({ defaultProps: { withThumbIndicator: false } }),
+      Switch: ext<typeof Switch>({ defaultProps: { withThumbIndicator: false } }),
       // The tick and the radio dot follow the text-on-accent colour, so a bright accent gets a dark tick.
-      Checkbox: Checkbox.extend({
+      Checkbox: ext<typeof Checkbox>({
         vars: (_t, props) => ({ root: !props.color || props.color === 'accent' ? { '--checkbox-icon-color': 'var(--bnb-on-accent)' } : {} }),
       }),
-      Radio: Radio.extend({
+      Radio: ext<typeof Radio>({
         vars: (_t, props) => ({ root: !props.color || props.color === 'accent' ? { '--radio-icon-color': 'var(--bnb-on-accent)' } : {} }),
       }),
       // A wide table scrolls sideways on a phone; without focus a keyboard can't scroll it.
-      TableScrollContainer: TableScrollContainer.extend({ defaultProps: { scrollAreaProps: { viewportProps: { tabIndex: 0 } } } }),
+      TableScrollContainer: ext<typeof TableScrollContainer>({ defaultProps: { scrollAreaProps: { viewportProps: { tabIndex: 0 } } } }),
     },
   })
   return overrides ? mergeThemeOverrides(base, overrides) : base
