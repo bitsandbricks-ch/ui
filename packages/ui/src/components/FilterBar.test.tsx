@@ -97,3 +97,25 @@ describe('FilterBar with several choices', () => {
     expect(pickedValues({ value: 'c,a,x', options: [{ value: 'a', label: 'A' }, { value: 'c', label: 'C' }] })).toEqual(['a', 'c'])
   })
 })
+
+describe('FilterBar on a phone', () => {
+  const two = (set = vi.fn()): FilterGroup[] => [
+    { key: 'state', label: 'State', value: 'down', defaultValue: 'all', onChange: set, options: [{ value: 'all', label: 'All' }, { value: 'down', label: 'Down' }] },
+    { key: 'tier', label: 'Tier', value: 'any', defaultValue: 'any', onChange: set, options: [{ value: 'any', label: 'Any' }, { value: 'core', label: 'Core' }] },
+  ]
+  it('puts two or more filters behind one Filter button, with the set ones as chips', () => {
+    renderWithApp(<FilterBar onSearchChange={() => {}} groups={two()} />)
+    expect(screen.queryByRole('button', { name: /^State:/ })).toBeNull()
+    expect(screen.getByRole('button', { name: /Filter/ })).toHaveAttribute('aria-haspopup', 'dialog')
+    expect(screen.getByText('State: Down')).toBeInTheDocument()
+  })
+  it('keeps a button per filter on wider screens', () => {
+    const wide = vi.spyOn(window, 'matchMedia').mockImplementation((query: string) => ({
+      matches: true, media: query, onchange: null, addListener: () => {}, removeListener: () => {},
+      addEventListener: () => {}, removeEventListener: () => {}, dispatchEvent: () => false,
+    }))
+    renderWithApp(<FilterBar onSearchChange={() => {}} groups={two()} />)
+    expect(screen.getByRole('button', { name: 'State: Down' })).toBeInTheDocument()
+    wide.mockRestore()
+  })
+})
