@@ -28,3 +28,6 @@ function Problems({ layout }: { layout: 'menus' | 'panel' }) {
 
 export const Menus: Story = { name: 'As menus', render: () => <Problems layout="menus" /> }
 export const Panel: Story = { name: 'In a panel', render: () => <Problems layout="panel" /> }
+
+/** On a phone the menus become one "Filter" button with a bottom sheet, and the set filters show as chips. */
+export const Phone: Story = { name: 'On a phone', parameters: { viewport: { defaultViewport: 'mobile1' } }, render: () => <Problems layout="menus" /> }

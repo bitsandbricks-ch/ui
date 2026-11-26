@@ -293,7 +293,8 @@ function FilterMenus({ groups }: { groups: FilterGroup[] }) {
 }
 
 /** Search, filters and the page's buttons on one row. Feed it from `useFilters` to keep it all
- *  in the address, or control the groups yourself. */
+ *  in the address, or control the groups yourself. On a phone, two or more filters go behind one
+ *  "Filter" button (a bottom sheet) with the set ones as chips below, instead of rows of buttons. */
 export function FilterBar({ search, onSearchChange, searchLabel, groups = [], actions, layout = 'menus', padded, onClear }: {
   search?: string
   onSearchChange?: (value: string) => void
@@ -309,8 +310,10 @@ export function FilterBar({ search, onSearchChange, searchLabel, groups = [], ac
   onClear?: () => void
 }) {
   const { t } = useT()
+  const phone = useMatches({ base: true, sm: false }, { getInitialValueInEffect: false })
   const hasGroups = groups.some((g) => !g.hidden)
   if (!onSearchChange && !hasGroups && !actions) return null
+  const panel = layout === 'panel' || (phone && groups.filter((g) => !g.hidden).length > 1)
   const label = searchLabel ?? t('filters.search')
   const changed = !!search || activeFilters(groups).length > 0
   return (
@@ -321,13 +324,13 @@ export function FilterBar({ search, onSearchChange, searchLabel, groups = [], ac
             onChange={(e) => onSearchChange(e.currentTarget.value)} className="bnb-filterbar-search"
             rightSection={search ? <CloseButton size="sm" aria-label={t('filters.clearSearch')} onClick={() => onSearchChange('')} /> : null} />
         )}
-        {hasGroups && (layout === 'panel' ? <FilterButton groups={groups} /> : <FilterMenus groups={groups} />)}
-        {layout === 'menus' && changed && (
+        {hasGroups && (panel ? <FilterButton groups={groups} /> : <FilterMenus groups={groups} />)}
+        {!panel && changed && (
           <Button variant="subtle" color="gray" onClick={onClear ?? (() => { onSearchChange?.(''); resetAll(groups) })}>{t('filters.clear')}</Button>
         )}
         {actions && <div className="bnb-filterbar-actions">{actions}</div>}
       </div>
-      {layout === 'panel' && hasGroups && activeFilters(groups).length > 0 && (
+      {panel && hasGroups && activeFilters(groups).length > 0 && (
         <div style={{ marginTop: 10 }}><ActiveFilterChips groups={groups} /></div>
       )}
     </div>
