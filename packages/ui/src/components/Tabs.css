@@ -1,6 +1,15 @@
-/* One row that scrolls sideways instead of wrapping: more agents or halls mean more tabs. */
+/* One row that never scrolls sideways or wraps: the tabs that don't fit go under "More" (useFit). */
+.bnb-tabs-fit, .bnb-linktabs { position: relative; min-width: 0; }
 .bnb-tabs .mantine-Tabs-list,
-.bnb-subtabs .mantine-Tabs-list { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
+.bnb-subtabs .mantine-Tabs-list { flex-wrap: nowrap; overflow: hidden; }
+.bnb-tabs-measure {
+  position: absolute; left: 0; top: 0; height: 0; overflow: hidden; visibility: hidden; pointer-events: none;
+  display: flex; gap: 0; white-space: nowrap; width: max-content;
+}
+.bnb-tabs-measure.is-sub { gap: 6px; }
+.bnb-tabs-measure.is-sub .bnb-linktab { padding: 6px 12px; }
+.bnb-tabs-more { cursor: pointer; background: none; border: 0; border-bottom: 2px solid transparent; }
+.bnb-tabs .bnb-tabs-more, .bnb-subtabs .bnb-tabs-more { margin-bottom: 0; }
 .bnb-tabs .mantine-Tabs-tab,
 .bnb-subtabs .mantine-Tabs-tab { flex: none; white-space: nowrap; }
 .bnb-tabs .mantine-Tabs-tabSection[data-position='right'] { display: inline-flex; align-items: center; gap: 6px; }
@@ -10,7 +19,7 @@
 /* LinkTabs: the same underline as PageTabs, drawn on links. */
 .bnb-linktabs { margin-bottom: 24px; }
 .bnb-linktabs-sub { margin-bottom: 16px; }
-.bnb-linktabs-list { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: thin; border-bottom: 1px solid var(--bnb-line); }
+.bnb-linktabs-list { display: flex; gap: 4px; overflow: hidden; border-bottom: 1px solid var(--bnb-line); }
 .bnb-linktab {
   display: inline-flex; align-items: center; gap: 6px; flex: none; white-space: nowrap;
   padding: 10px 14px 9px; margin-bottom: -1px; border-bottom: 2px solid transparent;

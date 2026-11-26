@@ -1,6 +1,8 @@
-import { Tabs as MantineTabs } from '@mantine/core'
-import { IconEyeOff } from '@tabler/icons-react'
-import { useContext, useEffect, useRef, type ReactNode } from 'react'
+import { Tabs as MantineTabs, Menu, UnstyledButton } from '@mantine/core'
+import { IconChevronDown, IconEyeOff } from '@tabler/icons-react'
+import { useContext, useLayoutEffect, useRef, useState, type ComponentPropsWithoutRef, type ReactNode, type RefObject } from 'react'
+import { useT } from '../i18n'
+import { texts } from './Tabs.texts'
 import type { State } from '../status'
 import { LinkContext } from './SidePanel'
 import { StatusBit } from './StatusBadge'
@@ -18,24 +20,75 @@ export interface TabDef {
   hidden?: string
 }
 
-/** Keeps the active tab in view when the row scrolls on a narrow screen, so a tab far to the right
- *  (opened by a link) doesn't look unselected. */
-function useActiveInView(active: string) {
-  const list = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const row = list.current
-    const on = row?.querySelector<HTMLElement>('[data-active], [aria-current="page"]')
-    if (!row || !on || row.scrollWidth <= row.clientWidth) return
-    const left = on.offsetLeft - row.offsetLeft
-    if (left < row.scrollLeft || left + on.offsetWidth > row.scrollLeft + row.clientWidth) {
-      row.scrollTo?.({ left: Math.max(0, left - 16) })
+/** Which tabs fit in one row (Mike, 2026-11-26: nothing scrolls sideways). The tabs are measured in
+ *  an invisible copy of the row; what doesn't fit goes under "More". The tab being shown always
+ *  stays in the row, in place of the last one that fits. Without layout (tests) every tab fits. */
+function useFit(ids: string[], active: string) {
+  const row = useRef<HTMLDivElement>(null)
+  const measure = useRef<HTMLDivElement>(null)
+  const [fit, setFit] = useState(ids.length)
+  const key = ids.join('\u0000')
+  useLayoutEffect(() => {
+    const el = row.current, m = measure.current
+    if (!el || !m) return
+    const count = () => {
+      const width = el.clientWidth
+      const cells = Array.from(m.children) as HTMLElement[]
+      const more = cells.pop()
+      if (!width || !cells.length) return setFit(ids.length)
+      const gap = parseFloat(getComputedStyle(m).columnGap) || 0
+      const sizes = cells.map((c) => c.getBoundingClientRect().width + gap)
+      const total = sizes.reduce((a, b) => a + b, 0)
+      if (total <= width + 1) return setFit(ids.length)
+      const room = width - (more?.getBoundingClientRect().width ?? 80) - gap
+      let n = 0, used = 0
+      while (n < sizes.length && used + sizes[n] <= room) used += sizes[n++]
+      setFit(Math.max(1, n))
     }
-  }, [active])
-  return list
+    count()
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(count) : null
+    ro?.observe(el)
+    return () => ro?.disconnect()
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `key` stands for the ids
+  }, [key])
+  let shown = ids.slice(0, fit)
+  if (fit < ids.length && !shown.includes(active) && ids.includes(active)) shown = [...shown.slice(0, Math.max(0, fit - 1)), active]
+  const hidden = ids.filter((id) => !shown.includes(id))
+  return { row, measure, shown, hidden }
+}
+
+function TabBody({ t }: { t: TabDef }) {
+  return (<>
+    {t.icon}
+    {t.hidden && <IconEyeOff size={14} aria-hidden="true" />}
+    <span>{t.label}</span>
+    {t.count != null && <span className="bnb-tab-count">{t.count}</span>}
+    {t.alert && <StatusBit state={t.alert} />}
+  </>)
+}
+
+/** The invisible copy of the row the tabs are measured in, with a "More" button at its end. */
+function Measure({ tabs, sub, refEl }: { tabs: TabDef[]; sub?: boolean; refEl: RefObject<HTMLDivElement | null> }) {
+  const { t } = useT(texts)
+  return (
+    <div className={sub ? 'bnb-tabs-measure is-sub' : 'bnb-tabs-measure'} ref={refEl} aria-hidden="true">
+      {tabs.map((tab) => <span key={tab.id} className="bnb-linktab"><TabBody t={tab} /></span>)}
+      <span className="bnb-linktab bnb-tabs-more">{t('tabs.more')} 9<IconChevronDown size={14} /></span>
+    </div>
+  )
+}
+
+function MoreButton({ count, ...rest }: { count: number } & ComponentPropsWithoutRef<'button'>) {
+  const { t } = useT(texts)
+  return (
+    <UnstyledButton {...rest} className="bnb-linktab bnb-tabs-more" aria-label={`${t('tabs.moreLabel')} (${count})`}>
+      <span>{t('tabs.more')}</span> <span className="bnb-tab-count">{count}</span><IconChevronDown size={14} aria-hidden="true" />
+    </UnstyledButton>
+  )
 }
 
 /** A page's tabs: an underline, never a pill. `sub` gives the smaller pill row under a tab.
- *  The row scrolls sideways when the tabs don't fit, so a page can grow tabs without wrapping. */
+ *  Tabs that don't fit in the row go under "More"; the row never scrolls sideways or wraps. */
 export function PageTabs({ tabs, active, onChange, label, sub }: {
   tabs: TabDef[]
   active: string
@@ -44,12 +97,15 @@ export function PageTabs({ tabs, active, onChange, label, sub }: {
   label?: string
   sub?: boolean
 }) {
-  const list = useActiveInView(active)
+  const { row, measure, shown, hidden } = useFit(tabs.map((t) => t.id), active)
+  const byId = new Map(tabs.map((t) => [t.id, t]))
   return (
+    <div className="bnb-tabs-fit" ref={row}>
+    <Measure tabs={tabs} sub={sub} refEl={measure} />
     <MantineTabs value={active} onChange={(v) => v && onChange(v)} mb={sub ? 16 : 24}
       variant={sub ? 'pills' : 'default'} radius={sub ? 'xl' : undefined} className={sub ? 'bnb-subtabs' : 'bnb-tabs'}>
-      <MantineTabs.List aria-label={label} ref={list}>
-        {tabs.map((t) => (
+      <MantineTabs.List aria-label={label}>
+        {shown.map((id) => byId.get(id)!).map((t) => (
           <MantineTabs.Tab key={t.id} value={t.id} title={t.hidden}
             className={t.hidden ? 'bnb-tab-hidden' : undefined}
             leftSection={t.hidden ? <>{t.icon}<IconEyeOff size={14} aria-hidden="true" /></> : t.icon}
@@ -63,8 +119,22 @@ export function PageTabs({ tabs, active, onChange, label, sub }: {
             {t.hidden && <span className="bnb-sr-only">, {t.hidden}</span>}
           </MantineTabs.Tab>
         ))}
+        {hidden.length > 0 && (
+          <Menu position="bottom-end" withinPortal>
+            <Menu.Target><MoreButton count={hidden.length} /></Menu.Target>
+            <Menu.Dropdown>
+              {hidden.map((id) => byId.get(id)!).map((t) => (
+                <Menu.Item key={t.id} leftSection={t.icon} onClick={() => onChange(t.id)}
+                  rightSection={t.count != null || t.alert ? <>{t.count != null && <span className="bnb-tab-count">{t.count}</span>}{t.alert && <StatusBit state={t.alert} />}</> : undefined}>
+                  {t.label}
+                </Menu.Item>
+              ))}
+            </Menu.Dropdown>
+          </Menu>
+        )}
       </MantineTabs.List>
     </MantineTabs>
+    </div>
   )
 }
 
@@ -85,11 +155,13 @@ export function LinkTabs({ tabs, active, label, sub }: {
   sub?: boolean
 }) {
   const Link = useContext(LinkContext)
-  const list = useActiveInView(active)
+  const { row, measure, shown, hidden } = useFit(tabs.map((t) => t.id), active)
+  const byId = new Map(tabs.map((t) => [t.id, t]))
   return (
     <nav aria-label={label} className={sub ? 'bnb-linktabs bnb-linktabs-sub' : 'bnb-linktabs'}>
-      <div className="bnb-linktabs-list" ref={list}>
-        {tabs.map((t) => {
+      <Measure tabs={tabs} sub={sub} refEl={measure} />
+      <div className="bnb-linktabs-list" ref={row}>
+        {shown.map((id) => byId.get(id)!).map((t) => {
           const props = {
             className: t.hidden ? 'bnb-linktab bnb-tab-hidden' : 'bnb-linktab',
             'aria-current': t.id === active ? 'page' as const : undefined,
@@ -107,6 +179,16 @@ export function LinkTabs({ tabs, active, label, sub }: {
             ? <Link key={t.id} to={t.href} {...props}>{body}</Link>
             : <a key={t.id} href={t.href} {...props}>{body}</a>
         })}
+        {hidden.length > 0 && (
+          <Menu position="bottom-end" withinPortal>
+            <Menu.Target><MoreButton count={hidden.length} /></Menu.Target>
+            <Menu.Dropdown>
+              {hidden.map((id) => byId.get(id)!).map((t) => Link
+                ? <Menu.Item key={t.id} leftSection={t.icon} renderRoot={(props) => <Link {...props} to={t.href} />}>{t.label}</Menu.Item>
+                : <Menu.Item key={t.id} component="a" href={t.href} leftSection={t.icon}>{t.label}</Menu.Item>)}
+            </Menu.Dropdown>
+          </Menu>
+        )}
       </div>
     </nav>
   )

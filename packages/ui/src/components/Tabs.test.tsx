@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import type { AnchorHTMLAttributes } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { renderWithApp } from '../../../../test/render'
@@ -41,5 +41,37 @@ describe('LinkTabs', () => {
     const Link = ({ to, ...rest }: { to: string } & AnchorHTMLAttributes<HTMLAnchorElement>) => <a data-router href={to} {...rest} />
     renderWithApp(<LinkContext.Provider value={Link}><LinkTabs label="Helpdesk" tabs={tabs} active="problems" /></LinkContext.Provider>)
     expect(screen.getByRole('link', { name: 'Handover' })).toHaveAttribute('data-router')
+  })
+})
+
+describe('tabs that do not fit', () => {
+  const six = ['Overview', 'Ports', 'Seats', 'Telemetry', 'Logs', 'Config'].map((l) => ({ id: l.toLowerCase(), label: l }))
+  // jsdom has no layout: every tab and the More button are 100 px wide, the row 350 px.
+  const layout = (fn: () => void) => {
+    const rect = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ width: 100 } as DOMRect)
+    const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(350)
+    try { fn() } finally { rect.mockRestore(); width.mockRestore() }
+  }
+
+  it('keeps one row and puts the rest under More, never scrolling sideways', async () => {
+    const onChange = vi.fn()
+    layout(() => { renderWithApp(<PageTabs label="Switch" active="overview" onChange={onChange} tabs={six} />) })
+    expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual(['Overview', 'Ports'])
+    fireEvent.click(screen.getByRole('button', { name: 'More tabs (4)' }))
+    fireEvent.click(await screen.findByRole('menuitem', { name: 'Logs' }))
+    expect(onChange).toHaveBeenCalledWith('logs')
+  })
+
+  it('keeps the tab being shown in the row', () => {
+    layout(() => { renderWithApp(<LinkTabs label="Switch" active="logs" tabs={six.map((t) => ({ ...t, href: `/${t.id}` }))} />) })
+    const nav = screen.getByRole('navigation', { name: 'Switch' })
+    expect(within(nav).getAllByRole('link').map((l) => l.textContent)).toEqual(['Overview', 'Logs'])
+    expect(screen.getByRole('link', { name: 'Logs' })).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('shows every tab when they fit', () => {
+    renderWithApp(<PageTabs label="Switch" active="overview" onChange={vi.fn()} tabs={six} />)
+    expect(screen.getAllByRole('tab')).toHaveLength(6)
+    expect(screen.queryByRole('button', { name: /More tabs/ })).toBeNull()
   })
 })

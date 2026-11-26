@@ -11,13 +11,22 @@ const halls = Array.from({ length: 14 }, (_, i) => ({
   alert: i === 3 ? 'down' as const : i === 8 ? 'warn' as const : null,
 }))
 
-/** More tabs than fit: the row scrolls sideways, and a tab that needs a look shows a bit. */
+/** More tabs than fit: the ones that fit stay in the row, the rest go under More, and the active tab
+ *  always stays visible. A tab that needs a look shows a bit. */
 function ManyHalls() {
   const [active, setActive] = useState('h1')
   return <div style={{ maxWidth: 560 }}><PageTabs label="Halls" tabs={halls} active={active} onChange={setActive} /></div>
 }
 
 export const ManyTabs: Story = { render: () => <ManyHalls /> }
+
+/** A phone's width: the same tabs, three in the row and the rest under More. */
+function PhoneHalls() {
+  const [active, setActive] = useState('h9')
+  return <div style={{ width: 360, border: '1px dashed var(--bnb-line)' }}><PageTabs label="Halls" tabs={halls} active={active} onChange={setActive} /></div>
+}
+
+export const PhoneWidth: Story = { render: () => <PhoneHalls /> }
 
 const helpdesk = [
   { id: 'problems', label: 'Problems', href: '#problems', count: 4, alert: 'warn' as const },
