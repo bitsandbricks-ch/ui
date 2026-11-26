@@ -3,6 +3,7 @@ import { useMediaQuery } from '@mantine/hooks'
 import type { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useInPanel, useTitleLevel, useTopBarSlot } from './context'
+import { PageMenu, type PageMenuItem } from './PageMenu'
 
 /** The head of a page: a small line above (eyebrow), the title, one sentence, and the page's
  *  buttons on the right. Inside another page's tab it heads a section instead.
@@ -10,13 +11,16 @@ import { useInPanel, useTitleLevel, useTopBarSlot } from './context'
  *  In an AppShell with `actionsInTopBar`, wide screens show the title in the top bar's breadcrumb
  *  and the buttons on its right, so the page has no title row of its own (Floorbit).
  *  The title is an h1, or an h2 under a shell that sets TitleLevel to 2. */
-export function PageHead({ title, eyebrow, desc, actions, icon, back }: {
+export function PageHead({ title, eyebrow, desc, actions, menu, icon, back }: {
   title: ReactNode
   /** A small line above the title (a type, a place). */
   eyebrow?: ReactNode
   /** One sentence about the page. */
   desc?: ReactNode
+  /** The primary action (one button, at most two); the rest go into `menu`. */
   actions?: ReactNode
+  /** The page's other actions, behind a "⋯" button after `actions`, the same on every screen size. */
+  menu?: PageMenuItem[]
   icon?: ReactNode
   /** A back link above everything. */
   back?: ReactNode
@@ -25,13 +29,15 @@ export function PageHead({ title, eyebrow, desc, actions, icon, back }: {
   const level = useTitleLevel()
   const slot = useTopBarSlot()
   const wide = useMediaQuery('(min-width: 48em)', false, { getInitialValueInEffect: false })
+  const more = menu?.length ? <PageMenu items={menu} /> : null
+  const buttons = actions || more ? <>{actions}{more}</> : null
   if (slot && wide && !inPanel) {
     const about = eyebrow ?? desc
     return (
       <>
         <Title order={level} className="bnb-sr-only">{title}</Title>
         {about && <Text size="sm" c="dimmed" maw={720} mb={16}>{about}</Text>}
-        {actions && createPortal(<Group gap="xs" wrap="nowrap" align="center">{actions}</Group>, slot)}
+        {buttons && createPortal(<Group gap="xs" wrap="nowrap" align="center">{buttons}</Group>, slot)}
       </>
     )
   }
@@ -49,9 +55,9 @@ export function PageHead({ title, eyebrow, desc, actions, icon, back }: {
             {desc && <Text size="sm" c="dimmed" maw={720}>{desc}</Text>}
           </Stack>
         </Group>
-        {actions && (
+        {buttons && (
           <Group gap="xs" wrap="wrap" align="center" className="bnb-pagehead-actions">
-            {actions}
+            {buttons}
           </Group>
         )}
       </Group>
