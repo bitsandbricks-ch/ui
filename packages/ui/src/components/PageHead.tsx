@@ -1,9 +1,41 @@
-import { Box, Group, Stack, Text, Title } from '@mantine/core'
+import { Box, Group, Stack, Text, Title, UnstyledButton } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import type { ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { useT } from '../i18n'
 import { useInPanel, useTitleLevel, useTopBarSlot } from './context'
 import { PageMenu, type PageMenuItem } from './PageMenu'
+import { texts } from './PageHead.texts'
+
+/** The sentence about the page. On a phone it shows two lines and a "More" link when it runs longer,
+ *  so the page's content starts on the first screen. */
+function Desc({ children, phone }: { children: ReactNode; phone: boolean }) {
+  const { t } = useT(texts)
+  const ref = useRef<HTMLParagraphElement>(null)
+  const id = useId()
+  const [open, setOpen] = useState(false)
+  const [long, setLong] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!phone || open || !el) return
+    const check = () => setLong(el.scrollHeight > el.clientHeight + 1)
+    check()
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(check) : null
+    ro?.observe(el)
+    return () => ro?.disconnect()
+  }, [phone, open, children])
+  const clamped = phone && !open
+  return (
+    <>
+      <Text ref={ref} id={id} size="sm" c="dimmed" maw={720} className={clamped ? 'bnb-pagehead-desc is-clamped' : 'bnb-pagehead-desc'}>{children}</Text>
+      {phone && (long || open) && (
+        <UnstyledButton className="bnb-pagehead-more" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
+          {open ? t('pagehead.less') : t('pagehead.more')}
+        </UnstyledButton>
+      )}
+    </>
+  )
+}
 
 /** The head of a page: a small line above (eyebrow), the title, one sentence, and the page's
  *  buttons on the right. Inside another page's tab it heads a section instead.
@@ -52,7 +84,7 @@ export function PageHead({ title, eyebrow, desc, actions, menu, icon, back }: {
             <Title order={(inPanel ? level + 1 : level) as 1 | 2 | 3} fz={inPanel ? 'lg' : 'h2'} style={{ margin: 0, overflowWrap: 'anywhere' }}>
               {title}
             </Title>
-            {desc && <Text size="sm" c="dimmed" maw={720}>{desc}</Text>}
+            {desc && <Desc phone={!wide}>{desc}</Desc>}
           </Stack>
         </Group>
         {buttons && (
