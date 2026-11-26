@@ -28,7 +28,9 @@ describe('StatTile', () => {
   })
 
   it('links where it drills down to, and lays tiles out in a grid', () => {
-    renderWithApp(<StatGrid><StatTile label="Down" value={2} href="/problems" /></StatGrid>)
+    const { container } = renderWithApp(<StatGrid><StatTile label="Down" value={2} href="/problems" /></StatGrid>)
     expect(screen.getByRole('link')).toHaveAttribute('href', '/problems')
+    // The phone's compact two-column look hangs off this class (StatTile.css).
+    expect(container.querySelector('.bnb-statgrid')).not.toBeNull()
   })
 })

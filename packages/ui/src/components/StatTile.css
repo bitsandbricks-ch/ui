@@ -1,0 +1,8 @@
+/* StatTile. Built into @bitsandbricks/ui/styles.css after the shared styles. */
+/* Phones: tiles in a StatGrid are compact, two to a row. */
+@media (max-width: 48em) {
+  .bnb-statgrid .bnb-stat { padding: 10px 12px; }
+  .bnb-statgrid .bnb-stat .bnb-stat-value { font-size: var(--bnb-fs-xl); }
+  .bnb-statgrid .bnb-stat .bnb-stat-more { font-size: var(--bnb-fs-xs); gap: 2px 8px; }
+  .bnb-statgrid .bnb-stat dt { font-size: var(--bnb-fs-xs); }
+}
