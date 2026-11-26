@@ -88,10 +88,11 @@ function ChangeArrow({ value, unit, goodWhen, text: shown, since }: StatChange) 
   )
 }
 
-/** A row of stat tiles: one column on phones, two on small screens, `columns` from md up. */
+/** A row of stat tiles: two compact columns on phones (so the list below starts on the first
+ *  screen), `columns` from md up. */
 export function StatGrid({ children, columns = 4, style }: { children: ReactNode; columns?: number; style?: CSSProperties }) {
   return (
-    <SimpleGrid cols={{ base: 1, xs: 2, md: columns }} spacing="md" mb={24} style={style}>
+    <SimpleGrid cols={{ base: 2, md: columns }} spacing={{ base: 'xs', sm: 'md' }} mb={24} style={style} className="bnb-statgrid">
       {children}
     </SimpleGrid>
   )
