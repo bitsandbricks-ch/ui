@@ -57,7 +57,7 @@ describe('tabs that do not fit', () => {
     const onChange = vi.fn()
     layout(() => { renderWithApp(<PageTabs label="Switch" active="overview" onChange={onChange} tabs={six} />) })
     expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual(['Overview', 'Ports'])
-    fireEvent.click(screen.getByRole('button', { name: 'More tabs (4)' }))
+    fireEvent.click(screen.getByRole('button', { name: 'More 4' }))
     fireEvent.click(await screen.findByRole('menuitem', { name: 'Logs' }))
     expect(onChange).toHaveBeenCalledWith('logs')
   })
@@ -72,6 +72,6 @@ describe('tabs that do not fit', () => {
   it('shows every tab when they fit', () => {
     renderWithApp(<PageTabs label="Switch" active="overview" onChange={vi.fn()} tabs={six} />)
     expect(screen.getAllByRole('tab')).toHaveLength(6)
-    expect(screen.queryByRole('button', { name: /More tabs/ })).toBeNull()
+    expect(screen.queryByRole('button', { name: /^More/ })).toBeNull()
   })
 })

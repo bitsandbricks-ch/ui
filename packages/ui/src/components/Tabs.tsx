@@ -40,7 +40,8 @@ function useFit(ids: string[], active: string) {
       const sizes = cells.map((c) => c.getBoundingClientRect().width + gap)
       const total = sizes.reduce((a, b) => a + b, 0)
       if (total <= width + 1) return setFit(ids.length)
-      const room = width - (more?.getBoundingClientRect().width ?? 80) - gap
+      // A little slack: a Mantine tab lays out its sections a few pixels wider than the copy.
+      const room = width - (more?.getBoundingClientRect().width ?? 80) - gap - 12
       let n = 0, used = 0
       while (n < sizes.length && used + sizes[n] <= room) used += sizes[n++]
       setFit(Math.max(1, n))
@@ -78,10 +79,10 @@ function Measure({ tabs, sub, refEl }: { tabs: TabDef[]; sub?: boolean; refEl: R
   )
 }
 
-function MoreButton({ count, ...rest }: { count: number } & ComponentPropsWithoutRef<'button'>) {
+function MoreButton({ count, className, ...rest }: { count: number } & ComponentPropsWithoutRef<'button'>) {
   const { t } = useT(texts)
   return (
-    <UnstyledButton {...rest} className="bnb-linktab bnb-tabs-more" aria-label={`${t('tabs.moreLabel')} (${count})`}>
+    <UnstyledButton {...rest} className={className ? `bnb-linktab bnb-tabs-more ${className}` : 'bnb-linktab bnb-tabs-more'} title={t('tabs.moreLabel')}>
       <span>{t('tabs.more')}</span> <span className="bnb-tab-count">{count}</span><IconChevronDown size={14} aria-hidden="true" />
     </UnstyledButton>
   )
@@ -99,6 +100,7 @@ export function PageTabs({ tabs, active, onChange, label, sub }: {
 }) {
   const { row, measure, shown, hidden } = useFit(tabs.map((t) => t.id), active)
   const byId = new Map(tabs.map((t) => [t.id, t]))
+  // The More menu sits next to the tablist, not in it: a tablist may only hold tabs.
   return (
     <div className="bnb-tabs-fit" ref={row}>
     <Measure tabs={tabs} sub={sub} refEl={measure} />
@@ -119,9 +121,11 @@ export function PageTabs({ tabs, active, onChange, label, sub }: {
             {t.hidden && <span className="bnb-sr-only">, {t.hidden}</span>}
           </MantineTabs.Tab>
         ))}
+      </MantineTabs.List>
+    </MantineTabs>
         {hidden.length > 0 && (
           <Menu position="bottom-end" withinPortal>
-            <Menu.Target><MoreButton count={hidden.length} /></Menu.Target>
+            <Menu.Target><MoreButton count={hidden.length} className="is-floating" /></Menu.Target>
             <Menu.Dropdown>
               {hidden.map((id) => byId.get(id)!).map((t) => (
                 <Menu.Item key={t.id} leftSection={t.icon} onClick={() => onChange(t.id)}
@@ -132,8 +136,6 @@ export function PageTabs({ tabs, active, onChange, label, sub }: {
             </Menu.Dropdown>
           </Menu>
         )}
-      </MantineTabs.List>
-    </MantineTabs>
     </div>
   )
 }

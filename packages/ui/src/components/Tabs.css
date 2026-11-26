@@ -9,7 +9,7 @@
 .bnb-tabs-measure.is-sub { gap: 6px; }
 .bnb-tabs-measure.is-sub .bnb-linktab { padding: 6px 12px; }
 .bnb-tabs-more { cursor: pointer; background: none; border: 0; border-bottom: 2px solid transparent; }
-.bnb-tabs .bnb-tabs-more, .bnb-subtabs .bnb-tabs-more { margin-bottom: 0; }
+.bnb-tabs-more.is-floating { position: absolute; right: 0; top: 0; }
 .bnb-tabs .mantine-Tabs-tab,
 .bnb-subtabs .mantine-Tabs-tab { flex: none; white-space: nowrap; }
 .bnb-tabs .mantine-Tabs-tabSection[data-position='right'] { display: inline-flex; align-items: center; gap: 6px; }
