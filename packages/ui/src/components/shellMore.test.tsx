@@ -14,13 +14,18 @@ describe('PhoneDock', () => {
     { id: 'home', label: 'Overview', href: '/', icon: <IconHome size={20} /> },
     { id: 'hosts', label: 'Hosts', href: '/hosts', icon: <IconServer size={20} />, badge: 3 },
   ]
-  it('shows the main pages, and the page shown on "More" when it is not one of them', async () => {
-    renderWithApp(<PhoneDock items={items} current="Settings" more={[{ items: [{ id: 'settings', label: 'Settings', href: '/settings', active: true }] }]} />)
+  it('says More, lit with a dot, when the page shown is under it, and shows the status line in its sheet', async () => {
+    const { container } = renderWithApp(<PhoneDock items={items} current="Settings" status={<span>5 down</span>}
+      more={[{ items: [{ id: 'settings', label: 'Settings', href: '/settings', active: true }] }]} />)
     expect(screen.getByRole('link', { name: /Hosts/ })).toHaveAttribute('href', '/hosts')
-    const more = screen.getByRole('button', { name: 'Settings' })
+    const more = screen.getByRole('button', { name: /^More.*Settings$/ })
+    expect(more).toHaveClass('is-active')
+    expect(container.querySelector('.bnb-dock-here')).not.toBeNull()
+    expect(container.querySelector('.bnb-dock')).toHaveClass('has-status')
     fireEvent.click(more)
     expect(more).toHaveAttribute('aria-expanded', 'true')
     expect(await screen.findByRole('dialog', { name: 'Every page' })).toBeInTheDocument()
+    expect(screen.getByText('5 down')).toBeInTheDocument()
   })
   it('says More when the page is in the bar, in German', () => {
     renderWithApp(<PhoneDock items={[{ ...items[0], active: true }, items[1]]} current="Overview" more={[{ items: [] }]} />, '/', 'de')

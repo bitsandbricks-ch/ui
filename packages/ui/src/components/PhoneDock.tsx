@@ -22,27 +22,33 @@ function DockLink({ item }: { item: NavItem }) {
 
 /** Phones: a bar at the bottom with the four or five pages used most, and "More", which opens every
  *  page (`more`, the same groups as the sidebar) and anything else (`moreFooter`: the theme, sign
- *  out) as a sheet. When the page shown isn't in the bar, "More" carries its name, so you still see
- *  where you are. Hidden on wider screens; put it once in the app's frame. From Mason. */
-export function PhoneDock({ items, more = [], moreFooter, current }: {
+ *  out) as a sheet. "More" always says More: a page name would be cut off in the bar. When the page
+ *  shown isn't in the bar, More is lit and carries a dot (and the page's name for screen readers).
+ *  `status` (the app's status line and footer links) moves into the sheet, so it doesn't float over
+ *  the bar on short pages. Hidden on wider screens; put it once in the app's frame. From Mason. */
+export function PhoneDock({ items, more = [], moreFooter, current, status }: {
   items: NavItem[]
   more?: NavGroup[]
   moreFooter?: ReactNode
-  /** The page shown, when it isn't one of `items` (its label goes on "More"). */
+  /** The page shown, when it isn't one of `items` (More is lit and names it to screen readers). */
   current?: string
+  /** The shell's status line: shown in the sheet instead of above the bar on phones. */
+  status?: ReactNode
 }) {
   const { t } = useT(texts)
   const [open, { toggle, close }] = useDisclosure(false)
   const inDock = items.some((i) => i.active)
-  const moreLabel = open || inDock || !current ? t('dock.more') : current
+  const here = !open && !inDock && !!current
   return (
     <>
-      <nav className="bnb-dock" aria-label={t('dock.label')}>
+      <nav className={status ? 'bnb-dock has-status' : 'bnb-dock'} aria-label={t('dock.label')}>
         {items.map((item) => <DockLink key={item.id} item={{ ...item, active: item.active && !open }} />)}
         {(more.length > 0 || moreFooter) && (
           <UnstyledButton className={`bnb-dock-item${open || !inDock ? ' is-active' : ''}`} aria-expanded={open} onClick={toggle}>
-            <span className="bnb-dock-icon" aria-hidden="true">{open ? <IconX size={20} /> : <IconDots size={20} />}</span>
-            <span className="bnb-dock-label">{moreLabel}</span>
+            <span className="bnb-dock-icon" aria-hidden="true">{open ? <IconX size={20} /> : <IconDots size={20} />}
+              {here && <span className="bnb-dock-here" />}</span>
+            <span className="bnb-dock-label">{t('dock.more')}</span>
+            {here && <span className="bnb-sr-only">, {current}</span>}
           </UnstyledButton>
         )}
       </nav>
@@ -50,6 +56,7 @@ export function PhoneDock({ items, more = [], moreFooter, current }: {
         closeButtonProps={{ 'aria-label': t('dock.close') }} classNames={{ content: 'bnb-dock-sheet' }}>
         <SideNav groups={more} onNavigate={close} />
         {moreFooter && <div className="bnb-dock-sheet-foot">{moreFooter}</div>}
+        {status && <div className="bnb-dock-sheet-status">{status}</div>}
       </Drawer>
     </>
   )
