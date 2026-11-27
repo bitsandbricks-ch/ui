@@ -1,7 +1,7 @@
 import { createElement, useContext, type ReactNode } from 'react'
 import { IconChevronRight, IconEyeOff } from '@tabler/icons-react'
 import { Card } from './feedback'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 
 export interface GlanceRow {
   id: string

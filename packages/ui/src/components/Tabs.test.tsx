@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import type { AnchorHTMLAttributes } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { renderWithApp } from '../../../../test/render'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 import { LinkTabs, PageTabs } from './Tabs'
 
 describe('PageTabs alert', () => {

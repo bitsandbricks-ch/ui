@@ -2,7 +2,7 @@ import { Anchor, Text, type MantineSize } from '@mantine/core'
 import { createElement, Fragment, useContext, type ReactNode } from 'react'
 import { useT } from '../i18n'
 import { texts } from './Legal.texts'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 
 // From Hubra's LegalFooter and LegalConsent and Seatbit's legal notice (by Mike). The app knows
 // where its policies live (settings, its own pages); these only link them.

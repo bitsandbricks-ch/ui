@@ -2,7 +2,7 @@ import { IconChevronRight } from '@tabler/icons-react'
 import { createElement, Fragment, useContext, type ReactNode } from 'react'
 import { useT } from '../i18n'
 import { texts } from './Breadcrumbs.texts'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 
 export interface Crumb {
   label: ReactNode

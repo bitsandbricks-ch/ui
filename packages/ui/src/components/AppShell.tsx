@@ -5,7 +5,7 @@ import { createElement, useContext, useState, type ReactNode } from 'react'
 import { useT } from '../i18n'
 import { texts } from './AppShell.texts'
 import { TopBarSlot } from './context'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 
 export interface NavItem {
   id: string

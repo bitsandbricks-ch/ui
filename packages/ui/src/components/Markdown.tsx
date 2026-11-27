@@ -1,6 +1,6 @@
 import { Anchor, Code, List, Text, Title } from '@mantine/core'
 import { createElement, useContext, type ElementType, type ReactNode } from 'react'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 
 // A small Markdown subset, from Floorbit's Markdown and Hubra's InlineMarkdown (by Mike). It builds
 // React elements, never HTML, so nothing typed can run, and it needs no Markdown library.

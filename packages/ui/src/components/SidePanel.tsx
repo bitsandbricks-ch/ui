@@ -1,12 +1,10 @@
 import { ActionIcon, Button, Drawer, Group, Tooltip, useMatches } from '@mantine/core'
 import { IconArrowDown, IconArrowRight, IconArrowUp, IconCheck, IconLink, IconX } from '@tabler/icons-react'
-import { createContext, useContext, useEffect, useState, type CSSProperties, type ElementType, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react'
+import { useContext, useEffect, useState, type CSSProperties, type ElementType, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react'
 import { useT } from '../i18n'
+import { LinkContext } from '../link'
 import { clampPanelWidth } from '../panelWidth'
 import { texts } from './SidePanel.texts'
-
-/** The app's link component (React Router's Link takes `to`); a plain <a href> without one. */
-export const LinkContext = createContext<ElementType | null>(null)
 
 /** Where a side panel sits. `drawer`: over the page from the right, modal (a quick look from a list).
  *  `dock`: a column in the page's own layout, e.g. an editor's settings beside its canvas.
