@@ -1,7 +1,7 @@
 import { Button } from '@mantine/core'
 import { createElement, useContext, type ReactNode } from 'react'
 import { useT } from '../i18n'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 import { texts } from './AttentionList.texts'
 
 export interface AttentionItem {

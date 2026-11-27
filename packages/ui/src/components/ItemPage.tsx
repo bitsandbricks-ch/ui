@@ -5,7 +5,7 @@ import { useT } from '../i18n'
 import { ConfirmButton } from './Confirm'
 import { Card, EmptyState, LoadingState } from './feedback'
 import { PageHead } from './PageHead'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 import { texts } from './ItemPage.texts'
 
 // One thing on its own page, from Floorbit's ItemPage and Hubra's detail pages (by Mike).

@@ -1,7 +1,7 @@
 import { MantineProvider, type MantineColorSchemeManager, type MantineThemeOverride } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import type { ElementType, ReactNode } from 'react'
-import { LinkContext } from './components/SidePanel'
+import { LinkContext } from './link'
 import { ConfirmProvider } from './components/useConfirm'
 import { I18nProvider, type Locale, type Messages, type Translate } from './i18n'
 import { cssVariablesResolver } from './theme'

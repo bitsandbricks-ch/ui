@@ -4,7 +4,7 @@ import { useContext, useLayoutEffect, useRef, useState, type ComponentPropsWitho
 import { useT } from '../i18n'
 import { texts } from './Tabs.texts'
 import type { State } from '../status'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 import { StatusBit } from './StatusBadge'
 
 export interface TabDef {

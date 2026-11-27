@@ -1,6 +1,6 @@
 import { createElement, useContext, type ReactNode } from 'react'
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 
 export interface SectionDef {
   id: string

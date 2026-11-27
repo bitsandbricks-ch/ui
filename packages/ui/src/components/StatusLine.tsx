@@ -1,6 +1,6 @@
 import { createElement, useContext, type ReactNode } from 'react'
 import type { Tone } from '../status'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 import { StatusBit } from './StatusBadge'
 
 export interface StatusItem {

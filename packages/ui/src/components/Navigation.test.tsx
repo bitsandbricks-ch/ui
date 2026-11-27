@@ -5,7 +5,7 @@ import { renderWithApp } from '../../../../test/render'
 import { GlanceList } from './GlanceList'
 import { SectionLayout, type SectionDef } from './SectionLayout'
 import { Segmented } from './Segmented'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 import { PageTabs } from './Tabs'
 
 const sections: SectionDef[] = [

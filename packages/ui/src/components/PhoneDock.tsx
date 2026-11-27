@@ -5,7 +5,7 @@ import { createElement, useContext, type ReactNode } from 'react'
 import { useT } from '../i18n'
 import { SideNav, type NavGroup, type NavItem } from './AppShell'
 import { texts } from './PhoneDock.texts'
-import { LinkContext } from './SidePanel'
+import { LinkContext } from '../link'
 
 function DockLink({ item }: { item: NavItem }) {
   const Link = useContext(LinkContext)
